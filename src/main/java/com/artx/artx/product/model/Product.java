@@ -2,6 +2,7 @@ package com.artx.artx.product.model;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.product.dto.ProductRequest;
 import com.artx.artx.user.model.User;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +36,7 @@ public class Product {
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductImage> productImages;
 
+	private String representativeImage;
 	private String title;
 	private String description;
 	private Long price;
@@ -82,5 +84,9 @@ public class Product {
 	public void saveProductImages(List<ProductImage> productImages) {
 		productImages.stream().forEach(productImage -> productImage.setProduct(this));
 		this.productImages = productImages;
+	}
+
+	public void setReresentativeImage(String fileName) {
+		this.representativeImage = fileName;
 	}
 }

@@ -4,7 +4,7 @@ import com.artx.artx.product.model.Product;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
+import java.nio.file.Path;
 
 public class ProductResponse {
 
@@ -38,6 +38,16 @@ public class ProductResponse {
 	@Getter
 	@Builder
 	public static class ReadAll {
-		List<ProductDto> productList;
+		private Long productId;
+		private String productImageUrl;
+		private String productTitle;
+
+		public static ReadAll from(String directory, Product product){
+			return ReadAll.builder()
+					.productId(product.getId())
+					.productImageUrl(Path.of(directory, product.getRepresentativeImage()).toString())
+					.productTitle(product.getTitle())
+					.build();
+		}
 	}
 }
