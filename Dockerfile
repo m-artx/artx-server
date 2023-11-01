@@ -7,7 +7,7 @@ WORKDIR /app
 
 # COPY {복사할 파일} {저장 디렉토리} => 이미지 파일을 빌드하면 현재 프로젝트 디렉토리를 기준으로 jar파일을 찾아서
 # 컨테이너 내부의 /app/app.jar에 복사할 수 있도록 한다.
-COPY /build/libs/stdout.jar /app/stdout.jar
+COPY /build/libs/artx.jar /app/artx.jar
 
 # 컨테이너가 시작되는 시점에 실행되는 기본 명령어이다.
 # WORKDIR랑은 별개이며, 독립적인 명령어라고 생각하면 된다.
