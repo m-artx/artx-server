@@ -42,4 +42,4 @@ out/
 
 !application-prod.yml
 
-image
+images

@@ -1,20 +1,36 @@
 package com.artx.artx.product.repository;
 
-import com.artx.artx.product.dto.ProductDto;
 import com.artx.artx.product.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	@Query(
-			"SELECT new com.artx.artx.product.dto.ProductDto(p.id, p.title, p.quantity, p.price) FROM Product p " +
-					"WHERE p.user.userId = :userId"
+			"SELECT p FROM Product p " +
+					"LEFT JOIN FETCH p.productImages img "+
+					"WHERE p.user.nickname = :nickname"
 	)
-	List<ProductDto> findAllByUser_UserId(@Param("userId") UUID userId);
+	Page<Product> findAllByUser_Nickname(@Param("nickname") String nickname, Pageable pageable);
+
+	@Query(
+			"SELECT p FROM Product p " +
+					"LEFT JOIN FETCH p.productImages img "+
+					"WHERE p.title = :title"
+	)
+	Page<Product> findAllByTitle(@Param("title") String title, Pageable pageable);
+
+	@Query(
+			"SELECT p FROM Product p " +
+					"LEFT JOIN FETCH p.productImages img "+
+					"ORDER BY p.createdAt ASC LIMIT 5"
+	)
+	List<Product> mainPageProductsByLatest();
+
 
 }

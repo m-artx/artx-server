@@ -18,7 +18,6 @@ public class ProductImage {
 	private Long id;
 	private String type;
 	private String name;
-	private String src;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
