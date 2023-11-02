@@ -10,6 +10,7 @@ import com.artx.artx.product.entity.ProductImage;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.FilterType;
+import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.product.type.SearchType;
 import com.artx.artx.user.model.User;
 import com.artx.artx.user.service.UserService;
@@ -55,7 +56,8 @@ public class ProductService {
 		return ProductResponse.Create.from(product);
 	}
 
-	private List<ProductImage> saveProductImages(Product product, String fileDirectory, List<MultipartFile> files) {
+	@Transactional
+	public List<ProductImage> saveProductImages(Product product, String fileDirectory, List<MultipartFile> files) {
 		List<ProductImage> productImages = new ArrayList<>();
 
 		for(int i = 0; i < files.size(); i++){
@@ -80,8 +82,6 @@ public class ProductService {
 			}
 
 		}
-
-
 		return productImages;
 	}
 
@@ -90,6 +90,8 @@ public class ProductService {
 				.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
 
+
+	// 작품 유저 또는 제목 검색
 	@Transactional
 	public Page<ProductResponse.ReadAll> searchProducts(SearchType type, String name, Pageable pageable) {
 		if(type == SearchType.USER){
@@ -103,6 +105,8 @@ public class ProductService {
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 	}
 
+
+	// 특정 작품 상세페이지
 	@Transactional(readOnly = true)
 	public ProductResponse.Read readProductDetail(Long productId){
 		Product product = productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -110,10 +114,11 @@ public class ProductService {
 
 	}
 
-	@Transactional
-	public List<ProductResponse.ReadAll> mainPageProducts(FilterType type) {
+	// 최근 작품 및 인기 작품
+	@Transactional(readOnly = true)
+	public List<ProductResponse.ReadAll> readMainPageProducts(FilterType type) {
 		if(type == FilterType.LATEST){
-			return productRepository.mainPageProductsByLatest().stream().map(product -> ProductResponse.ReadAll.from(serverUrl, product)).collect(Collectors.toList());
+			return productRepository.findMainPageProductsByLatest().stream().map(product -> ProductResponse.ReadAll.from(serverUrl, product)).collect(Collectors.toList());
 		}
 //
 //		if(type == FilterType.POPULARITY){
@@ -122,6 +127,13 @@ public class ProductService {
 
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 	}
+
+	@Transactional(readOnly = true)
+	public Page<ProductResponse.ReadAll> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
+		ProductCategory category = productCategoryRepository.findByName(type.name()).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
+		return productRepository.findProductsByCategory(category.getId(), pageable).map(product -> ProductResponse.ReadAll.from(serverUrl, product));
+	}
+
 
 	/**
 	 * TODO: 동시성 이슈 체크

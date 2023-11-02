@@ -4,6 +4,7 @@ import com.artx.artx.product.model.ProductRequest;
 import com.artx.artx.product.model.ProductResponse;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.FilterType;
+import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.product.type.SearchType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,23 +28,33 @@ public class ProductController {
 		return ResponseEntity.ok(productService.createProduct(request, files));
 	}
 
-	//특정 유저 작품 전체 조회(페이징)
+	// 특정 유저 작품 전체 조회(페이징)
 	@GetMapping("/search")
 	public ResponseEntity<Page<ProductResponse.ReadAll>> searchProducts(@RequestParam SearchType type, String name, Pageable pageable){
 		return ResponseEntity.ok(productService.searchProducts(type, name , pageable));
 	}
 
-	//특정 작품 상세페이지
+	// 특정 작품 상세페이지
 	@GetMapping("/{productId}")
 	public ResponseEntity<ProductResponse.Read> readProductDetail(@PathVariable Long productId){
 		return ResponseEntity.ok(productService.readProductDetail(productId));
 	}
 
 
-	//메인 페이지 작품 조회
+	// 메인 페이지 작품 조회
 	@GetMapping("/main")
 	public ResponseEntity<List<ProductResponse.ReadAll>> mainPageProducts(@RequestParam FilterType type){
-		return ResponseEntity.ok(productService.mainPageProducts(type));
+		return ResponseEntity.ok(productService.readMainPageProducts(type));
 	}
+
+	// 카테고리별 작품 조회
+	@GetMapping
+	public ResponseEntity<Page<ProductResponse.ReadAll>> readProductsByCategory(@RequestParam ProductCategoryType type, Pageable pageable){
+		return ResponseEntity.ok(productService.readProductsByCategory(type, pageable));
+	}
+
+
+
+
 
 }

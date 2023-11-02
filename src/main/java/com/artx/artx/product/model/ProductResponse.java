@@ -73,15 +73,14 @@ public class ProductResponse {
 		private Long productId;
 		private String productImageUrl;
 		private String productTitle;
+		private String link;
 
 		public static ReadAll from(String serverUrl, Product product) {
-
-			StringBuilder sb = new StringBuilder();
-
 			return ReadAll.builder()
 					.productId(product.getId())
-					.productImageUrl(sb.append(serverUrl).append("/api/images/").append(product.getRepresentativeImage()).toString())
+					.productImageUrl(serverUrl + "/api/images/" + product.getRepresentativeImage())
 					.productTitle(product.getTitle())
+					.link(serverUrl + "/api/products/" + product.getId())
 					.build();
 		}
 	}
