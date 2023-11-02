@@ -1,11 +1,14 @@
-package com.artx.artx.product.dto;
+package com.artx.artx.product.model;
 
-import com.artx.artx.product.model.Product;
+import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductImage;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductResponse {
 
@@ -31,11 +34,33 @@ public class ProductResponse {
 	@Builder
 	public static class Read {
 		private Long productId;
+		private List<String> productImageUrls;
 		private String productTitle;
 		private String productDescription;
 		private Long productQuantity;
 		private Long productPrice;
 		private LocalDate createdAt;
+
+		public static Read from(String serverUrl, Product product) {
+			List<String> fileImageNames = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
+			StringBuilder sb = new StringBuilder();
+			sb.append(serverUrl);
+			List<String> fileImageUrls = new ArrayList<>();
+
+			for (int i = 0; i < fileImageNames.size(); i++) {
+				sb.append(fileImageNames.get(i));
+				fileImageUrls.add(sb.toString());
+				sb.setLength(serverUrl.length());
+			}
+
+			return Read.builder().productId(product.getId()).productTitle(product.getTitle())
+					.productDescription(product.getDescription())
+					.productPrice(product.getPrice())
+					.productQuantity(product.getQuantity())
+					.productImageUrls(fileImageUrls)
+					.createdAt(LocalDate.from(product.getCreatedAt()))
+					.build();
+		}
 	}
 
 	@Getter
@@ -45,10 +70,13 @@ public class ProductResponse {
 		private String productImageUrl;
 		private String productTitle;
 
-		public static ReadAll from(String directory, Product product){
+		public static ReadAll from(String serverUrl, Product product) {
+
+			StringBuilder sb = new StringBuilder();
+
 			return ReadAll.builder()
 					.productId(product.getId())
-					.productImageUrl(Path.of(directory, product.getRepresentativeImage()).toString())
+					.productImageUrl(sb.append(serverUrl).append("/api/images/").append(product.getRepresentativeImage()).toString())
 					.productTitle(product.getTitle())
 					.build();
 		}

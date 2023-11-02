@@ -3,7 +3,7 @@ package com.artx.artx.cart.model;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.product.model.Product;
+import com.artx.artx.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

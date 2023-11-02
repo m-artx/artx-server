@@ -1,7 +1,7 @@
 package com.artx.artx.product.controller;
 
-import com.artx.artx.product.dto.ProductRequest;
-import com.artx.artx.product.dto.ProductResponse;
+import com.artx.artx.product.model.ProductRequest;
+import com.artx.artx.product.model.ProductResponse;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.FilterType;
 import com.artx.artx.product.type.SearchType;
@@ -32,6 +32,13 @@ public class ProductController {
 	public ResponseEntity<Page<ProductResponse.ReadAll>> searchProducts(@RequestParam SearchType type, String name, Pageable pageable){
 		return ResponseEntity.ok(productService.searchProducts(type, name , pageable));
 	}
+
+	//특정 작품 상세페이지
+	@GetMapping("/{productId}")
+	public ResponseEntity<ProductResponse.Read> readProductDetail(@PathVariable Long productId){
+		return ResponseEntity.ok(productService.readProductDetail(productId));
+	}
+
 
 	//메인 페이지 작품 조회
 	@GetMapping("/main")

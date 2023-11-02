@@ -1,4 +1,4 @@
-package com.artx.artx.product.model;
+package com.artx.artx.product.entity;
 
 import com.artx.artx.common.model.BaseEntity;
 import jakarta.persistence.*;

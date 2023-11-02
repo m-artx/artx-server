@@ -10,7 +10,7 @@ import com.artx.artx.order.model.Order;
 import com.artx.artx.order.model.OrderProduct;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
-import com.artx.artx.product.model.Product;
+import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.user.model.User;
 import com.artx.artx.user.repository.UserRepository;

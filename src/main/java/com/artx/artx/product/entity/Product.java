@@ -1,9 +1,9 @@
-package com.artx.artx.product.model;
+package com.artx.artx.product.entity;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.product.dto.ProductRequest;
+import com.artx.artx.product.model.ProductRequest;
 import com.artx.artx.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
