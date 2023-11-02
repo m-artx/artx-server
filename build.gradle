@@ -41,6 +41,6 @@ tasks.withType(Jar) {
     archiveFileName.set("artx.jar") // JAR 파일 이름 설정 (원하는 이름으로 변경)
 }
 
-//tasks.named('test') {
-//    useJUnitPlatform()
-//}
+tasks.named('test') {
+    useJUnitPlatform()
+}
