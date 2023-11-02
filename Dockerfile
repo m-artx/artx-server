@@ -9,6 +9,10 @@ WORKDIR /app
 # 컨테이너 내부의 /app/app.jar에 복사할 수 있도록 한다.
 COPY /build/libs/artx.jar /app/artx.jar
 
+
+# 설정 파일을 복사
+COPY src/main/resources/application-prod.yml application-prod.yml
+
 # 컨테이너가 시작되는 시점에 실행되는 기본 명령어이다.
 # WORKDIR랑은 별개이며, 독립적인 명령어라고 생각하면 된다.
 CMD ["java", "-jar", "/app/.jar"]
