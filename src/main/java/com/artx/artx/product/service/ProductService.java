@@ -2,11 +2,11 @@ package com.artx.artx.product.service;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.product.dto.ProductRequest;
-import com.artx.artx.product.dto.ProductResponse;
-import com.artx.artx.product.model.Product;
-import com.artx.artx.product.model.ProductCategory;
-import com.artx.artx.product.model.ProductImage;
+import com.artx.artx.product.model.ProductRequest;
+import com.artx.artx.product.model.ProductResponse;
+import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductCategory;
+import com.artx.artx.product.entity.ProductImage;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.FilterType;
@@ -103,6 +103,13 @@ public class ProductService {
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 	}
 
+	@Transactional(readOnly = true)
+	public ProductResponse.Read readProductDetail(Long productId){
+		Product product = productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+		return ProductResponse.Read.from(serverUrl, product);
+
+	}
+
 	@Transactional
 	public List<ProductResponse.ReadAll> mainPageProducts(FilterType type) {
 		if(type == FilterType.LATEST){
@@ -131,5 +138,9 @@ public class ProductService {
 
 	private User getUserById(UUID userId) {
 		return userService.getUserByUserId(userId);
+	}
+
+	public Product getProductById(Long productId) {
+		return productRepository.findById(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 	}
 }

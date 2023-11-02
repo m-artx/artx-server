@@ -1,6 +1,6 @@
 package com.artx.artx.product.repository;
 
-import com.artx.artx.product.model.Product;
+import com.artx.artx.product.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
@@ -28,9 +29,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query(
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img "+
-					"ORDER BY p.createdAt ASC LIMIT 5"
+					"ORDER BY p.createdAt ASC LIMIT 10"
 	)
 	List<Product> mainPageProductsByLatest();
 
+
+	@Query("SELECT p FROM Product p LEFT JOIN FETCH p.productImages WHERE p.id = :productId")
+	Optional<Product> findByIdWithProductImages(@Param("productId")Long productId);
 
 }

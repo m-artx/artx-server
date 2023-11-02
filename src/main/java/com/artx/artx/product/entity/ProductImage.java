@@ -1,4 +1,4 @@
-package com.artx.artx.product.model;
+package com.artx.artx.product.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

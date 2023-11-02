@@ -1,4 +1,4 @@
-package com.artx.artx.product.dto;
+package com.artx.artx.product.model;
 
 import lombok.Getter;
 

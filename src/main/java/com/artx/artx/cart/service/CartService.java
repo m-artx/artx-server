@@ -11,7 +11,7 @@ import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.CommonOrder;
 import com.artx.artx.order.dto.OrderRequest;
 import com.artx.artx.order.service.OrderService;
-import com.artx.artx.product.model.Product;
+import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

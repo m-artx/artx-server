@@ -1,6 +1,6 @@
 package com.artx.artx.order.model;
 
-import com.artx.artx.product.model.Product;
+import com.artx.artx.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
