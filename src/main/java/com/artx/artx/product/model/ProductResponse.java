@@ -45,12 +45,16 @@ public class ProductResponse {
 			List<String> fileImageNames = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
 			StringBuilder sb = new StringBuilder();
 			sb.append(serverUrl);
+			sb.append("/api/images/");
+
+			int initLength = sb.length();
+
 			List<String> fileImageUrls = new ArrayList<>();
 
 			for (int i = 0; i < fileImageNames.size(); i++) {
 				sb.append(fileImageNames.get(i));
 				fileImageUrls.add(sb.toString());
-				sb.setLength(serverUrl.length());
+				sb.setLength(initLength);
 			}
 
 			return Read.builder().productId(product.getId()).productTitle(product.getTitle())
