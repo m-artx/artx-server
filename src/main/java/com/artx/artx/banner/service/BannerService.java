@@ -1,11 +1,11 @@
 package com.artx.artx.banner.service;
 
+import com.artx.artx.banner.entity.Banner;
 import com.artx.artx.banner.model.BannerRequest;
 import com.artx.artx.banner.model.BannerResponse;
 import com.artx.artx.banner.repository.BannerRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.banner.entity.Banner;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +22,20 @@ public class BannerService {
 	private final ProductService productService;
 	private final BannerRepository bannerRepository;
 
-	@Value(value = "${server.full-url}")
-	private String serverUrl;
+	@Value(value = "${api.products}")
+	private String productsApiAddress;
 
 	@Transactional
 	public void addBanner(BannerRequest.Create request) {
 		Product product = productService.getProductById(request.getProductId());
-		if(bannerRepository.existsByProduct(product)){
+		if (bannerRepository.existsByProduct(product)) {
 			throw new BusinessException(ErrorCode.DUPLICATED_BANNER);
 		}
-
-		StringBuilder sb = new StringBuilder();
 
 		bannerRepository.save(
 				Banner.builder()
 						.product(productService.getProductById(request.getProductId()))
-						.link(sb.append(serverUrl).append("/api/products/").append(product.getId().toString()).toString())
+						.link(productsApiAddress + product.getId())
 						.build()
 		);
 	}

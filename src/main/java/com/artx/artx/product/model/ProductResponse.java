@@ -41,20 +41,12 @@ public class ProductResponse {
 		private Long productPrice;
 		private LocalDate createdAt;
 
-		public static Read from(String serverUrl, Product product) {
+		public static Read from(String apiAddress, Product product) {
 			List<String> fileImageNames = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
-			StringBuilder sb = new StringBuilder();
-			sb.append(serverUrl);
-			sb.append("/api/images/");
-
-			int initLength = sb.length();
-
 			List<String> fileImageUrls = new ArrayList<>();
 
 			for (int i = 0; i < fileImageNames.size(); i++) {
-				sb.append(fileImageNames.get(i));
-				fileImageUrls.add(sb.toString());
-				sb.setLength(initLength);
+				fileImageUrls.add(apiAddress + fileImageNames.get(i));
 			}
 
 			return Read.builder().productId(product.getId()).productTitle(product.getTitle())
@@ -75,12 +67,12 @@ public class ProductResponse {
 		private String productTitle;
 		private String link;
 
-		public static ReadAll from(String serverUrl, Product product) {
+		public static ReadAll from(String imageApiAddress, String productApiAddress, Product product) {
 			return ReadAll.builder()
 					.productId(product.getId())
-					.productImageUrl(serverUrl + "/api/images/" + product.getRepresentativeImage())
+					.productImageUrl(imageApiAddress + product.getRepresentativeImage())
 					.productTitle(product.getTitle())
-					.link(serverUrl + "/api/products/" + product.getId())
+					.link(productApiAddress + product.getId())
 					.build();
 		}
 	}

@@ -42,8 +42,11 @@ public class ProductService {
 	@Value(value = "${directory.images}")
 	private String uploadDir;
 
-	@Value(value = "${server.full-url}")
-	private String serverUrl;
+	@Value(value = "${api.products}")
+	private String productsApiAddress;
+
+	@Value(value = "${api.images}")
+	private String imagesApiAddress;
 
 	@Transactional
 	public ProductResponse.Create createProduct(ProductRequest.Create request, List<MultipartFile> files) {
@@ -95,11 +98,13 @@ public class ProductService {
 	@Transactional
 	public Page<ProductResponse.ReadAll> searchProducts(SearchType type, String name, Pageable pageable) {
 		if(type == SearchType.USER){
-			return productRepository.findAllByUser_Nickname(name, pageable).map(product -> ProductResponse.ReadAll.from(serverUrl, product));
+			return productRepository.findAllByUser_Nickname(name, pageable)
+					.map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
 		}
 
 		if(type == SearchType.TITLE){
-			return productRepository.findAllByTitle(name, pageable).map(product -> ProductResponse.ReadAll.from(serverUrl, product));
+			return productRepository.findAllByTitle(name, pageable)
+					.map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
 		}
 
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
@@ -110,7 +115,7 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductResponse.Read readProductDetail(Long productId){
 		Product product = productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
-		return ProductResponse.Read.from(serverUrl, product);
+		return ProductResponse.Read.from(imagesApiAddress, product);
 
 	}
 
@@ -118,11 +123,11 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public List<ProductResponse.ReadAll> readMainPageProducts(FilterType type) {
 		if(type == FilterType.LATEST){
-			return productRepository.findMainPageProductsByLatest().stream().map(product -> ProductResponse.ReadAll.from(serverUrl, product)).collect(Collectors.toList());
+			return productRepository.findMainPageProductsByLatest().stream().map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 //
 //		if(type == FilterType.POPULARITY){
-//			return productRepository.findAllByTitle(name, pageable).map(product -> ProductResponse.ReadAll.from(serverUrl, product));
+//			return productRepository.findAllByTitle(name, pageable).map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
 //		}
 
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
@@ -130,8 +135,11 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public Page<ProductResponse.ReadAll> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
-		ProductCategory category = productCategoryRepository.findByName(type.name()).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
-		return productRepository.findProductsByCategory(category.getId(), pageable).map(product -> ProductResponse.ReadAll.from(serverUrl, product));
+		ProductCategory category = productCategoryRepository.findByName(type.name()).orElseThrow(
+				() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND)
+		);
+		return productRepository.findProductsByCategory(category.getId(), pageable)
+				.map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
 	}
 
 
