@@ -2,7 +2,9 @@ package com.artx.artx.product.entity;
 
 import com.artx.artx.common.model.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class ProductCategory extends BaseEntity {
 
