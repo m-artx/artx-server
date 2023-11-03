@@ -28,12 +28,12 @@ public class CartController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PatchMapping("/{cartId}/products/{productId}/decrease")
+	@PatchMapping("/{cartId}/items/{itemId}/decrease")
 	public ResponseEntity<CartResponse.Create> decreaseQuantity(
 			@PathVariable Long cartId,
-			@PathVariable Long productId
+			@PathVariable Long itemId
 	) {
-		cartService.decreaseQuantity(cartId, productId);
+		cartService.decreaseQuantity(cartId, itemId);
 		return ResponseEntity.ok().build();
 	}
 
@@ -44,6 +44,13 @@ public class CartController {
 	) {
 		cartService.orderByCart(cartId, request);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{cartId}")
+	public ResponseEntity<CartResponse.ReadAll> readCartItems(
+			@PathVariable Long cartId
+	) {
+		return ResponseEntity.ok(cartService.readCarItems(cartId));
 	}
 
 }

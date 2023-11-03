@@ -1,5 +1,6 @@
 package com.artx.artx.common.service;
 
+import com.artx.artx.cart.repository.CartItemRepository;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ public class ScheduleService {
 
 	private final RedisTemplate<String, Long> redisTemplate;
 	private final ProductRepository productRepository;
+	private final CartItemRepository cartItemRepository;
 
 	@Scheduled(fixedDelay = 600000L)
 	@Transactional
@@ -34,4 +37,11 @@ public class ScheduleService {
 		}
 
 	}
+
+	@Scheduled(cron = "0 0 0 * * *")
+	@Transactional
+	public void deleteExpiredCartItems(){
+		cartItemRepository.deleteExpiredItems(LocalDateTime.now().minusDays(30));
+	}
+
 }

@@ -34,7 +34,7 @@ public class ProductResponse {
 	@Builder
 	public static class Read {
 		private Long productId;
-		private List<String> productImageUrls;
+		private List<String> productImages;
 		private String productTitle;
 		private String productDescription;
 		private Long productQuantity;
@@ -53,7 +53,7 @@ public class ProductResponse {
 					.productDescription(product.getDescription())
 					.productPrice(product.getPrice())
 					.productQuantity(product.getQuantity())
-					.productImageUrls(fileImageUrls)
+					.productImages(fileImageUrls)
 					.createdAt(LocalDate.from(product.getCreatedAt()))
 					.build();
 		}
@@ -63,14 +63,14 @@ public class ProductResponse {
 	@Builder
 	public static class ReadAll {
 		private Long productId;
-		private String productImageUrl;
+		private String productRepresentativeImage;
 		private String productTitle;
 		private String link;
 
 		public static ReadAll from(String imageApiAddress, String productApiAddress, Product product) {
 			return ReadAll.builder()
 					.productId(product.getId())
-					.productImageUrl(imageApiAddress + product.getRepresentativeImage())
+					.productRepresentativeImage(imageApiAddress + product.getRepresentativeImage())
 					.productTitle(product.getTitle())
 					.link(productApiAddress + product.getId())
 					.build();
