@@ -3,6 +3,7 @@ package com.artx.artx.product.service;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.service.RedisCacheService;
+import com.artx.artx.product.model.ProductCategoryResponse;
 import com.artx.artx.product.model.ProductRequest;
 import com.artx.artx.product.model.ProductResponse;
 import com.artx.artx.product.entity.Product;
@@ -62,7 +63,7 @@ public class ProductService {
 	}
 
 	@Transactional
-	public List<ProductImage> saveProductImages(Product product, String fileDirectory, List<MultipartFile> files) {
+	public List<ProductImage> saveProductImages(Product product, String uploadDir, List<MultipartFile> files) {
 		List<ProductImage> productImages = new ArrayList<>();
 
 		for(int i = 0; i < files.size(); i++){
@@ -70,7 +71,7 @@ public class ProductService {
 
 			try {
 				String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
-				Path path = Paths.get(fileDirectory, filename);
+				Path path = Paths.get(uploadDir, filename);
 				Files.write(path, file.getBytes());
 				productImages.add(ProductImage.builder()
 						.name(filename)
@@ -112,7 +113,6 @@ public class ProductService {
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 	}
 
-
 	// 특정 작품 상세페이지
 	@Transactional(readOnly = true)
 	public ProductResponse.Read readProductDetail(Long productId){
@@ -127,12 +127,18 @@ public class ProductService {
 		if(type == FilterType.LATEST){
 			return productRepository.findMainPageProductsByLatest().stream().map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
-//
-//		if(type == FilterType.POPULARITY){
-//			return productRepository.findAllByTitle(name, pageable).map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
-//		}
+
+		if(type == FilterType.POPULARITY){
+			return productRepository.findMainPageProductsByPopularity().stream().map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
+		}
 
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+	}
+
+	@Transactional(readOnly = true)
+	public List<ProductCategoryResponse.ReadAll> readCategories(){
+		List<ProductCategory> categories = productCategoryRepository.findAllWithProductCategoryImage();
+		return categories.stream().map(category -> ProductCategoryResponse.ReadAll.from(imagesApiAddress, category)).collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)

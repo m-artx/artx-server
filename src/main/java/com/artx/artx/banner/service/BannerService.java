@@ -26,7 +26,7 @@ public class BannerService {
 	private String productsApiAddress;
 
 	@Transactional
-	public void addBanner(BannerRequest.Create request) {
+	public void createBanner(BannerRequest.Create request) {
 		Product product = productService.getProductById(request.getProductId());
 		if (bannerRepository.existsByProduct(product)) {
 			throw new BusinessException(ErrorCode.DUPLICATED_BANNER);

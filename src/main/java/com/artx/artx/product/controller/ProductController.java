@@ -1,5 +1,6 @@
 package com.artx.artx.product.controller;
 
+import com.artx.artx.product.model.ProductCategoryResponse;
 import com.artx.artx.product.model.ProductRequest;
 import com.artx.artx.product.model.ProductResponse;
 import com.artx.artx.product.service.ProductService;
@@ -40,7 +41,6 @@ public class ProductController {
 		return ResponseEntity.ok(productService.readProductDetail(productId));
 	}
 
-
 	// 메인 페이지 작품 조회
 	@GetMapping("/main")
 	public ResponseEntity<List<ProductResponse.ReadAll>> mainPageProducts(@RequestParam FilterType type){
@@ -53,8 +53,10 @@ public class ProductController {
 		return ResponseEntity.ok(productService.readProductsByCategory(type, pageable));
 	}
 
-
-
-
+	// 모든 카테고리 조회
+	@GetMapping("/categories")
+	public ResponseEntity<List<ProductCategoryResponse.ReadAll>> readCategories(){
+		return ResponseEntity.ok(productService.readCategories());
+	}
 
 }

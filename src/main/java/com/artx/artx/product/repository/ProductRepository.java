@@ -36,6 +36,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query(
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
+					"ORDER BY p.views DESC LIMIT 10"
+	)
+	List<Product> findMainPageProductsByPopularity();
+
+	@Query(
+			"SELECT p FROM Product p " +
+					"LEFT JOIN FETCH p.productImages img " +
 					"WHERE p.productCategory.id = :categoryId " +
 					"ORDER BY p.createdAt ASC"
 	)
