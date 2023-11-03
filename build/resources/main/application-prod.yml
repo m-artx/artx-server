@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: ${DDL_AUTO}
+  profiles:
+    active: prod
+logging:
+  level:
+    org.springframework.transaction.interceptor: ${LOG_LEVEL}
+
+directory:
+  images: ${IMAGE_DIRECTORY}

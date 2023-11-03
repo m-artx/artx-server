@@ -40,7 +40,7 @@ public class Product extends BaseEntity {
 	private String title;
 	private String description;
 	private Long price;
-	private Long views;
+	private long views;
 	private Long quantity;
 
 	public static Product from(ProductRequest.Create request, ProductCategory productCategory, User user){
