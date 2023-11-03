@@ -13,22 +13,25 @@ import com.artx.artx.order.dto.OrderRequest;
 import com.artx.artx.order.service.OrderService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.repository.ProductRepository;
-import com.artx.artx.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
 
-	private final UserRepository userRepository;
 	private final ProductRepository productRepository;
 	private final CartItemRepository cartItemRepository;
 	private final CartRepository cartRepository;
 	private final OrderService orderService;
+
+	@Value(value = "${api.images}")
+	private String imagesApiAddress;
 
 	public CartResponse.Create addItem(Long cartId, Long productId) {
 		Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
@@ -57,7 +60,7 @@ public class CartService {
 
 		return CartResponse.Create.builder()
 				.productId(cartItem.getProduct().getId())
-				.savedDate(cartItem.getCreatedAt())
+				.createdAt(cartItem.getCreatedAt())
 				.build();
 	}
 
@@ -71,14 +74,33 @@ public class CartService {
 	public void decreaseQuantity(Long cartId, Long itemId) {
 		CartItem cartItem = cartItemRepository.findById(CartItemId.builder().cartId(cartId).productId(itemId).build()).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
 		cartItem.decrease();
-		if(cartItem.isEmpty()){
+		if (cartItem.isEmpty()) {
 			cartItemRepository.delete(cartItem);
 		}
 	}
 
 	@Transactional
-	public void orderByCart(Long cartId, CommonOrder.Create request){
+	public void orderByCart(Long cartId, CommonOrder.Create request) {
 		orderService.createOrder(request);
 		cartItemRepository.deleteAllByCartIdAndProductIds(cartId, request.getOrderData().stream().map(OrderRequest.OrderData::getProductId).collect(Collectors.toList()));
+	}
+
+	@Transactional(readOnly = true)
+	public CartResponse.ReadAll readCarItems(Long cartId) {
+		Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
+		List<CartItem> cartItems = cart.getCartItems();
+		return CartResponse.ReadAll.builder()
+				.cartId(cartId)
+				.cartItems(
+						cartItems.stream().map(
+										cartItem -> CartResponse.Read.builder()
+												.productId(cartItem.getProduct().getId())
+												.productRepresentativeImage(imagesApiAddress + cartItem.getProduct().getRepresentativeImage())
+												.productTitle(cartItem.getProduct().getTitle())
+												.quantity(cartItem.getProduct().getQuantity())
+												.price(cartItem.getProduct().getPrice())
+												.build())
+								.collect(Collectors.toList())
+				).build();
 	}
 }

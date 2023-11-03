@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CartItemRepository extends JpaRepository<CartItem, CartItemId> {
@@ -14,4 +15,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItemId> 
 	@Modifying
 	@Query("DELETE FROM CartItem c WHERE c.cart.id = :cartId AND c.product.id IN :productIds")
 	void deleteAllByCartIdAndProductIds(@Param("cartId") Long cartId, @Param("productIds") List<Long> productIds);
+
+	@Modifying
+	@Query("DELETE FROM CartItem c WHERE c.createdAt < :thirtyDaysAgo")
+	void deleteExpiredItems(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
 }
