@@ -40,7 +40,8 @@ public class Product extends BaseEntity {
 	private String title;
 	private String description;
 	private Long price;
-	private long quantity;
+	private Long views;
+	private Long quantity;
 
 	public static Product from(ProductRequest.Create request, ProductCategory productCategory, User user){
 		return Product.builder()
@@ -88,5 +89,9 @@ public class Product extends BaseEntity {
 
 	public void setReresentativeImage(String fileName) {
 		this.representativeImage = fileName;
+	}
+
+	public void setViews(Long views) {
+		this.views = views;
 	}
 }

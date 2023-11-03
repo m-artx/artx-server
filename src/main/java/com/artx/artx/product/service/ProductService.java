@@ -2,6 +2,7 @@ package com.artx.artx.product.service;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.common.service.RedisCacheService;
 import com.artx.artx.product.model.ProductRequest;
 import com.artx.artx.product.model.ProductResponse;
 import com.artx.artx.product.entity.Product;
@@ -38,6 +39,7 @@ public class ProductService {
 	private final ProductRepository productRepository;
 	private final ProductCategoryRepository productCategoryRepository;
 	private final UserService userService;
+	private final RedisCacheService redisCacheService;
 
 	@Value(value = "${directory.images}")
 	private String uploadDir;
@@ -115,8 +117,8 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductResponse.Read readProductDetail(Long productId){
 		Product product = productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+		redisCacheService.countProductView(productId);
 		return ProductResponse.Read.from(imagesApiAddress, product);
-
 	}
 
 	// 최근 작품 및 인기 작품
