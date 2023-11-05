@@ -1,6 +1,7 @@
 package com.artx.artx.cart.service;
 
-import com.artx.artx.cart.dto.CartResponse;
+import com.artx.artx.cart.dto.CreateCartItem;
+import com.artx.artx.cart.dto.ReadCartItem;
 import com.artx.artx.cart.model.Cart;
 import com.artx.artx.cart.model.CartItem;
 import com.artx.artx.cart.model.CartItemId;
@@ -8,11 +9,10 @@ import com.artx.artx.cart.repository.CartItemRepository;
 import com.artx.artx.cart.repository.CartRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.common.model.CommonOrder;
-import com.artx.artx.order.dto.OrderRequest;
+import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.order.service.OrderService;
 import com.artx.artx.product.entity.Product;
-import com.artx.artx.product.repository.ProductRepository;
+import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,54 +25,42 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartService {
 
-	private final ProductRepository productRepository;
 	private final CartItemRepository cartItemRepository;
 	private final CartRepository cartRepository;
 	private final OrderService orderService;
+	private final ProductService productService;
 
 	@Value(value = "${api.images}")
 	private String imagesApiAddress;
 
-	public CartResponse.Create addItem(Long cartId, Long productId) {
-		Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
-		Product product = productRepository.findById(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+	@Transactional
+	public CreateCartItem.Response addProduct(Long cartId, Long productId) {
 
-		CartItem cartItem = CartItem.builder().cart(cart).product(product).build();
-		boolean isContainCartItem = cart.getCartItems().contains(cartItem);
+		Cart cart = getCartById(cartId);
+		Product product = productService.getProductById(productId);
 
-		if (isContainCartItem) {
+		CartItem cartItem = CartItem.from(cart, product);
+		boolean hasCartItem = cart.getCartItems().contains(cartItem);
+
+		if (hasCartItem) {
 			throw new BusinessException(ErrorCode.DUPLICATED_CARTITEM);
 		}
 
-		CartItem item = cartItemRepository.save(CartItem.builder()
-				.cartItemId(CartItemId.builder()
-						.cartId(cart.getId())
-						.productId(product.getId())
-						.build()
-				)
-				.cart(cart)
-				.product(product)
-				.quantity(1L)
-				.build()
-		);
-
+		CartItem item = cartItemRepository.save(cartItem);
 		cart.addCartItem(item);
 
-		return CartResponse.Create.builder()
-				.productId(cartItem.getProduct().getId())
-				.createdAt(cartItem.getCreatedAt())
-				.build();
+		return CreateCartItem.Response.from(cartItem);
 	}
 
 	@Transactional
-	public void increaseQuantity(Long cartId, Long itemId) {
-		CartItem cartItem = cartItemRepository.findById(CartItemId.builder().cartId(cartId).productId(itemId).build()).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
+	public void increaseProductQuantity(Long cartId, Long productId) {
+		CartItem cartItem = getCartItemByCartIdAndProductId(cartId, productId);
 		cartItem.increase();
 	}
 
 	@Transactional
-	public void decreaseQuantity(Long cartId, Long itemId) {
-		CartItem cartItem = cartItemRepository.findById(CartItemId.builder().cartId(cartId).productId(itemId).build()).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
+	public void decreaseProductQuantity(Long cartId, Long productId) {
+		CartItem cartItem = getCartItemByCartIdAndProductId(cartId, productId);
 		cartItem.decrease();
 		if (cartItem.isEmpty()) {
 			cartItemRepository.delete(cartItem);
@@ -80,27 +68,33 @@ public class CartService {
 	}
 
 	@Transactional
-	public void orderByCart(Long cartId, CommonOrder.Create request) {
+	public void createOrder(Long cartId, CreateOrder.Request request) {
 		orderService.createOrder(request);
-		cartItemRepository.deleteAllByCartIdAndProductIds(cartId, request.getOrderData().stream().map(OrderRequest.OrderData::getProductId).collect(Collectors.toList()));
+		cartItemRepository.deleteAllByCartIdAndProductIds(
+				cartId,
+				request.getOrderDetails().stream()
+						.map(CreateOrder.OrderDetail::getProductId)
+						.collect(Collectors.toList()));
 	}
 
 	@Transactional(readOnly = true)
-	public CartResponse.ReadAll readCarItems(Long cartId) {
-		Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
+	public ReadCartItem.Response fetchCarItemsByCartId(Long cartId) {
+		Cart cart = getCartById(cartId);
 		List<CartItem> cartItems = cart.getCartItems();
-		return CartResponse.ReadAll.builder()
-				.cartId(cartId)
-				.cartItems(
-						cartItems.stream().map(
-										cartItem -> CartResponse.Read.builder()
-												.productId(cartItem.getProduct().getId())
-												.productRepresentativeImage(imagesApiAddress + cartItem.getProduct().getRepresentativeImage())
-												.productTitle(cartItem.getProduct().getTitle())
-												.quantity(cartItem.getProduct().getQuantity())
-												.price(cartItem.getProduct().getPrice())
-												.build())
-								.collect(Collectors.toList())
-				).build();
+		return ReadCartItem.Response.from(
+				cartId,
+				cartItems.stream()
+						.map(cartItem -> ReadCartItem.CartItemDetail.from(imagesApiAddress, cartItem))
+						.collect(Collectors.toList())
+		);
+	}
+
+	//TODO: N+1
+	private Cart getCartById(Long cartId) {
+		return cartRepository.readCartWithCartItemAndProductByCartId(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
+	}
+
+	private CartItem getCartItemByCartIdAndProductId(Long cartId, Long productId) {
+		return cartItemRepository.findById(CartItemId.from(cartId, productId)).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
 	}
 }
