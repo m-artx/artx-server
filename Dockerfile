@@ -15,4 +15,4 @@ COPY src/main/resources/application-prod.yml application-prod.yml
 
 # 컨테이너가 시작되는 시점에 실행되는 기본 명령어이다.
 # WORKDIR랑은 별개이며, 독립적인 명령어라고 생각하면 된다.
-CMD ["java", "-jar", "/app/.jar"]
+CMD ["java", "-jar", "/app/artx.jar"]

@@ -41,5 +41,6 @@ out/
 *.properties
 
 !application-prod.yml
-!gradle/wrapper/gradle-wrapper.properties
+!Deploy.yml
+!gradle-wrapper.properties
 images

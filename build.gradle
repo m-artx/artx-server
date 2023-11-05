@@ -44,3 +44,7 @@ tasks.withType(Jar) {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+jar {
+    enabled = false
+}
