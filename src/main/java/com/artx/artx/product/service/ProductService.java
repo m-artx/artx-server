@@ -3,18 +3,18 @@ package com.artx.artx.product.service;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.service.RedisCacheService;
-import com.artx.artx.product.model.ProductCategoryResponse;
-import com.artx.artx.product.model.ProductRequest;
-import com.artx.artx.product.model.ProductResponse;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductImage;
+import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.product.model.ReadProduct;
+import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.FilterType;
 import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.product.type.SearchType;
-import com.artx.artx.user.model.User;
+import com.artx.artx.user.entity.User;
 import com.artx.artx.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,23 +44,23 @@ public class ProductService {
 	private final RedisCacheService redisCacheService;
 
 	@Value(value = "${directory.images}")
-	private String uploadDir;
-
-	@Value(value = "${api.products}")
-	private String productsApiAddress;
+	private String imagesUploadDirectory;
 
 	@Value(value = "${api.images}")
 	private String imagesApiAddress;
 
+	@Value(value = "${api.products}")
+	private String productsApiAddress;
+
 	@Transactional
-	public ProductResponse.Create createProduct(ProductRequest.Create request, List<MultipartFile> files) {
+	public ReadProduct.Response createProduct(CreateProduct.Request request, List<MultipartFile> files) {
 		User user = getUserById(request.getUserId());
 		user.canCreateProduct();
 		Product product = productRepository.save(
 				Product.from(request, getProductCategoryById(request.getProductCategoryId()), user)
 		);
-		product.saveProductImages(saveProductImages(product, uploadDir, files));
-		return ProductResponse.Create.from(product);
+		product.saveProductImages(saveProductImages(product, imagesUploadDirectory, files));
+		return ReadProduct.Response.from(imagesApiAddress, product);
 	}
 
 	@Transactional
@@ -99,15 +100,15 @@ public class ProductService {
 
 	// 작품 유저 또는 제목 검색
 	@Transactional
-	public Page<ProductResponse.ReadAll> searchProducts(SearchType type, String name, Pageable pageable) {
+	public Page<ReadProduct.SimpleResponse> searchProducts(SearchType type, String name, Pageable pageable) {
 		if(type == SearchType.USER){
 			return productRepository.findAllByUser_Nickname(name, pageable)
-					.map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
+					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}
 
 		if(type == SearchType.TITLE){
 			return productRepository.findAllByTitle(name, pageable)
-					.map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
+					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}
 
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
@@ -115,39 +116,39 @@ public class ProductService {
 
 	// 특정 작품 상세페이지
 	@Transactional(readOnly = true)
-	public ProductResponse.Read readProductDetail(Long productId){
+	public ReadProduct.Response readProductDetail(Long productId){
 		Product product = productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 		redisCacheService.countProductView(productId);
-		return ProductResponse.Read.from(imagesApiAddress, product);
+		return ReadProduct.Response.from(imagesApiAddress, product);
 	}
 
 	// 최근 작품 및 인기 작품
 	@Transactional(readOnly = true)
-	public List<ProductResponse.ReadAll> readMainPageProducts(FilterType type) {
+	public List<ReadProduct.SimpleResponse> readMainPageProducts(FilterType type) {
 		if(type == FilterType.LATEST){
-			return productRepository.findMainPageProductsByLatest().stream().map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
+			return productRepository.findMainPageProductsByLatest().stream().map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 
 		if(type == FilterType.POPULARITY){
-			return productRepository.findMainPageProductsByPopularity().stream().map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
+			return productRepository.findMainPageProductsByPopularity().stream().map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 
 		throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 	}
 
 	@Transactional(readOnly = true)
-	public List<ProductCategoryResponse.ReadAll> readCategories(){
+	public List<ReadProductCategory.ResponseAll> readCategories(){
 		List<ProductCategory> categories = productCategoryRepository.findAllWithProductCategoryImage();
-		return categories.stream().map(category -> ProductCategoryResponse.ReadAll.from(imagesApiAddress, category)).collect(Collectors.toList());
+		return categories.stream().map(category -> ReadProductCategory.ResponseAll.from(imagesApiAddress, category)).collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ProductResponse.ReadAll> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
+	public Page<ReadProduct.SimpleResponse> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
 		ProductCategory category = productCategoryRepository.findByName(type.name()).orElseThrow(
 				() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND)
 		);
 		return productRepository.findProductsByCategory(category.getId(), pageable)
-				.map(product -> ProductResponse.ReadAll.from(imagesApiAddress, productsApiAddress, product));
+				.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 	}
 
 
@@ -171,4 +172,10 @@ public class ProductService {
 	public Product getProductById(Long productId) {
 		return productRepository.findById(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 	}
+
+	public List<Product> getAllProductByIds(Set<Long> productId) {
+		return productRepository.findAllById(productId);
+	}
+
+
 }

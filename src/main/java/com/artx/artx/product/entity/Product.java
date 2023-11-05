@@ -3,8 +3,8 @@ package com.artx.artx.product.entity;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.product.model.ProductRequest;
-import com.artx.artx.user.model.User;
+import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,16 +37,18 @@ public class Product extends BaseEntity {
 	private List<ProductImage> productImages;
 
 	private String representativeImage;
+	private String name;
 	private String title;
 	private String description;
-	private Long price;
+	private long price;
 	private long views;
-	private Long quantity;
+	private long quantity;
 
-	public static Product from(ProductRequest.Create request, ProductCategory productCategory, User user){
+	public static Product from(CreateProduct.Request request, ProductCategory productCategory, User user){
 		return Product.builder()
 				.user(user)
 				.productCategory(productCategory)
+				.name(request.getProductName())
 				.title(request.getProductTitle())
 				.description(request.getProductDescription())
 				.price(request.getProductPrice())
@@ -91,7 +93,7 @@ public class Product extends BaseEntity {
 		this.representativeImage = fileName;
 	}
 
-	public void setViews(Long views) {
+	public void setViews(long views) {
 		this.views = views;
 	}
 }

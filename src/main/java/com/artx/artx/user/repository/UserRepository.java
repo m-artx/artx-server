@@ -1,7 +1,7 @@
 package com.artx.artx.user.repository;
 
-import com.artx.artx.user.dto.UserArtist;
-import com.artx.artx.user.model.User;
+import com.artx.artx.user.entity.User;
+import com.artx.artx.user.model.ReadUserDto;
 import com.artx.artx.user.type.UserRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	boolean existsByNickname(String nickname);
 	boolean existsByEmail(String email);
 
-	@Query("SELECT new com.artx.artx.user.dto.UserArtist(u.userId, u.nickname, u.userRole) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
-	Page<UserArtist> getNewArtists(@Param("userRole") UserRole userRole, Pageable pageable);
+	@Query("SELECT new com.artx.artx.user.model.ReadUserDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
+	Page<ReadUserDto> getNewArtists(@Param("userRole") UserRole userRole, Pageable pageable);
 
 }

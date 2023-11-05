@@ -2,25 +2,22 @@ package com.artx.artx.order.service;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.common.model.CommonOrder;
-import com.artx.artx.order.dto.OrderRequest;
-import com.artx.artx.order.dto.OrderResponse;
-import com.artx.artx.order.model.Delivery;
-import com.artx.artx.order.model.Order;
-import com.artx.artx.order.model.OrderProduct;
+import com.artx.artx.order.entity.Delivery;
+import com.artx.artx.order.entity.Order;
+import com.artx.artx.order.entity.OrderProduct;
+import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
 import com.artx.artx.product.entity.Product;
-import com.artx.artx.product.repository.ProductRepository;
-import com.artx.artx.user.model.User;
-import com.artx.artx.user.repository.UserRepository;
+import com.artx.artx.product.service.ProductService;
+import com.artx.artx.user.entity.User;
+import com.artx.artx.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,14 +25,14 @@ import java.util.stream.Collectors;
 public class OrderService {
 
 	private final OrderRepository orderRepository;
-	private final UserRepository userRepository;
-	private final ProductRepository productRepository;
+	private final UserService userService;
+	private final ProductService productService;
 
 	@Transactional
-	public OrderResponse.Create createOrder(CommonOrder.Create request) {
-		User user = getUserById(request.getUserId());
+	public CreateOrder.Response createOrder(CreateOrder.Request request) {
+		User user = userService.getUserByUserId(request.getUserId());
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
-		List<Product> products = productRepository.findAllById(productIdsAndQuantities.keySet());
+		List<Product> products = productService.getAllProductByIds(productIdsAndQuantities.keySet());
 
 		//재고 확인
 		products.stream().forEach(product -> {
@@ -60,16 +57,12 @@ public class OrderService {
 			product.decrease(productIdsAndQuantities.get(product.getId()));
 		});
 
-		return OrderResponse.Create.from(order);
+		return CreateOrder.Response.from(order);
 	}
 
-	private Map<Long, Long> extractProductIdsAndQuantities(CommonOrder.Create request) {
-		return request.getOrderData().stream().collect(Collectors.toMap(OrderRequest.OrderData::getProductId, OrderRequest.OrderData::getQuantity));
+	private Map<Long, Long> extractProductIdsAndQuantities(CreateOrder.Request request) {
+		return request.getOrderDetails().stream()
+				.collect(Collectors.toMap(CreateOrder.OrderDetail::getProductId, CreateOrder.OrderDetail::getProductQuantity));
 	}
 
-
-	private User getUserById(UUID userId) {
-		return userRepository.findById(userId)
-				.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-	}
 }

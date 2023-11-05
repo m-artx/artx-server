@@ -30,7 +30,22 @@ public class CartItem extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Product product;
 
-	private Long quantity;
+	private long quantity = 1L;
+
+	@PrePersist
+	public void prePersist(){
+		if(this.cartItemId == null){
+			this.cartItemId = CartItemId.from(cart, product);
+		}
+	}
+
+	public static CartItem from(Cart cart, Product product){
+
+		return CartItem.builder()
+				.cart(cart)
+				.product(product)
+				.build();
+	}
 
 	public void setCart(Cart cart) {
 		this.cart = cart;

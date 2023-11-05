@@ -1,12 +1,14 @@
 package com.artx.artx.product.controller;
 
-import com.artx.artx.product.model.ProductCategoryResponse;
-import com.artx.artx.product.model.ProductRequest;
-import com.artx.artx.product.model.ProductResponse;
+import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.product.model.ReadProductCategory;
+import com.artx.artx.product.model.ReadProduct;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.FilterType;
 import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.product.type.SearchType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Tag(name = "작품")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
@@ -23,39 +26,39 @@ public class ProductController {
 
 	private final ProductService productService;
 
-	//새로운 작품 등록
+	@Operation(summary = "작품 등록", description = "작가는 새로운 작품을 등록할 수 있다.")
 	@PostMapping("/new")
-	public ResponseEntity<ProductResponse.Create> create(@RequestPart ProductRequest.Create request, @RequestPart List<MultipartFile> files){
+	public ResponseEntity<ReadProduct.Response> create(@RequestPart CreateProduct.Request request, @RequestPart List<MultipartFile> files){
 		return ResponseEntity.ok(productService.createProduct(request, files));
 	}
 
-	// 특정 유저 작품 전체 조회(페이징)
+	@Operation(summary = "작품 전체 조회", description = "작가명 또는 제목으로 작품을 전체 조회할 수 있다.")
 	@GetMapping("/search")
-	public ResponseEntity<Page<ProductResponse.ReadAll>> searchProducts(@RequestParam SearchType type, String name, Pageable pageable){
+	public ResponseEntity<Page<ReadProduct.SimpleResponse>> searchProducts(@RequestParam SearchType type, String name, Pageable pageable){
 		return ResponseEntity.ok(productService.searchProducts(type, name , pageable));
 	}
 
-	// 특정 작품 상세페이지
+	@Operation(summary = "작품 상세 페이지 조회", description = "특정 작품의 상세 페이지를 조회할 수 있다.")
 	@GetMapping("/{productId}")
-	public ResponseEntity<ProductResponse.Read> readProductDetail(@PathVariable Long productId){
+	public ResponseEntity<ReadProduct.Response> readProductDetail(@PathVariable Long productId){
 		return ResponseEntity.ok(productService.readProductDetail(productId));
 	}
 
-	// 메인 페이지 작품 조회
+	@Operation(summary = "메인 페이지 조회", description = "등록순 및 인기순으로 작품 10개를 조회할 수 있다.")
 	@GetMapping("/main")
-	public ResponseEntity<List<ProductResponse.ReadAll>> mainPageProducts(@RequestParam FilterType type){
+	public ResponseEntity<List<ReadProduct.SimpleResponse>> mainPageProducts(@RequestParam FilterType type){
 		return ResponseEntity.ok(productService.readMainPageProducts(type));
 	}
 
-	// 카테고리별 작품 조회
+	@Operation(summary = "카테고리별 작품 조회", description = "특정 카테고리로 여러 작품을 조회한다.")
 	@GetMapping
-	public ResponseEntity<Page<ProductResponse.ReadAll>> readProductsByCategory(@RequestParam ProductCategoryType type, Pageable pageable){
+	public ResponseEntity<Page<ReadProduct.SimpleResponse>> readProductsByCategory(@RequestParam ProductCategoryType type, Pageable pageable){
 		return ResponseEntity.ok(productService.readProductsByCategory(type, pageable));
 	}
 
-	// 모든 카테고리 조회
+	@Operation(summary = "전체 카테고리 조회", description = "모든 카테고리의 이름, 상세 설명, 대표 이미지를 조회할 수 있다.")
 	@GetMapping("/categories")
-	public ResponseEntity<List<ProductCategoryResponse.ReadAll>> readCategories(){
+	public ResponseEntity<List<ReadProductCategory.ResponseAll>> readCategories(){
 		return ResponseEntity.ok(productService.readCategories());
 	}
 
