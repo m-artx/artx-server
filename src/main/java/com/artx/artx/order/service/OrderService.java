@@ -18,9 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -35,10 +36,9 @@ public class OrderService {
 		User user = getUserById(request.getUserId());
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
 		List<Product> products = productRepository.findAllById(productIdsAndQuantities.keySet());
-		Stream<Product> productStream = products.stream();
 
 		//재고 확인
-		productStream.forEach(product -> {
+		products.stream().forEach(product -> {
 			if(product.getQuantity() < productIdsAndQuantities.get(product.getId())){
 				throw new BusinessException(ErrorCode.NOT_ENOUGH_QUANTITY);
 			}
@@ -52,7 +52,7 @@ public class OrderService {
 						.price(products.stream().mapToLong(Product::getPrice).sum())
 						.build()
 		);
-		productStream.forEach(product -> {
+		products.stream().forEach(product -> {
 			//주문 연관 관계
 			order.addOrderProduct(OrderProduct.from(order, product, productIdsAndQuantities.get(product.getId())));
 
