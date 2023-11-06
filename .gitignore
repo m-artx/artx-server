@@ -41,6 +41,7 @@ out/
 *.properties
 
 !application-prod.yml
+!application-krampoline.yml
 !Deploy.yml
 !gradle-wrapper.properties
 images
