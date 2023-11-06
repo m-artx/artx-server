@@ -65,3 +65,10 @@ springdoc:
     paths-to-match:
       - /api/**
   use-fqn: true
+
+kakaopay:
+  ready: https://kapi.kakao.com/v1/payment/ready
+  approval: https://kapi.kakao.com/v1/payment/approve
+  cancel: https://kapi.kakao.com/v1/payment/cancel
+  key: ${KAKAOPAY_ADMIN_KEY}
+  cid: ${KAKAOPAY_CID}

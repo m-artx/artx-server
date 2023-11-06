@@ -40,7 +40,7 @@ public class ReadCartItem {
 		@Schema(description = "작품 소개 제목", nullable = false, example = "목탄으로 표현한 어둠 속에 피어난 장미")
 		private String productTitle;
 		@Schema(description = "작품 재고 수량", nullable = false, example = "100")
-		private Long productQuantity;
+		private Long cartProductQuantity;
 		@Schema(description = "작품 가격", nullable = false, example = "100000")
 		private Long productPrice;
 
@@ -50,8 +50,8 @@ public class ReadCartItem {
 					.productId(cartItem.getCartItemId().getProductId())
 					.productRepresentativeImage(imagesApiAddress + cartItem.getProduct().getRepresentativeImage())
 					.productTitle(cartItem.getProduct().getTitle())
-					.productQuantity(cartItem.getProduct().getQuantity())
 					.productPrice(cartItem.getProduct().getPrice())
+					.cartProductQuantity(cartItem.getQuantity())
 					.build();
 		}
 	}
