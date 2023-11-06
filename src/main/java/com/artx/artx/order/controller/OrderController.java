@@ -2,6 +2,7 @@ package com.artx.artx.order.controller;
 
 import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.order.service.OrderService;
+import com.artx.artx.payment.model.CreatePayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class OrderController {
 
 	@Operation(summary = "주문 생성", description = "주문 정보와 함께 주문할 수 있다.")
 	@PostMapping
-	public ResponseEntity<CreateOrder.Response> create(@RequestBody CreateOrder.Request request){
+	public ResponseEntity<CreatePayment.ReadyResponse> create(@RequestBody CreateOrder.Request request){
 		return ResponseEntity.ok(orderService.createOrder(request));
 	}
 

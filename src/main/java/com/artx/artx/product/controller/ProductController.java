@@ -28,7 +28,7 @@ public class ProductController {
 
 	@Operation(summary = "작품 등록", description = "작가는 새로운 작품을 등록할 수 있다.")
 	@PostMapping("/new")
-	public ResponseEntity<ReadProduct.Response> create(@RequestPart CreateProduct.Request request, @RequestPart List<MultipartFile> files){
+	public ResponseEntity<CreateProduct.Response> create(@RequestPart CreateProduct.Request request, @RequestPart List<MultipartFile> files){
 		return ResponseEntity.ok(productService.createProduct(request, files));
 	}
 

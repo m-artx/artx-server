@@ -96,4 +96,15 @@ public class Product extends BaseEntity {
 	public void setViews(long views) {
 		this.views = views;
 	}
+
+	public boolean canDecrease(Long quantity) {
+		if(quantity <= 0){
+			throw new BusinessException(ErrorCode.MUST_BE_MORE_THAN_ZERO);
+		}
+
+		if(this.quantity - quantity < 0){
+			throw new BusinessException(ErrorCode.CAN_NOT_DECREASE);
+		}
+		return true;
+	}
 }
