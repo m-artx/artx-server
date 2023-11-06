@@ -19,6 +19,9 @@ spring:
   config:
     activate:
       on-profile: prod
+  servlet:
+    multipart:
+      max-file-size: 10MB
 logging:
   level:
     org.springframework.transaction.interceptor: ${LOG_LEVEL}
