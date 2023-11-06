@@ -53,14 +53,14 @@ public class ProductService {
 	private String productsApiAddress;
 
 	@Transactional
-	public ReadProduct.Response createProduct(CreateProduct.Request request, List<MultipartFile> files) {
+	public CreateProduct.Response createProduct(CreateProduct.Request request, List<MultipartFile> files) {
 		User user = getUserById(request.getUserId());
 		user.canCreateProduct();
 		Product product = productRepository.save(
 				Product.from(request, getProductCategoryById(request.getProductCategoryId()), user)
 		);
 		product.saveProductImages(saveProductImages(product, imagesUploadDirectory, files));
-		return ReadProduct.Response.from(imagesApiAddress, product);
+		return CreateProduct.Response.from(product);
 	}
 
 	@Transactional

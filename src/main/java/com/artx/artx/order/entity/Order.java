@@ -2,6 +2,7 @@ package com.artx.artx.order.entity;
 
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.order.type.OrderStatus;
+import com.artx.artx.payment.entity.Payment;
 import com.artx.artx.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,10 @@ public class Order extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "payment_id")
+	private Payment payment;
+
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	List<OrderProduct> orderProducts;
 
@@ -38,7 +43,8 @@ public class Order extends BaseEntity {
 	@JoinColumn(name = "delivery_id")
 	private Delivery delivery;
 
-	private long price;
+	private String title;
+	private long totalAmount;
 
 	public void addOrderProduct(OrderProduct orderProduct){
 		if(this.orderProducts == null){
@@ -48,4 +54,7 @@ public class Order extends BaseEntity {
 		this.orderProducts.add(orderProduct);
 	}
 
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
 }

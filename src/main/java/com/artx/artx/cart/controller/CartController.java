@@ -28,9 +28,9 @@ public class CartController {
 	@PatchMapping("/{cartId}/products/{productId}/increase")
 	public ResponseEntity<Void> increaseQuantity(
 			@PathVariable Long cartId,
-			@PathVariable Long itemId
+			@PathVariable Long productId
 	) {
-		cartService.increaseProductQuantity(cartId, itemId);
+		cartService.increaseProductQuantity(cartId, productId);
 		return ResponseEntity.ok().build();
 	}
 
