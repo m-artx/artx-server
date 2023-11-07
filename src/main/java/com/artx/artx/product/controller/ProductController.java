@@ -5,7 +5,7 @@ import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.model.ReadProduct;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.FilterType;
-import com.artx.artx.product.type.ProductCategoryType;
+import com.artx.artx.product.type.CategoryType;
 import com.artx.artx.product.type.SearchType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +52,7 @@ public class ProductController {
 
 	@Operation(summary = "카테고리별 작품 조회", description = "특정 카테고리로 여러 작품을 조회한다.(전체 카테고리 포함)")
 	@GetMapping
-	public ResponseEntity<Page<ReadProduct.SimpleResponse>> readProductsByCategory(@RequestParam ProductCategoryType type, Pageable pageable){
+	public ResponseEntity<Page<ReadProduct.SimpleResponse>> readProductsByCategory(@RequestParam CategoryType type, Pageable pageable){
 		return ResponseEntity.ok(productService.readProductsByCategory(type, pageable));
 	}
 

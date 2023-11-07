@@ -57,4 +57,16 @@ public class Order extends BaseEntity {
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
+
+	public void toOrderSuccess() {
+		this.status = OrderStatus.ORDER_SUCCESS;
+	}
+
+	public void toOrderCancel() {
+		this.status = OrderStatus.ORDER_SUCCESS;
+	}
+
+	public void toOrderFailure() {
+		this.status = OrderStatus.ORDER_FAILURE;
+	}
 }
