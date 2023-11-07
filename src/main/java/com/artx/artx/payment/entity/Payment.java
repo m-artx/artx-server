@@ -49,4 +49,8 @@ public class Payment extends BaseEntity {
 	public void toPaymentSuccess() {
 		this.paymentStatus = PaymentStatus.PAYMENT_SUCCESS;
 	}
+	public void toPaymentFailure() {
+		this.paymentStatus = PaymentStatus.PAYMENT_FAILURE;
+	}
+
 }

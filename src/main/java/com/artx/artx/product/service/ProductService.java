@@ -12,7 +12,7 @@ import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.FilterType;
-import com.artx.artx.product.type.ProductCategoryType;
+import com.artx.artx.product.type.CategoryType;
 import com.artx.artx.product.type.SearchType;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.service.UserService;
@@ -143,11 +143,14 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReadProduct.SimpleResponse> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
-		ProductCategory category = productCategoryRepository.findByName(type.name()).orElseThrow(
-				() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND)
-		);
-		return productRepository.findProductsByCategory(category.getId(), pageable)
+	public Page<ReadProduct.SimpleResponse> readProductsByCategory(CategoryType type, Pageable pageable) {
+
+		if(type == CategoryType.ALL){
+			return	productRepository.findProductsByCategory(pageable)
+					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
+		}
+
+		return productRepository.findProductsByCategory(type.toString(), pageable)
 				.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 	}
 

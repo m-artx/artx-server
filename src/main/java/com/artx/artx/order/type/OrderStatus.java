@@ -1,5 +1,8 @@
 package com.artx.artx.order.type;
 
 public enum OrderStatus {
-	ORDERED, CANCELED
+	ORDER_READY,
+	ORDER_SUCCESS,
+	ORDER_FAILURE,
+	ORDER_CANCEL
 }

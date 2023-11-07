@@ -4,6 +4,7 @@ import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.order.entity.Delivery;
 import com.artx.artx.order.entity.Order;
+import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
@@ -36,6 +37,10 @@ public class OrderService {
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
 		List<Product> products = productService.getAllProductByIds(productIdsAndQuantities.keySet());
 
+		if(products.isEmpty()){
+			throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+		}
+
 		//재고 확인
 		products.stream().forEach(product -> {
 			if(product.getQuantity() < productIdsAndQuantities.get(product.getId())){
@@ -47,19 +52,22 @@ public class OrderService {
 		Order order = orderRepository.save(
 				Order.builder()
 						.title(orderTitle)
-						.status(OrderStatus.ORDERED)
+						.status(OrderStatus.ORDER_READY)
 						.user(user)
 						.delivery(Delivery.from(request))
 						.totalAmount(products.stream().mapToLong(Product::getPrice).sum())
 						.build()
 		);
 
-
+		products.stream().forEach(product -> {
+			//주문 연관 관계
+			order.addOrderProduct(OrderProduct.from(order, product, productIdsAndQuantities.get(product.getId())));
+		});
 
 		try{
 			products.stream().forEach(product -> {
 				//재고 수량 감소 여부 확인
-				boolean canDecrease = product.canDecrease(productIdsAndQuantities.get(product.getId()));
+				product.canDecrease(productIdsAndQuantities.get(product.getId()));
 			});
 			CreatePayment.ReadyResponse readyResponse = paymentService.readyPayment(order);
 			return readyResponse;
@@ -71,13 +79,7 @@ public class OrderService {
 
 
 		//TODO: 결제 완료 후에 실행되게 미루기
-//		products.stream().forEach(product -> {
-//			//주문 연관 관계
-//			order.addOrderProduct(OrderProduct.from(order, product, productIdsAndQuantities.get(product.getId())));
-//
-//			//재고 수량 감소
-//			product.decrease(productIdsAndQuantities.get(product.getId()));
-//		});
+
 
 	}
 

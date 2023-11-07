@@ -43,10 +43,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query(
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
-					"WHERE p.productCategory.id = :categoryId " +
+					"WHERE p.productCategory.name = :categoryName " +
 					"ORDER BY p.createdAt ASC"
 	)
-	Page<Product> findProductsByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
+	Page<Product> findProductsByCategory(@Param("categoryName") String categoryName, Pageable pageable);
+
+	@Query(
+			"SELECT p FROM Product p " +
+					"LEFT JOIN FETCH p.productImages img"
+	)
+	Page<Product> findProductsByCategory(Pageable pageable);
+
 
 
 	@Query("SELECT p FROM Product p LEFT JOIN FETCH p.productImages WHERE p.id = :productId")
