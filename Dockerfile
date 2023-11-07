@@ -13,8 +13,7 @@
 ## WORKDIR랑은 별개이며, 독립적인 명령어라고 생각하면 된다.
 #CMD ["java", "-jar", "/app/artx.jar"]
 
-# gradle:7.3.1-jdk17 이미지를 기반으로 함
-#
+
 FROM openjdk:17
 
 # 작업 디렉토리 설정

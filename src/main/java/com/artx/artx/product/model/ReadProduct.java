@@ -62,8 +62,6 @@ public class ReadProduct {
 		private String productLink;
 		@Schema(description = "작품 대표 이미지", nullable = false, example = "http://127.0.0.1:8080/api/images/1f66d818-4ff2-4a14-9c0c-d77dc30c0639_Rectangle_635.png")
 		private String productRepresentativeImage;
-		@Schema(description = "작품명", nullable = false, example = "검은 장미")
-		private String productName;
 		@Schema(description = "작품 가격", nullable = false, example = "100000")
 		private Long productPrice;
 
