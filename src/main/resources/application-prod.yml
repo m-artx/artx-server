@@ -31,9 +31,10 @@ directory:
 
 
 server:
+  host: ${SERVER_HOST}
   port: ${SERVER_PORT}
 
-serverAddress: ${ARTX_SERVER_ADDRESS}
+serverAddress: http://${server.host}:${server.port}
 
 api:
   products: ${serverAddress}/api/products/
