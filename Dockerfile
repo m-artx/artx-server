@@ -40,7 +40,5 @@ RUN ./gradlew clean build
 # gradle 빌드 시 proxy 설정을 gradle.properties에 추가
 RUN echo "distributionBase=GRADLE_USER_HOME\distributionPath=wrapper/dists\distributionUrl=https\://services.gradle.org/distributions/gradle-7.5.1-bin.zip\zipStoreBase=GRADLE_USER_HOME\zipStorePath=wrapper/dists" > /root/.gradle/gradle.properties
 
-ENV DATABASE_URL=jdbc:mariadb://mariadb/krampoline
-
 # 빌드 결과 jar 파일을 실행
 CMD ["java", "-jar", "-Dspring.profiles.active=prod", "/app/build/libs/artx.jar"]

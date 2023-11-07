@@ -1,0 +1,69 @@
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: artx-namespace
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: artx-deployment
+  namespace: artx-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artx
+    template:
+      metadata:
+        labels:
+          app: artx
+      spec:
+        containers:
+          - name: artx
+            image: https://krmp-d2hub-idock.9rum.cc/dev-test/repo_13e0eb8b2b5e
+            imagePullPolicy: Always
+            ports:
+              - containerPort: 8080
+            env:
+              - name: REDIS_HOST
+                value: 64.110.89.251
+              - name: REDIS_PORT
+                value: 6379
+              - name: MYSQL_USERNAME
+                value: root
+              - name: MYSQL_PASSWORD
+                value: 1234
+              - name: MYSQL_URL
+                value: jdbc:mysql://mysql:3306/artx
+              - name: DDL_AUTO
+                value: update
+              - name: IMAGE_DIRECTORY
+                value: /app/images
+              - name: SPRING_PROFILES_ACTIVE
+                value: prod
+              - name: LOG_LEVEL
+                value: INFO
+              - name: SERVER_PORT
+                value: 8080
+              - name: ARTX_SERVER_ADDRESS
+                value: https://sealo-zedmpesazf.krampoline.com/
+              - name: KAKAOPAY_CID
+                value: TC0ONETIME
+              - name: KAKAOPAY_ADMIN_KEY
+                value: 94c0f2e2624cf70ae98d3d9568104683
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: artx-service
+  namespace: artx-namespace
+spec:
+  selector:
+    app: artx
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+

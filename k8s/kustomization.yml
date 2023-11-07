@@ -1,0 +1,5 @@
+namespace: artx-namespace
+resources:
+  - backend.yaml
+  - mysql.yaml
+  - redis.yaml
