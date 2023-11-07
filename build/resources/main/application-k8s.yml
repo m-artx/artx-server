@@ -1,0 +1,74 @@
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: ${DDL_AUTO}
+  config:
+    activate:
+      on-profile: k8s
+  servlet:
+    multipart:
+      max-file-size: 10MB
+logging:
+  level:
+    org.springframework.transaction.interceptor: ${LOG_LEVEL}
+
+directory:
+  images: ${IMAGE_DIRECTORY}
+
+
+server:
+  port: ${SERVER_PORT}
+
+serverAddress: ${ARTX_SERVER_ADDRESS}
+
+api:
+  products: ${serverAddress}/api/products/
+  images: ${serverAddress}/api/images/
+springdoc:
+  swagger-ui:
+    # swagger-ui 접근 경로. default 값은 /swagger-ui.html이다.
+    # path: /swagger-ui.html
+
+    # 태그 정렬 순서.
+    # alpha: 알파벳 순 정렬
+    # method: OpenAPI specification file에 원하는 태그 정렬 방식 직접 기재
+    tags-sorter: alpha
+
+    # openAPI 접근 경로. default 값은 /v3/api-docs 이다.
+    api-docs:
+      path: /api-docs
+
+    # Spring Actuator의 endpoint까지 보여줄 것인지?
+    show-actuator: true
+
+    # request media type 의 기본 값
+    default-consumes-media-type: application/json
+
+    # response media type 의 기본 값
+    default-produces-media-type: application/json
+
+    # 해당 패턴에 매칭되는 controller만 swagger-ui에 노출한다.
+    paths-to-match:
+      - /api/**
+  use-fqn: true
+
+kakaopay:
+  ready: https://kapi.kakao.com/v1/payment/ready
+  approval: https://kapi.kakao.com/v1/payment/approve
+  cancel: https://kapi.kakao.com/v1/payment/cancel
+  key: ${KAKAOPAY_ADMIN_KEY}
+  cid: ${KAKAOPAY_CID}
