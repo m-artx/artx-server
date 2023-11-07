@@ -22,9 +22,7 @@ public class ReadProduct {
 		private String productRepresentativeImage;
 		@Schema(description = "작품 전체 이미지", nullable = false, example = "[http://127.0.0.1:8080/api/images/1f66d818-4ff2-4a14-9c0c-d77dc30c0639_Rectangle_635.png, ...]")
 		private List<String> productImages;
-		@Schema(description = "작품명", nullable = false, example = "검은 장미")
-		private String productName;
-		@Schema(description = "작품 소개 제목", nullable = false, example = "목탄으로 표현한 어둠 속에 피어난 장미")
+		@Schema(description = "작품명", nullable = false, example = "목탄으로 표현한 어둠 속에 피어난 장미")
 		private String productTitle;
 		@Schema(description = "작품 상세 설명", nullable = false, example = "10년 전 우연히 길을 지나가다 발견한 장미의 낯빛이 어두웠습니다. 그때의 감정을..")
 		private String productDescription;
@@ -47,7 +45,6 @@ public class ReadProduct {
 					.productId(product.getId())
 					.productRepresentativeImage(imagesApiAddress + product.getRepresentativeImage())
 					.productImages(fileImageUrls)
-					.productName(product.getName())
 					.productTitle(product.getTitle())
 					.productDescription(product.getDescription())
 					.productPrice(product.getPrice())
@@ -75,7 +72,6 @@ public class ReadProduct {
 					.productId(product.getId())
 					.productLink(productApiAddress + product.getId())
 					.productRepresentativeImage(imageApiAddress + product.getRepresentativeImage())
-					.productName(product.getName())
 					.productPrice(product.getPrice())
 					.build();
 		}

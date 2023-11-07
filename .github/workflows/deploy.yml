@@ -1,57 +1,57 @@
-#name: Build and Deploy
-#
-#on:
-#  push:
-#    branches:
-#      - develop
-#
-#jobs:
-#  build:
-#    runs-on: [ARM64]
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Java
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '17'
-#          distribution: 'adopt'
-#
-#      - name: Build
-#        run: ./gradlew build
-#
-#      - name: Docker Hub
-#        run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-#
-#      - name: Build and push Docker image
-#        run: |
-#          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest .
-#          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest
-#
-#  deploy:
-#    needs: build
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Generate and set up SSH key
-#        run: |
-#          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
-#          chmod 600 ~/.ssh/id_rsa
-#          eval "$(ssh-agent -s)"
-#          ssh-add ~/.ssh/id_rsa
-#        env:
-#          SSH_AUTH_SOCK: ${{ steps.setup-ssh-agent.outputs.ssh-auth-sock }}
-#
-#      - name: Instance
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.SSH_HOST }}
-#          username: ${{ secrets.SSH_USERNAME }}
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          script: |
-#            cd /home/ubuntu/common
-#            docker-compose down --rmi artx
-#            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest
-#            docker-compose up -d
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: [ARM64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate and set up SSH key
+        run: |
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+        env:
+          SSH_AUTH_SOCK: ${{ steps.setup-ssh-agent.outputs.ssh-auth-sock }}
+
+      - name: Instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/common
+            docker-compose down --rmi artx
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest
+            docker-compose up -d

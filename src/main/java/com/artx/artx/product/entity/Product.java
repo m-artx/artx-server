@@ -37,7 +37,6 @@ public class Product extends BaseEntity {
 	private List<ProductImage> productImages;
 
 	private String representativeImage;
-	private String name;
 	private String title;
 	private String description;
 	private long price;
@@ -48,7 +47,6 @@ public class Product extends BaseEntity {
 		return Product.builder()
 				.user(user)
 				.productCategory(productCategory)
-				.name(request.getProductName())
 				.title(request.getProductTitle())
 				.description(request.getProductDescription())
 				.price(request.getProductPrice())

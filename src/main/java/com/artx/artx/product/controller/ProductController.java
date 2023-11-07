@@ -50,7 +50,7 @@ public class ProductController {
 		return ResponseEntity.ok(productService.readMainPageProducts(type));
 	}
 
-	@Operation(summary = "카테고리별 작품 조회", description = "특정 카테고리로 여러 작품을 조회한다.")
+	@Operation(summary = "카테고리별 작품 조회", description = "특정 카테고리로 여러 작품을 조회한다.(전체 카테고리 포함)")
 	@GetMapping
 	public ResponseEntity<Page<ReadProduct.SimpleResponse>> readProductsByCategory(@RequestParam ProductCategoryType type, Pageable pageable){
 		return ResponseEntity.ok(productService.readProductsByCategory(type, pageable));
