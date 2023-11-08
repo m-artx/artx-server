@@ -47,7 +47,7 @@ kind: Service
 metadata:
   name: mysql
 spec:
-  type: ClusterIP
+  type: ClusterIP # 외부에서 해당 서비스에 접근할 수 없다. 클러스터 내부에서만 접근 가능하다.
   selector:
     app: mysql
   ports:

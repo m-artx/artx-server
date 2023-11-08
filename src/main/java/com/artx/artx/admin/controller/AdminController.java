@@ -22,6 +22,11 @@ public class AdminController {
 	private final BannerService bannerService;
 	private final ProductCategoryService productCategoryService;
 
+	@GetMapping("/test")
+	public ResponseEntity<String> test(){
+		return ResponseEntity.ok("테스트 성공");
+	}
+
 	@PostMapping("/banners")
 	public ResponseEntity<Void> createBanner(@RequestBody CreateBanner.Request request){
 		bannerService.createBanner(request);
