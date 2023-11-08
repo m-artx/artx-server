@@ -29,7 +29,6 @@ logging:
 directory:
   images: ${IMAGE_DIRECTORY}
 
-
 server:
   host: ${SERVER_HOST}
   port: ${SERVER_PORT}

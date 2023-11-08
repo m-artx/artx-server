@@ -150,7 +150,7 @@ public class ProductService {
 					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}
 
-		return productRepository.findProductsByCategory(type.toString(), pageable)
+		return productRepository.findProductsByCategory(type, pageable)
 				.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 	}
 
