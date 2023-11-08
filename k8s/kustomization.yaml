@@ -3,3 +3,4 @@ resources:
   - backend.yaml
   - mysql.yaml
   - redis.yaml
+  - ingress.yaml
