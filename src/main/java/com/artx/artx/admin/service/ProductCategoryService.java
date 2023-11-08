@@ -35,7 +35,7 @@ public class ProductCategoryService {
 					.build();
 			productCategoryRepository.save(ProductCategory
 					.builder()
-					.name(request.getProductCategoryName())
+					.type(request.getProductCategoryType())
 					.description(request.getProductCategoryDescription())
 					.productCategoryImage(productCategoryImage)
 					.build()

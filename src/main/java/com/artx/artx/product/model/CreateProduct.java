@@ -18,8 +18,6 @@ public class CreateProduct {
 		private UUID userId;
 		@Schema(description = "작품 카테고리 고유 식별 번호", nullable = false, example = "1")
 		private Long productCategoryId;
-		@Schema(description = "작품명", nullable = false, example = "검은 장미")
-		private String productName;
 		@Schema(description = "작품 소개 제목", nullable = false, example = "목탄으로 표현한 어둠 속에 피어난 장미")
 		private String productTitle;
 		@Schema(description = "작품 상세 설명", nullable = false, example = "10년 전 우연히 길을 지나가다 발견한 장미의 낯빛이 어두웠습니다. 그때의 감정을..")

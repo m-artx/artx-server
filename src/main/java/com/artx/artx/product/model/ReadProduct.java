@@ -49,6 +49,7 @@ public class ReadProduct {
 					.productDescription(product.getDescription())
 					.productPrice(product.getPrice())
 					.productQuantity(product.getQuantity())
+					.productCreatedAt(LocalDate.from(product.getCreatedAt()))
 					.build();
 		}
 	}
