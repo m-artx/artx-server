@@ -17,8 +17,6 @@ spec:
         - name: mariadb
           image: mariadb
           env:
-            - name: TZ
-              value: Asia/Seoul
             - name: MARIADB_ROOT_PASSWORD
               value: 1234
             - name: MARIADB_DATABASE
