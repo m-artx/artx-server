@@ -10,6 +10,7 @@ import com.artx.artx.cart.repository.CartRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.order.model.CreateOrder;
+import com.artx.artx.order.model.OrderDetail;
 import com.artx.artx.order.service.OrderService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.service.ProductService;
@@ -73,7 +74,7 @@ public class CartService {
 		cartItemRepository.deleteAllByCartIdAndProductIds(
 				cartId,
 				request.getOrderDetails().stream()
-						.map(CreateOrder.OrderDetail::getProductId)
+						.map(OrderDetail::getProductId)
 						.collect(Collectors.toList()));
 	}
 

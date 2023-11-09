@@ -36,7 +36,7 @@ public class Delivery extends BaseEntity {
 				.receiverPhoneNumber(request.getDeliveryDetail().getDeliveryReceiverPhoneNumber())
 				.address(
 						Address.builder()
-								.address(request.getDeliveryDetail().getDeliveryReceiveraddress())
+								.address(request.getDeliveryDetail().getDeliveryReceiverAddress())
 								.addressDetail(request.getDeliveryDetail().getDeliveryReceiverAddressDetail())
 								.build()
 				)
