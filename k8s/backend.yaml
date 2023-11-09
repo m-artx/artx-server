@@ -39,7 +39,7 @@ spec:
             - name: LOG_LEVEL
               value: "INFO"
             - name: KRAMPOLINE_HOST
-              value: "https://k67ec3a38f116a.user-app.krampoline.com"
+              value: "https://ka8d596e67406a.user-app.krampoline.com"
             - name: KAKAOPAY_CID
               value: "TC0ONETIME"
             - name: KAKAOPAY_ADMIN_KEY
