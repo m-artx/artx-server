@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: artx
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_3cbae866bd02
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_d6f097abf9fd
           ports:
             - containerPort: 8080
           env:
