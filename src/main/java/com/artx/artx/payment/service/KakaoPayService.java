@@ -89,7 +89,7 @@ public class KakaoPayService implements PaymentService {
 			);
 
 			order.setPayment(payment);
-			return null;
+			return readyResponse;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException(ErrorCode.FAILED_KAKAOPAY_PAYMENT);
