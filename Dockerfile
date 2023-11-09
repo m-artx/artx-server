@@ -31,6 +31,6 @@ RUN echo "systemProp.http.proxyHost=krmp-proxy.9rum.cc\nsystemProp.http.proxyPor
 
 RUN chmod +x gradlew
 
-RUN ./gradlew clean bootJar
+RUN ./gradlew clean build
 
 CMD ["java", "-jar", "build/libs/artx.jar"]
