@@ -1,9 +1,9 @@
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mariadb
 spec:
-  replicas: 1
   serviceName: mariadb
   selector:
     matchLabels:
@@ -15,14 +15,17 @@ spec:
     spec:
       containers:
         - name: mariadb
+          # 여러분의 mariadb image 주소를 입력해주세요.
           image: mariadb
           env:
+            - name: TZ
+              value: Asia/Seoul
             - name: MARIADB_ROOT_PASSWORD
-              value: 1234
+              value: root
             - name: MARIADB_DATABASE
               value: krampoline
-          ports:
-            - containerPort: 3306
+            - name: MARIADB_DISABLE_UPGRADE_BACKUP
+              value: '1'
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: data
@@ -48,7 +51,8 @@ kind: Service
 metadata:
   name: mariadb
 spec:
-  type: ClusterIP # 외부에서 해당 서비스에 접근할 수 없다. 클러스터 내부에서만 접근 가능하다.
+  type: ClusterIP
+  clusterIP: None # Headless
   selector:
     app: mariadb
   ports:
