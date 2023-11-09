@@ -1,5 +1,6 @@
 namespace: default
 resources:
+  - persistentvolumeclaim.yaml
   - backend.yaml
   - mysql.yaml
   - redis.yaml
