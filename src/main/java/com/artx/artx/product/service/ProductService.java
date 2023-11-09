@@ -12,7 +12,7 @@ import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.FilterType;
-import com.artx.artx.product.type.CategoryType;
+import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.product.type.SearchType;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.service.UserService;
@@ -57,7 +57,7 @@ public class ProductService {
 		User user = getUserById(request.getUserId());
 		user.canCreateProduct();
 		Product product = productRepository.save(
-				Product.from(request, getProductCategoryById(request.getProductCategoryId()), user)
+				Product.from(request, getProductCategoryById(request.getProductCategoryType()), user)
 		);
 		product.saveProductImages(saveProductImages(product, imagesUploadDirectory, files));
 		return CreateProduct.Response.from(product);
@@ -92,8 +92,8 @@ public class ProductService {
 		return productImages;
 	}
 
-	private ProductCategory getProductCategoryById(Long productCategoryId) {
-		return productCategoryRepository.findById(productCategoryId)
+	private ProductCategory getProductCategoryById(ProductCategoryType productCategoryType) {
+		return productCategoryRepository.findByType(productCategoryType)
 				.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
 
@@ -143,9 +143,9 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReadProduct.SimpleResponse> readProductsByCategory(CategoryType type, Pageable pageable) {
+	public Page<ReadProduct.SimpleResponse> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
 
-		if(type == CategoryType.ALL){
+		if(type == ProductCategoryType.ALL){
 			return	productRepository.findProductsByCategory(pageable)
 					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}

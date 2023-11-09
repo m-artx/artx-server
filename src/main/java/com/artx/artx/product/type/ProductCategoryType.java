@@ -1,6 +1,6 @@
 package com.artx.artx.product.type;
 
 
-public enum CategoryType {
+public enum ProductCategoryType {
 	ALL, PAINT, CERAMIC, ETC;
 }

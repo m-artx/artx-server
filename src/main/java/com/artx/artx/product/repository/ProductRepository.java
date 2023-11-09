@@ -1,7 +1,7 @@
 package com.artx.artx.product.repository;
 
 import com.artx.artx.product.entity.Product;
-import com.artx.artx.product.type.CategoryType;
+import com.artx.artx.product.type.ProductCategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,7 +47,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 					"WHERE p.productCategory.type = :type " +
 					"ORDER BY p.createdAt ASC"
 	)
-	Page<Product> findProductsByCategory(@Param("type") CategoryType type, Pageable pageable);
+	Page<Product> findProductsByCategory(@Param("type") ProductCategoryType type, Pageable pageable);
 
 	@Query(
 			"SELECT p FROM Product p " +
