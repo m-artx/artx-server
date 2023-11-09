@@ -1,9 +1,8 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: artx
 metadata:
   name: artx
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: artx
@@ -19,7 +18,8 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: artx-data
-              mountPath: /app/artx
+              mountPath: /app/data
+              subPath: artx
           env:
             - name: REDIS_HOST
               value: "redis"
