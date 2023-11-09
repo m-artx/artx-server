@@ -24,9 +24,9 @@ spec:
             - name: MYSQL_USERNAME
               value: "root"
             - name: MYSQL_PASSWORD
-              value: "root"
+              value: "1234"
             - name: MYSQL_URL
-              value: "jdbc:mariadb://mariadb:3306/artx"
+              value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
               value: "create"
             - name: IMAGE_DIRECTORY
