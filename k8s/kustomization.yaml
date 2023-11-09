@@ -1,6 +1,7 @@
 namespace: default
 resources:
   - backend.yaml
+  - pvc.yaml
   - mysql.yaml
   - redis.yaml
   - ingress.yaml
