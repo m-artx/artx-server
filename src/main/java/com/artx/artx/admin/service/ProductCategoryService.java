@@ -7,6 +7,7 @@ import com.artx.artx.product.repository.ProductCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class ProductCategoryService {
 	@Value(value = "${directory.images}")
 	private String uploadDir;
 
+	@Transactional
 	public void createCategory(MultipartFile file, CreateProductCategory.Request request) {
 		try {
 			String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
