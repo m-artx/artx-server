@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/proxy-body-size: "1gb"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10g"
   labels:
     app.kubernetes.io/managed-by: kargocd
   name: artx
@@ -11,8 +11,6 @@ metadata:
 spec:
   rules:
     - http:
-        maxBodySize: 100m
-        clientMaxBodySize: 100m
         paths:
           - backend:
               serviceName: artx
