@@ -33,7 +33,7 @@ spec:
             - name: DDL_AUTO
               value: "none"
             - name: IMAGE_DIRECTORY
-              value: "/app/artx/images"
+              value: "/app/data/images"
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
             - name: LOG_LEVEL
