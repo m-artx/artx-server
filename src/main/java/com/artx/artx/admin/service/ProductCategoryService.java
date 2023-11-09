@@ -1,6 +1,8 @@
 package com.artx.artx.admin.service;
 
 import com.artx.artx.admin.model.CreateProductCategory;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductCategoryImage;
 import com.artx.artx.product.repository.ProductCategoryRepository;
@@ -23,13 +25,13 @@ public class ProductCategoryService {
 	private final ProductCategoryRepository productCategoryRepository;
 
 	@Value(value = "${directory.images}")
-	private String uploadDir;
+	private String imagesUploadDirectory;
 
 	@Transactional
 	public void createCategory(MultipartFile file, CreateProductCategory.Request request) {
 		try {
 			String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
-			Path path = Paths.get(uploadDir, filename);
+			Path path = Paths.get(imagesUploadDirectory, filename);
 			Files.write(path, file.getBytes());
 
 			ProductCategoryImage productCategoryImage = ProductCategoryImage.builder()
@@ -43,7 +45,7 @@ public class ProductCategoryService {
 					.build()
 			);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_CATEGORY);
 		}
 	}
 }

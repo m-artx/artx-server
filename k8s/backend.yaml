@@ -1,19 +1,21 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: artx
+  name: artx-statefulset
 spec:
   selector:
     matchLabels:
-      app: artx # 해당 레이블 이름을 가진 파드만 선택한다.
+      app: artx
+  serviceName: artx-service
+  replicas: 1
   template:
     metadata:
       labels:
-        app: artx # 특정 Key & Value를 통해 레이블 설정 가능 + selector에 의해 찾아질 수 있도록 metadata의 labels 설정한다.
+        app: artx
     spec:
       containers:
         - name: artx
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_8dfba1fbffd5
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_2e3c87258e04
           ports:
             - containerPort: 8080
           env:
@@ -45,6 +47,10 @@ spec:
               value: "TC0ONETIME"
             - name: KAKAOPAY_ADMIN_KEY
               value: "94c0f2e2624cf70ae98d3d9568104683"
+      volumes:
+        - name: images
+          persistentVolumeClaim:
+            claimName: images-pvc
 ---
 apiVersion: v1
 kind: Service
