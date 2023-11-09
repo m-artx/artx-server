@@ -11,6 +11,7 @@ spec:
   rules:
     - http:
         maxBodySize: 100m
+        clientMaxBodySize: 100m
         paths:
           - backend:
               serviceName: artx
