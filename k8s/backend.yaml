@@ -18,7 +18,7 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: artx
+            - name: artx-data
               mountPath: /app/artx
           env:
             - name: REDIS_HOST
@@ -51,7 +51,7 @@ spec:
               value: "94c0f2e2624cf70ae98d3d9568104683"
   volumeClaimTemplates:
     - metadata:
-        name: artx
+        name: artx-data
       spec:
         accessModes:
           - ReadWriteOnce
