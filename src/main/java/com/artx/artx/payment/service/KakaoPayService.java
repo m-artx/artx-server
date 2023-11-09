@@ -50,7 +50,7 @@ public class KakaoPayService implements PaymentService {
 	@Value("${kakaopay.cancel}")
 	private String cancelApiAddress;
 
-	@Value("${serverAddress}")
+	@Value("${krampoline-host}")
 	private String serverAddress;
 
 	@Transactional

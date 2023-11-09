@@ -31,11 +31,11 @@ directory:
   images: ${IMAGE_DIRECTORY}
 
 
-serverAddress: ${KRAMPOLINE_HOST}
+krampoline-host: ${KRAMPOLINE_HOST}
 
 api:
-  products: ${serverAddress}/api/products/
-  images: ${serverAddress}/api/images/
+  products: ${krampoline-host}/api/products/
+  images: ${krampoline-host}/api/images/
 springdoc:
   swagger-ui:
     # swagger-ui 접근 경로. default 값은 /swagger-ui.html이다.
