@@ -62,3 +62,15 @@ spec:
       targetPort: 8080
   selector:
     app: artx
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: images-pvc
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
