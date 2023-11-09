@@ -1,6 +1,6 @@
 namespace: default
 resources:
   - backend.yaml
-  - mysql.yaml
+  - mariadb.yaml
   - redis.yaml
   - ingress.yaml

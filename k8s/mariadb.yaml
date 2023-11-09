@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysql
+  name: mariadb
 spec:
-  serviceName: mysql
   replicas: 1
+  serviceName: mariadb
   selector:
     matchLabels:
-      app: mysql
+      app: mariadb
   template:
     metadata:
       labels:
-        app: mysql
+        app: mariadb
     spec:
       containers:
-        - name: mysql
-          image: mysql:latest
+        - name: mariadb
+          image: mariadb
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "1234"
@@ -46,10 +46,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: mariadb
 spec:
   type: ClusterIP # 외부에서 해당 서비스에 접근할 수 없다. 클러스터 내부에서만 접근 가능하다.
   selector:
-    app: mysql
+    app: mariadb
   ports:
     - port: 3306
