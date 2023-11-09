@@ -29,11 +29,8 @@ logging:
 directory:
   images: ${IMAGE_DIRECTORY}
 
-server:
-  host: ${SERVER_HOST}
-  port: ${SERVER_PORT}
 
-serverAddress: http://${server.host}:${server.port}
+serverAddress: ${SERVER_ADDRESS}
 
 api:
   products: ${serverAddress}/api/products/
