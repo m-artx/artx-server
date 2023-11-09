@@ -46,7 +46,6 @@ spec:
             - name: KAKAOPAY_ADMIN_KEY
               value: "94c0f2e2624cf70ae98d3d9568104683"
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
