@@ -91,6 +91,7 @@ public class KakaoPayService implements PaymentService {
 
 			return readyResponse;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new BusinessException(ErrorCode.FAILED_KAKAOPAY_PAYMENT);
 		}
 
