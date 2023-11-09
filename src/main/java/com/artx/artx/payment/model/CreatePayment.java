@@ -39,13 +39,4 @@ public class CreatePayment {
 		private String payload;// 결제 승인 요청에 대해 저장 값, 요청 시 전달 내용
 	}
 
-	@Getter
-	public static class Amount {
-		private Long total;
-		private Long tax_free;
-		private Long vat;
-		private Long point;
-		private Long discount;
-		private Long green_deposi;
-	}
 }

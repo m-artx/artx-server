@@ -1,5 +1,7 @@
 package com.artx.artx.order.entity;
 
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.order.type.OrderStatus;
 import com.artx.artx.payment.entity.Payment;
@@ -68,5 +70,12 @@ public class Order extends BaseEntity {
 
 	public void toOrderFailure() {
 		this.status = OrderStatus.ORDER_FAILURE;
+	}
+
+	public boolean isCancelable() {
+		if(this.status == OrderStatus.ORDER_READY || this.status == OrderStatus.ORDER_SUCCESS){
+			return true;
+		}
+		throw new BusinessException(ErrorCode.CAN_NOT_ORDER_CANCEL);
 	}
 }

@@ -10,6 +10,8 @@ import com.artx.artx.order.model.OrderDetail;
 import com.artx.artx.order.model.ReadOrder;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
+import com.artx.artx.payment.entity.Payment;
+import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
 import com.artx.artx.payment.service.PaymentService;
 import com.artx.artx.product.entity.Product;
@@ -80,11 +82,6 @@ public class OrderService {
 			e.printStackTrace();
 			throw e;
 		}
-
-
-		//TODO: 결제 완료 후에 실행되게 미루기
-
-
 	}
 
 	private String extractOrderTitle(List<Product> products) {
@@ -106,5 +103,18 @@ public class OrderService {
 	public Page<ReadOrder.ResponseAll> readOrder(ReadOrder.Request request, Pageable pageable) {
 		Page<Order> order = orderRepository.findByUserIdWithOrderProductsAndPaymentAndDelivery(request.getUserId(), pageable);
 		return order.map(ReadOrder.ResponseAll::from);
+	}
+
+	@Transactional
+	public CancelPayment cancelOrder(Long orderId) {
+		Order order = orderRepository.findByUserIdWithPayment(orderId).orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+		Payment payment = order.getPayment();
+		Delivery delivery = order.getDelivery();
+
+		delivery.isCacnelable();
+		order.isCancelable();
+		payment.isCancelable();
+
+		return paymentService.cancelPayment(payment);
 	}
 }

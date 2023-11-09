@@ -7,6 +7,7 @@ import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.payment.entity.KakaoPayment;
 import com.artx.artx.payment.entity.Payment;
+import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
 import com.artx.artx.payment.repository.KakaoPaymentRepository;
 import com.artx.artx.payment.repository.PaymentRepository;
@@ -90,10 +91,35 @@ public class KakaoPayService implements PaymentService {
 
 			return readyResponse;
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new BusinessException(ErrorCode.FAILED_KAKAOPAY_PAYMENT);
 		}
 
+	}
+
+	@Override
+	@Transactional
+	public CancelPayment cancelPayment(Payment payment) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "KakaoAK " + apiKey);
+		headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
+
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		params.add("cid", cid);
+		params.add("tid", payment.getTid());
+		params.add("cancel_amount", String.valueOf(payment.getTotalAmount()));
+		params.add("cancel_tax_free_amount", "0");
+
+		HttpEntity request = new HttpEntity(params, headers);
+
+		try {
+			CancelPayment response = restTemplate.postForObject(cancelApiAddress, request, CancelPayment.class);
+			payment.toPaymentCancel();
+			return response;
+		} catch (Exception e){
+			e.printStackTrace();
+			throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
+		}
 	}
 
 	@Transactional
@@ -126,7 +152,6 @@ public class KakaoPayService implements PaymentService {
 		} catch (Exception e) {
 			payment.toPaymentFailure();
 			order.toOrderFailure();
-			e.printStackTrace();
 			throw new BusinessException(ErrorCode.FAILED_KAKAOPAY_PAYMENT);
 		}
 

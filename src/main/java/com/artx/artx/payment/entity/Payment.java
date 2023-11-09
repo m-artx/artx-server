@@ -1,5 +1,7 @@
 package com.artx.artx.payment.entity;
 
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.payment.type.PaymentStatus;
@@ -36,7 +38,7 @@ public class Payment extends BaseEntity {
 
 	private long totalAmount;
 
-	public static Payment from(Order order, String tid, PaymentType paymentType, PaymentStatus paymentStatus){
+	public static Payment from(Order order, String tid, PaymentType paymentType, PaymentStatus paymentStatus) {
 		return Payment.builder()
 				.tid(tid)
 				.totalAmount(order.getTotalAmount())
@@ -49,8 +51,19 @@ public class Payment extends BaseEntity {
 	public void toPaymentSuccess() {
 		this.paymentStatus = PaymentStatus.PAYMENT_SUCCESS;
 	}
+
 	public void toPaymentFailure() {
 		this.paymentStatus = PaymentStatus.PAYMENT_FAILURE;
 	}
 
+	public void toPaymentCancel() {
+		this.paymentStatus = PaymentStatus.PAYMENT_CANCEL;
+	}
+
+	public boolean isCancelable() {
+		if (this.paymentStatus == PaymentStatus.PAYMENT_SUCCESS) {
+			return true;
+		}
+		throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
+	}
 }
