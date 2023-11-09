@@ -26,9 +26,9 @@ spec:
             - name: MYSQL_PASSWORD
               value: "root"
             - name: MYSQL_URL
-              value: "jdbc:mariadb://mariadb:3306/krampoline"
+              value: "jdbc:mariadb://mariadb:3306/artx"
             - name: DDL_AUTO
-              value: "none"
+              value: "create"
             - name: IMAGE_DIRECTORY
               value: "/app/images"
             - name: SPRING_PROFILES_ACTIVE
