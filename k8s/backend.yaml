@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: artx
 spec:
   selector:
     matchLabels:
       app: artx # 해당 레이블 이름을 가진 파드만 선택한다.
+  serviceName: artx
   template:
     metadata:
       labels:
@@ -45,10 +46,21 @@ spec:
               value: "TC0ONETIME"
             - name: KAKAOPAY_ADMIN_KEY
               value: "94c0f2e2624cf70ae98d3d9568104683"
+          volumeMount:
+            - name: artx
+              mountPath: /app/data
       volumes:
-        - name: artx-data
-          persistentVolumeClaim:
-            claimName: artx-pvc
+        - name: artx
+          volumeClaimTemplate:
+            metadata:
+              name: artx
+            spec:
+              storageClassName: standard
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
