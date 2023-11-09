@@ -17,9 +17,9 @@ spec:
         - name: mariadb
           image: mariadb
           env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: MARIADB_ROOT_PASSWORD
               value: "1234"
-            - name: MYSQL_DATABASE
+            - name: MARIADB_DATABASE
               value: "artx"
           ports:
             - containerPort: 3306
