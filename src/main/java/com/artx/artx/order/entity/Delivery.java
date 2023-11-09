@@ -1,5 +1,7 @@
 package com.artx.artx.order.entity;
 
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.Address;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.order.model.CreateOrder;
@@ -42,5 +44,12 @@ public class Delivery extends BaseEntity {
 				)
 				.status(DeliveryStatus.READY)
 				.build();
+	}
+
+	public boolean isCacnelable() {
+		if(this.status == DeliveryStatus.READY){
+			return true;
+		}
+		throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
 	}
 }

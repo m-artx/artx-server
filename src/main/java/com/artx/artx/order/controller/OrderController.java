@@ -3,6 +3,7 @@ package com.artx.artx.order.controller;
 import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.order.model.ReadOrder;
 import com.artx.artx.order.service.OrderService;
+import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +31,12 @@ public class OrderController {
 	@GetMapping
 	public ResponseEntity<Page<ReadOrder.ResponseAll>> readOrder(@RequestBody ReadOrder.Request request, Pageable pageable){
 		return ResponseEntity.ok(orderService.readOrder(request, pageable));
+	}
+
+	@Operation(summary = "주문 취소", description = "주문을 취소할 수 있다.")
+	@PatchMapping("/{orderId}/cancel")
+	public ResponseEntity<CancelPayment> cancelOrder(@PathVariable Long orderId){
+		return ResponseEntity.ok(orderService.cancelOrder(orderId));
 	}
 
 }
