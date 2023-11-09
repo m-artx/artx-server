@@ -28,7 +28,7 @@ spec:
             - name: MYSQL_URL
               value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
-              value: "create"
+              value: "none"
             - name: IMAGE_DIRECTORY
               value: "/app/images"
             - name: SPRING_PROFILES_ACTIVE
