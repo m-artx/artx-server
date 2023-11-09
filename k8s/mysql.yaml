@@ -1,9 +1,9 @@
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
@@ -20,9 +20,9 @@ spec:
             - name: TZ
               value: Asia/Seoul
             - name: MYSQL_ROOT_PASSWORD
-              value: 1234
+              value: "1234"
             - name: MYSQL_DATABASE
-              value: artx
+              value: "artx"
             - name: MARIADB_DISABLE_UPGRADE_BACKUP
               value: '1'
           volumeMounts:
