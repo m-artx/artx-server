@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -50,11 +51,14 @@ public class KakaoPayService implements PaymentService {
 	@Value("${kakaopay.cancel}")
 	private String cancelApiAddress;
 
-	@Value("${krampoline-host}")
+	@Value("${artx.address}")
 	private String serverAddress;
 
 	@Transactional
 	public CreatePayment.ReadyResponse readyPayment(Order order) {
+
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "KakaoAK " + apiKey);
 		headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");

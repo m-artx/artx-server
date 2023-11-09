@@ -31,11 +31,14 @@ directory:
   images: ${IMAGE_DIRECTORY}
 
 
-krampoline-host: ${KRAMPOLINE_HOST}
+artx:
+  host: ${ARTX_HOST}
+  port: ${ARTX_PORT}
+  address: ${ARTX_ADDRESS}
 
 api:
-  products: ${krampoline-host}/api/products/
-  images: ${krampoline-host}/api/images/
+  products: ${artx.address}/api/products/
+  images: ${artx.address}/api/images/
 springdoc:
   swagger-ui:
     # swagger-ui 접근 경로. default 값은 /swagger-ui.html이다.
@@ -70,3 +73,7 @@ kakaopay:
   cancel: https://kapi.kakao.com/v1/payment/cancel
   key: ${KAKAOPAY_ADMIN_KEY}
   cid: ${KAKAOPAY_CID}
+
+proxy:
+  host: ${PROXY_HOST}
+  port: ${PROXY_PORT}
