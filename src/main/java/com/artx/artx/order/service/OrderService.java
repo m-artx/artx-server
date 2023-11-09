@@ -6,6 +6,8 @@ import com.artx.artx.order.entity.Delivery;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.order.model.CreateOrder;
+import com.artx.artx.order.model.OrderDetail;
+import com.artx.artx.order.model.ReadOrder;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
 import com.artx.artx.payment.model.CreatePayment;
@@ -15,6 +17,8 @@ import com.artx.artx.product.service.ProductService;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +59,7 @@ public class OrderService {
 						.status(OrderStatus.ORDER_READY)
 						.user(user)
 						.delivery(Delivery.from(request))
-						.totalAmount(products.stream().mapToLong(Product::getPrice).sum())
+						.totalAmount(products.stream().mapToLong(product -> product.getPrice() * productIdsAndQuantities.get(product.getId())).sum())
 						.build()
 		);
 
@@ -95,7 +99,12 @@ public class OrderService {
 
 	private Map<Long, Long> extractProductIdsAndQuantities(CreateOrder.Request request) {
 		return request.getOrderDetails().stream()
-				.collect(Collectors.toMap(CreateOrder.OrderDetail::getProductId, CreateOrder.OrderDetail::getProductQuantity));
+				.collect(Collectors.toMap(OrderDetail::getProductId, OrderDetail::getProductQuantity));
 	}
 
+	@Transactional(readOnly = true)
+	public Page<ReadOrder.ResponseAll> readOrder(ReadOrder.Request request, Pageable pageable) {
+		Page<Order> order = orderRepository.findByUserIdWithOrderProductsAndPaymentAndDelivery(request.getUserId(), pageable);
+		return order.map(ReadOrder.ResponseAll::from);
+	}
 }
