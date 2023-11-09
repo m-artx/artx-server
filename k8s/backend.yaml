@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: artx-statefulset
+  name: artx
 spec:
   selector:
     matchLabels:
       app: artx
-  serviceName: artx-service
-  replicas: 1
+  serviceName: artx
+  replicas: 2
   template:
     metadata:
       labels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: artx
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_48911efeb421
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_8dfba1fbffd5
           ports:
             - containerPort: 8080
           env:
@@ -47,13 +47,20 @@ spec:
               value: "TC0ONETIME"
             - name: KAKAOPAY_ADMIN_KEY
               value: "94c0f2e2624cf70ae98d3d9568104683"
-      volumes:
-        - name: images
-          persistentVolumeClaim:
-            claimName: images-pvc
-
+          resources: {}
+          volumeMounts:
+            - name: artx-volume
+              mountPath: /app
+  volumeClaimTemplates:
+    - metadata:
+        name: artx-pvc
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Gi
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
