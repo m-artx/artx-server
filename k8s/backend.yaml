@@ -18,7 +18,7 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: artx-volume
-              mountPath: /app/data
+              mountPath: /app/data/images
           env:
             - name: REDIS_HOST
               value: "redis"
