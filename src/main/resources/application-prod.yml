@@ -31,7 +31,7 @@ directory:
   images: ${IMAGE_DIRECTORY}
 
 
-serverAddress: ${SERVER_ADDRESS}
+serverAddress: ${KRAMPOLINE_ADDRESS}
 
 api:
   products: ${serverAddress}/api/products/
