@@ -5,11 +5,14 @@ import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.order.repository.OrderRepository;
+import com.artx.artx.payment.entity.KakaoPayment;
 import com.artx.artx.payment.entity.Payment;
 import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
 import com.artx.artx.payment.repository.KakaoPaymentRepository;
 import com.artx.artx.payment.repository.PaymentRepository;
+import com.artx.artx.payment.type.PaymentStatus;
+import com.artx.artx.payment.type.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -72,23 +75,20 @@ public class KakaoPayService implements PaymentService {
 		HttpEntity request = new HttpEntity(params, headers);
 
 		try {
-//			CreatePayment.ReadyResponse readyResponse = restTemplate.postForObject(readyApiAddress, request, CreatePayment.ReadyResponse.class);
-			String s = restTemplate.postForObject(readyApiAddress, request, String.class);
-			System.out.println(s);
-//			Payment payment = Payment.from(
-//					order,
-//					readyResponse.getTid(),
-//					PaymentType.KAKAOPAY,
-//					PaymentStatus.PAYMENT_READY
-//			);
-//			KakaoPayment kakaoPayment = kakaoPaymentRepository.save(KakaoPayment.builder()
-//					.tid(readyResponse.getTid())
-//					.payment(payment)
-//					.build()
-//			);
+			CreatePayment.ReadyResponse readyResponse = restTemplate.postForObject(readyApiAddress, request, CreatePayment.ReadyResponse.class);
+			Payment payment = Payment.from(
+					order,
+					readyResponse.getTid(),
+					PaymentType.KAKAOPAY,
+					PaymentStatus.PAYMENT_READY
+			);
+			KakaoPayment kakaoPayment = kakaoPaymentRepository.save(KakaoPayment.builder()
+					.tid(readyResponse.getTid())
+					.payment(payment)
+					.build()
+			);
 
-//			order.setPayment(payment);
-
+			order.setPayment(payment);
 			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
