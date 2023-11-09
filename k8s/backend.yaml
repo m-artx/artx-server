@@ -38,12 +38,21 @@ spec:
               value: "prod"
             - name: LOG_LEVEL
               value: "INFO"
-            - name: KRAMPOLINE_HOST
-              value: "https://ka8d596e67406a.user-app.krampoline.com"
             - name: KAKAOPAY_CID
               value: "TC0ONETIME"
             - name: KAKAOPAY_ADMIN_KEY
               value: "94c0f2e2624cf70ae98d3d9568104683"
+            - name: PROXY_HOST
+              value: "http://krmp-proxy.9rum.cc"
+            - name: PROXY_PORT
+              value: "3128"
+            - name: ARTX_HOST
+              value: "https://ka8d596e67406a.user-app.krampoline.com"
+            - name: ARTX_PORT
+              value: "80"
+            - name: ARTX_ADDRESS
+              value: "https://ka8d596e67406a.user-app.krampoline.com"
+
       volumes:
         - name: artx-volume
           persistentVolumeClaim:
