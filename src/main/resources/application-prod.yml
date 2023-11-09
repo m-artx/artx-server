@@ -21,7 +21,8 @@ spring:
       on-profile: prod
   servlet:
     multipart:
-      max-file-size: 10MB
+      max-file-size: 20MB
+      max-request-size: 20MB
 logging:
   level:
     org.springframework.transaction.interceptor: ${LOG_LEVEL}
