@@ -4,3 +4,4 @@ resources:
   - mysql.yaml
   - redis.yaml
   - ingress.yaml
+  - artx-pvc.yaml
