@@ -51,7 +51,9 @@ spec:
         - name: images
           persistentVolumeClaim:
             claimName: images-pvc
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
