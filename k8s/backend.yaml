@@ -49,8 +49,9 @@ spec:
               value: "94c0f2e2624cf70ae98d3d9568104683"
           resources: {}
           volumeMounts:
-            - name: artx-volume
+            - name: artx-pvc
               mountPath: /app
+              subPath: artx
   volumeClaimTemplates:
     - metadata:
         name: artx-pvc
