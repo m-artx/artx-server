@@ -77,3 +77,9 @@ kakaopay:
 proxy:
   host: ${PROXY_HOST}
   port: ${PROXY_PORT}
+
+jwt:
+  secret: ARTX
+  expiration:
+    access-token: 360000
+    refresh-token: 360000

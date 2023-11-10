@@ -11,6 +11,7 @@ import com.artx.artx.user.type.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import java.util.UUID;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+
 
 	@Transactional
 	public CreateUser.Response createUser(CreateUser.Request request){
@@ -28,7 +31,7 @@ public class UserService {
 			throw new BusinessException(ErrorCode.DUPLICATED_USERNAME);
 		}
 
-		User user = userRepository.save(User.from(request));
+		User user = userRepository.save(User.from(request, passwordEncoder));
 		return CreateUser.Response.from(user);
 	}
 

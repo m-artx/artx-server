@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
@@ -53,11 +54,11 @@ public class User extends BaseEntity {
 	}
 
 
-	public static User from(CreateUser.Request request){
+	public static User from(CreateUser.Request request, PasswordEncoder passwordEncoder){
 		return User.builder()
 				.userRole(request.getUserRole())
 				.username(request.getUsername())
-				.password(request.getPassword())
+				.password(passwordEncoder.encode(request.getPassword()))
 				.email(request.getEmail())
 				.nickname(request.getNickname())
 				.phoneNumber(request.getPhoneNumber())
