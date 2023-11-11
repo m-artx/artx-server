@@ -31,16 +31,16 @@ public class TokenProvider {
 	@Value("${jwt.expiration.refresh-token}")
 	private Long REFRESH_TOKEN_EXPIRATION;
 
-	public String createToken(String username, TokenType type){
+	public String createToken(String username, TokenType type) {
 
 		Date now = new Date();
 		Date exp = null;
 
-		if(type == TokenType.ACCESS_TOKEN) {
+		if (type == TokenType.ACCESS_TOKEN) {
 			exp = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION);
 		}
 
-		if(type == TokenType.REFRESH_TOKEN) {
+		if (type == TokenType.REFRESH_TOKEN) {
 			exp = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION);
 		}
 
@@ -54,7 +54,7 @@ public class TokenProvider {
 				.compact();
 	}
 
-	public Claims getClaim(String token){
+	public Claims getClaim(String token) {
 		return Jwts.parserBuilder()
 				.setSigningKey(SECRET_KEY)
 				.build()
@@ -62,13 +62,9 @@ public class TokenProvider {
 				.getBody();
 	}
 
-	public boolean isValid(String token){
-		try{
-			getClaim(token);
-			return true;
-		} catch (Exception e){
-		}
-		return false;
+	public boolean isValid(String token) {
+		getClaim(token);
+		return true;
 	}
 
 	public Authentication getAuthentication(String accessToken) {

@@ -1,5 +1,6 @@
 package com.artx.artx.common.config;
 
+import com.artx.artx.common.filter.ExceptionHandlerFilter;
 import com.artx.artx.common.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final ExceptionHandlerFilter exceptionHandlerFilter;
 
 	@Bean
 	public PasswordEncoder passwordEncoder(){
@@ -37,9 +39,11 @@ public class SecurityConfig {
 				.sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(it -> {
 					it.requestMatchers("/api/auth/**").permitAll();
+					it.anyRequest().authenticated();
 				})
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class);
+
 
 		/**
 			JwtAuthenticationFilter에서 검증되어 SecurityContextHolder의 Context에 인증 정보가 저장되면

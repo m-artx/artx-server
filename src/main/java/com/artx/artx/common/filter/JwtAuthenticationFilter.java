@@ -3,21 +3,20 @@ package com.artx.artx.common.filter;
 import com.artx.artx.common.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
 
@@ -33,18 +32,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		String accessToken = extractAccessToken((HttpServletRequest) request);
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		String accessToken = extractAccessToken(request);
 		boolean isValid = tokenProvider.isValid(accessToken);
 
-		try {
-			if (isValid) {
-				Authentication authentication = tokenProvider.getAuthentication(accessToken);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-			}
-			chain.doFilter(request, response);
-		} catch (Exception e) {
-
+		if (isValid) {
+			Authentication authentication = tokenProvider.getAuthentication(accessToken);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
+		filterChain.doFilter(request, response);
 	}
 }
