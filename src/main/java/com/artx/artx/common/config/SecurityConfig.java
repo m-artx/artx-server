@@ -38,11 +38,11 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(it -> it.disable());
-		http//UsernamePasswordAuthenticationFilter를 사용하지 않음
-				.sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		http.sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(it -> {
 					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
 					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+					it.requestMatchers(HttpMethod.POST, "/api/payments").permitAll();
 					it.anyRequest().authenticated();
 				})
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
