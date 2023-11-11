@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +24,12 @@ public class AuthService {
 	private final TokenProvider tokenProvider;
 	private final AuthenticationManager authenticationManager;
 
-
 	@Transactional(readOnly = true)
 	public Login.Response login(Login.Request request) {
 		try {
 			//검증 실패 시 예외 발생
 			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (UsernameNotFoundException e) {
 			throw new BusinessException(ErrorCode.INVALID_USERNAME);
 		} catch (BadCredentialsException e){

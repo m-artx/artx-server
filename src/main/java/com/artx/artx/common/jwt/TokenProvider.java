@@ -1,20 +1,26 @@
 package com.artx.artx.common.jwt;
 
-import com.artx.artx.common.error.ErrorCode;
-import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.auth.service.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class TokenProvider {
+
+	private final CustomUserDetailsService userDetailsService;
 
 	@Value("${jwt.secret}")
 	private String SECRET_KEY;
@@ -40,7 +46,6 @@ public class TokenProvider {
 
 		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
 
-
 		return Jwts.builder()
 				.setExpiration(exp)
 				.setSubject(username)
@@ -62,11 +67,14 @@ public class TokenProvider {
 			getClaim(token);
 			return true;
 		} catch (Exception e){
-			throw new BusinessException(ErrorCode.INVALID_TOKEN);
 		}
+		return false;
 	}
 
-
-
-
+	public Authentication getAuthentication(String accessToken) {
+		Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(accessToken).getBody();
+		String username = claims.getSubject();
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+	}
 }
