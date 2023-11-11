@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AccessToken {
+
 	private String value;
 
 	public static AccessToken from(String token) {
@@ -14,4 +15,5 @@ public class AccessToken {
 				.value(token)
 				.build();
 	}
+
 }

@@ -18,6 +18,8 @@ public class ProductCategory extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(unique = true)
 	@Enumerated(EnumType.STRING)
 	private ProductCategoryType type;
 	private String description;
