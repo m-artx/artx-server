@@ -1,8 +1,8 @@
 package com.artx.artx.product.controller;
 
 import com.artx.artx.product.model.CreateProduct;
-import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.model.ReadProduct;
+import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.FilterType;
 import com.artx.artx.product.type.ProductCategoryType;
@@ -27,8 +27,11 @@ public class ProductController {
 	private final ProductService productService;
 
 	@Operation(summary = "작품 등록", description = "작가는 새로운 작품을 등록할 수 있다.")
-	@PostMapping("/new")
-	public ResponseEntity<CreateProduct.Response> create(@RequestPart CreateProduct.Request request, @RequestPart List<MultipartFile> files){
+	@PostMapping
+	public ResponseEntity<CreateProduct.Response> create(
+			@RequestPart CreateProduct.Request request,
+			@RequestPart List<MultipartFile> files
+	){
 		return ResponseEntity.ok(productService.createProduct(request, files));
 	}
 
