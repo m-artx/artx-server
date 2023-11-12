@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -64,7 +66,8 @@ public class Product extends BaseEntity {
 		productImages.add(productImage);
 	}
 
-	public void saveProductImages(List<ProductImage> productImages) {
+	public void setProductImages(List<MultipartFile> multipartFiles) {
+		List<ProductImage> productImages = multipartFiles.stream().map(ProductImage::from).collect(Collectors.toList());
 		productImages.stream().forEach(productImage -> productImage.setProduct(this));
 		this.productImages = productImages;
 	}

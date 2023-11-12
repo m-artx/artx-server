@@ -1,7 +1,7 @@
 package com.artx.artx.product.entity;
 
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.product.type.ProductCategoryType;
+import com.artx.artx.product.type.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +21,7 @@ public class ProductCategory extends BaseEntity {
 
 	@Column(unique = true)
 	@Enumerated(EnumType.STRING)
-	private ProductCategoryType type;
+	private Category type;
 	private String description;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

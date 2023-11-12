@@ -1,5 +1,5 @@
 package com.artx.artx.product.type;
 
-public enum FilterType {
+public enum Filter {
 	LATEST, POPULARITY
 }

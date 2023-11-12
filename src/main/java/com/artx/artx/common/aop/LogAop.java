@@ -20,8 +20,7 @@ public class LogAop {
 	}
 
 	@Around("pointCut()")
-	public void logMethodCall(ProceedingJoinPoint joinPoint) throws Throwable {
-
+	public Object logMethodCall(ProceedingJoinPoint joinPoint) throws Throwable {
 		long startTime = System.currentTimeMillis();
 		Object result = joinPoint.proceed();
 		long endTime = System.currentTimeMillis();
@@ -31,6 +30,7 @@ public class LogAop {
 		String methodName = joinPoint.getSignature().getName();
 		log.info("[{}] {} = {}ms", controllerName, methodName, executionTime);
 
+		return result;
 	}
 
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Entity
@@ -22,6 +23,13 @@ public class ProductImage {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	public static ProductImage from(MultipartFile multipartFile){
+		return ProductImage.builder()
+				.type(multipartFile.getContentType())
+				.name(multipartFile.getName())
+				.build();
+	}
 
 	public void setProduct(Product product) {
 		this.product = product;
