@@ -40,10 +40,10 @@ public class SecurityConfig {
 		http.csrf(it -> it.disable());
 		http.sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(it -> {
-					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
-					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
-					it.requestMatchers("/api/payments/**").permitAll();
-					it.anyRequest().authenticated();
+//					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
+//					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+//					it.requestMatchers("/api/payments/**").permitAll();
+					it.anyRequest().permitAll();
 				})
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
