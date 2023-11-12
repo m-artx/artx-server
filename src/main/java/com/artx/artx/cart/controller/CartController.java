@@ -1,6 +1,7 @@
 package com.artx.artx.cart.controller;
 
 import com.artx.artx.cart.dto.CreateCartItem;
+import com.artx.artx.cart.dto.DeleteCartItem;
 import com.artx.artx.cart.dto.ReadCartItem;
 import com.artx.artx.cart.service.CartService;
 import com.artx.artx.order.model.CreateOrder;
@@ -8,6 +9,7 @@ import com.artx.artx.payment.model.CreatePayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,18 +58,29 @@ public class CartController {
 
 	@Operation(summary = "장바구니 전체 조회", description = "장바구니에 있는 상품들을 전체 조회할 수 있다.")
 	@GetMapping("/{cartId}")
-	public ResponseEntity<ReadCartItem.Response> readCartItems(
-			@PathVariable Long cartId
+	public ResponseEntity<ReadCartItem.Response> readAllCartItems(
+			@PathVariable Long cartId,
+			Pageable pageable
 	) {
-		return ResponseEntity.ok(cartService.fetchCarItemsByCartId(cartId));
+		return ResponseEntity.ok(cartService.readAllCarItemsByCartId(cartId, pageable));
 	}
 
 	@Operation(summary = "장바구니 전체 삭제", description = "장바구니에 있는 상품들을 전체 삭제할 수 있다.")
-	@DeleteMapping("/{cartId}")
-	public ResponseEntity<ReadCartItem.Response> deleteCartItems(
+	@DeleteMapping("/{cartId}/all")
+	public ResponseEntity<ReadCartItem.Response> deleteAllCartItems(
 			@PathVariable Long cartId
 	) {
-		cartService.deleteCarItems(cartId);
+		cartService.deleteAllCarItems(cartId);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "장바구니 선택 삭제", description = "장바구니에 있는 상품들을 전체 삭제할 수 있다.")
+	@DeleteMapping("/{cartId}")
+	public ResponseEntity<ReadCartItem.Response> deleteCartItems(
+			@PathVariable Long cartId,
+			@RequestBody DeleteCartItem.Request request
+	) {
+		cartService.deleteSelectedCartItems(cartId, request);
 		return ResponseEntity.ok().build();
 	}
 

@@ -4,8 +4,7 @@ import com.artx.artx.cart.model.CartItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public class ReadCartItem {
 
@@ -16,9 +15,9 @@ public class ReadCartItem {
 		private Long cartId;
 
 		@Schema(description = "장바구니 작품 상세 정보", nullable = false, example = "")
-		private List<CartItemDetail> cartItemDetails;
+		private Page<CartItemDetail> cartItemDetails;
 
-		public static Response from(Long cartId, List<CartItemDetail> cartItemDetails){
+		public static Response from(Long cartId, Page<CartItemDetail> cartItemDetails){
 			return Response.builder()
 					.cartId(cartId)
 					.cartItemDetails(cartItemDetails)
