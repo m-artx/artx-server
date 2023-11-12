@@ -62,4 +62,13 @@ public class CartController {
 		return ResponseEntity.ok(cartService.fetchCarItemsByCartId(cartId));
 	}
 
+	@Operation(summary = "장바구니 전체 삭제", description = "장바구니에 있는 상품들을 전체 삭제할 수 있다.")
+	@DeleteMapping("/{cartId}")
+	public ResponseEntity<ReadCartItem.Response> deleteCartItems(
+			@PathVariable Long cartId
+	) {
+		cartService.deleteCarItems(cartId);
+		return ResponseEntity.ok().build();
+	}
+
 }
