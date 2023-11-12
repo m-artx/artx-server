@@ -79,7 +79,7 @@ proxy:
   port: ${PROXY_PORT}
 
 jwt:
-  secret: ARTX
+  secret: ${JWT_SECRET}
   expiration:
-    access-token: 360000
-    refresh-token: 360000
+    access-token: 1800000
+    refresh-token: 2592000000
