@@ -107,4 +107,14 @@ public class CartService {
 	private CartItem getCartItemByCartIdAndProductId(Long cartId, Long productId) {
 		return cartItemRepository.findById(CartItemId.from(cartId, productId)).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
 	}
+
+	@Transactional
+	public void deleteCarItems(Long cartId) {
+		Cart cart = getCartById(cartId);
+		List<CartItem> cartItems = cart.getCartItems();
+		for (CartItem cartItem : cartItems) {
+			System.out.println(cartItem.getCartItemId());
+		}
+		cartItemRepository.deleteAllInBatch(cart.getCartItems());
+	}
 }
