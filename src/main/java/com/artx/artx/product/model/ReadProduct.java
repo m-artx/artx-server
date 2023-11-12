@@ -2,6 +2,7 @@ package com.artx.artx.product.model;
 
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductImage;
+import com.artx.artx.product.entity.ProductStock;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,7 +49,7 @@ public class ReadProduct {
 					.productTitle(product.getTitle())
 					.productDescription(product.getDescription())
 					.productPrice(product.getPrice())
-					.productQuantity(product.getQuantity())
+					.productQuantity(product.getProductStock().getQuantity())
 					.productCreatedAt(LocalDate.from(product.getCreatedAt()))
 					.build();
 		}

@@ -28,10 +28,10 @@ public class Payment extends BaseEntity {
 	private String tid;
 
 	@Enumerated(EnumType.STRING)
-	private PaymentType paymentType;
+	private PaymentType type;
 
 	@Enumerated(EnumType.STRING)
-	private PaymentStatus paymentStatus;
+	private PaymentStatus status;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	private Order order;
@@ -43,25 +43,25 @@ public class Payment extends BaseEntity {
 				.tid(tid)
 				.totalAmount(order.getTotalAmount())
 				.order(order)
-				.paymentType(paymentType)
-				.paymentStatus(paymentStatus)
+				.type(paymentType)
+				.status(paymentStatus)
 				.build();
 	}
 
 	public void toPaymentSuccess() {
-		this.paymentStatus = PaymentStatus.PAYMENT_SUCCESS;
+		this.status = PaymentStatus.PAYMENT_SUCCESS;
 	}
 
 	public void toPaymentFailure() {
-		this.paymentStatus = PaymentStatus.PAYMENT_FAILURE;
+		this.status = PaymentStatus.PAYMENT_FAILURE;
 	}
 
 	public void toPaymentCancel() {
-		this.paymentStatus = PaymentStatus.PAYMENT_CANCEL;
+		this.status = PaymentStatus.PAYMENT_CANCEL;
 	}
 
 	public boolean isCancelable() {
-		if (this.paymentStatus == PaymentStatus.PAYMENT_SUCCESS) {
+		if (this.status == PaymentStatus.PAYMENT_SUCCESS) {
 			return true;
 		}
 		throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);

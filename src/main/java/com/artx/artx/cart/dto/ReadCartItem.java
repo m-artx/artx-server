@@ -46,14 +46,14 @@ public class ReadCartItem {
 		@Schema(description = "작품 가격", nullable = false, example = "100000")
 		private Long productPrice;
 
-		public static CartItemDetail from(String imagesApiAddress, CartItem cartItem){
+		public static CartItemDetail from(String imagesApiAddress, CartItem cartItem, Long carItemQuantity){
 			return CartItemDetail.builder()
 					.cartId(cartItem.getCartItemId().getCartId())
 					.productId(cartItem.getCartItemId().getProductId())
 					.productRepresentativeImage(imagesApiAddress + cartItem.getProduct().getRepresentativeImage())
 					.productTitle(cartItem.getProduct().getTitle())
 					.productPrice(cartItem.getProduct().getPrice())
-					.productQuantity(cartItem.getProduct().getQuantity())
+					.productQuantity(carItemQuantity)
 					.cartProductQuantity(cartItem.getQuantity())
 					.build();
 		}

@@ -16,7 +16,7 @@ public class CreateOrder {
 		@Schema(description = "유저 고유 식별 번호", nullable = false, example = "fafe2100-e770-4cfc-aef7-960837b777df")
 		private UUID userId;
 		@Schema(description = "주문 상세 정보", nullable = false, example = "")
-		private List<OrderDetail> orderDetails;
+		private List<OrderProductIdAndQuantity> orderDetails;
 		@Schema(description = "배송 상세 정보", nullable = false, example = "")
 		private DeliveryDetail deliveryDetail;
 	}

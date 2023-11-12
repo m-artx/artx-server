@@ -1,7 +1,5 @@
 package com.artx.artx.product.entity;
 
-import com.artx.artx.common.error.ErrorCode;
-import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.product.model.CreateProduct;
 import com.artx.artx.user.entity.User;
@@ -41,37 +39,21 @@ public class Product extends BaseEntity {
 	private String description;
 	private long price;
 	private long views;
-	private long quantity;
 
-	public static Product from(CreateProduct.Request request, ProductCategory productCategory, User user){
+	//fetch lazy(X)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "product_stock_id")
+	private ProductStock productStock;
+
+	public static Product from(CreateProduct.Request request){
 		return Product.builder()
-				.user(user)
-				.productCategory(productCategory)
 				.title(request.getProductTitle())
 				.description(request.getProductDescription())
 				.price(request.getProductPrice())
-				.quantity(request.getProductQuantity())
 				.build();
 	}
 
-	public void increase(long quantity) {
-		if(quantity <= 0){
-			throw new BusinessException(ErrorCode.MUST_BE_MORE_THAN_ZERO);
-		}
-		this.quantity += quantity;
-	}
 
-	public void decrease(long quantity) {
-		if(quantity <= 0){
-			throw new BusinessException(ErrorCode.MUST_BE_MORE_THAN_ZERO);
-		}
-
-		if(this.quantity - quantity < 0){
-			throw new BusinessException(ErrorCode.CAN_NOT_DECREASE);
-		}
-
-		this.quantity -= quantity;
-	}
 
 
 	//TODO: list 개수 제한 필요
@@ -95,14 +77,16 @@ public class Product extends BaseEntity {
 		this.views = views;
 	}
 
-	public boolean canDecrease(Long quantity) {
-		if(quantity <= 0){
-			throw new BusinessException(ErrorCode.MUST_BE_MORE_THAN_ZERO);
-		}
 
-		if(this.quantity - quantity < 0){
-			throw new BusinessException(ErrorCode.CAN_NOT_DECREASE);
-		}
-		return true;
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public void setProductStock(ProductStock productStock) {
+		this.productStock = productStock;
+	}
+
+	public void setCategory(ProductCategory productCategory) {
+		this.productCategory = productCategory;
 	}
 }

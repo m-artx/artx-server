@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class OrderDetail {
+
 	private Long productId;
 	private String productTitle;
 	private String productRepresentativeImage;
@@ -26,4 +27,5 @@ public class OrderDetail {
 				.productTotalPrice(product.getPrice() * orderProduct.getQuantity())
 				.build();
 	}
+
 }

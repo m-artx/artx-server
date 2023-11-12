@@ -12,7 +12,9 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 
 	Optional<ProductCategory> findByType(ProductCategoryType type);
 
-	@Query("SELECT pc FROM ProductCategory pc LEFT JOIN FETCH pc.productCategoryImage pci")
+	@Query("SELECT pc FROM ProductCategory pc " +
+			"LEFT JOIN FETCH pc.productCategoryImage pci"
+	)
 	List<ProductCategory> findAllWithProductCategoryImage();
 
 }

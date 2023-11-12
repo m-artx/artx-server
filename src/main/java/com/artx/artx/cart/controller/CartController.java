@@ -4,6 +4,7 @@ import com.artx.artx.cart.dto.CreateCartItem;
 import com.artx.artx.cart.dto.ReadCartItem;
 import com.artx.artx.cart.service.CartService;
 import com.artx.artx.order.model.CreateOrder;
+import com.artx.artx.payment.model.CreatePayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -46,12 +47,11 @@ public class CartController {
 
 	@Operation(summary = "장바구니 상품 주문", description = "장바구니에 있는 상품들을 주문할 수 있다.")
 	@PostMapping("/{cartId}")
-	public ResponseEntity<Void> orderByCart(
+	public ResponseEntity<CreatePayment.ReadyResponse> orderByCart(
 			@PathVariable Long cartId,
 			@RequestBody CreateOrder.Request request
 	) {
-		cartService.createOrder(cartId, request);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(cartService.createOrder(cartId, request));
 	}
 
 	@Operation(summary = "장바구니 전체 조회", description = "장바구니에 있는 상품들을 전체 조회할 수 있다.")
