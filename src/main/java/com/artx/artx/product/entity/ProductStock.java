@@ -22,6 +22,7 @@ public class ProductStock {
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "productStock")
 	private Product product;
 
+	@Version
 	private Long quantity;
 
 	public void increase(long quantity) {

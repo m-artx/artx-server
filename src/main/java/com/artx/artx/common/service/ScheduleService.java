@@ -1,6 +1,10 @@
 package com.artx.artx.common.service;
 
 import com.artx.artx.cart.repository.CartItemRepository;
+import com.artx.artx.order.repository.OrderRepository;
+import com.artx.artx.order.type.OrderStatus;
+import com.artx.artx.payment.repository.PaymentRepository;
+import com.artx.artx.payment.type.PaymentStatus;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,8 @@ public class ScheduleService {
 	private final RedisTemplate<String, Long> redisTemplate;
 	private final ProductRepository productRepository;
 	private final CartItemRepository cartItemRepository;
+	private final OrderRepository orderRepository;
+	private final PaymentRepository paymentRepository;
 
 	@Scheduled(fixedDelay = 600000L)
 	@Transactional
@@ -43,5 +49,17 @@ public class ScheduleService {
 	public void deleteExpiredCartItems(){
 		cartItemRepository.deleteExpiredItems(LocalDateTime.now().minusDays(30));
 	}
+
+	@Scheduled(cron = "0 55 * * * *")
+	@Transactional
+	public void updateExpiredOrderToCancel(){
+		orderRepository.updateExpiredOrderToCancel(LocalDateTime.now().minusDays(7), OrderStatus.ORDER_READY, OrderStatus.ORDER_CANCEL);
+		paymentRepository.updateExpiredPaymentToCancel(LocalDateTime.now().minusDays(7), PaymentStatus.PAYMENT_READY, PaymentStatus.PAYMENT_CANCEL);
+	}
+
+
+
+
+
 
 }

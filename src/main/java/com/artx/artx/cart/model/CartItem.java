@@ -30,7 +30,7 @@ public class CartItem extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Product product;
 
-	private long quantity = 1L;
+	private long quantity;
 
 	@PrePersist
 	public void prePersist(){
@@ -44,6 +44,7 @@ public class CartItem extends BaseEntity {
 		return CartItem.builder()
 				.cart(cart)
 				.product(product)
+				.quantity(1L)
 				.build();
 	}
 

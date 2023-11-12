@@ -4,7 +4,6 @@ import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
-import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.payment.entity.KakaoPayment;
 import com.artx.artx.payment.entity.Payment;
 import com.artx.artx.payment.model.CancelPayment;
@@ -13,6 +12,9 @@ import com.artx.artx.payment.repository.KakaoPaymentRepository;
 import com.artx.artx.payment.repository.PaymentRepository;
 import com.artx.artx.payment.type.PaymentStatus;
 import com.artx.artx.payment.type.PaymentType;
+import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductStock;
+import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -25,6 +27,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +37,7 @@ public class KakaoPayService implements PaymentService {
 	private final RestTemplate restTemplate;
 	private final KakaoPaymentRepository kakaoPaymentRepository;
 	private final PaymentRepository paymentRepository;
-	private final OrderRepository orderRepository;
+	private final ProductService productService;
 
 	@Value("${kakaopay.key}")
 	private String apiKey;
@@ -87,7 +91,6 @@ public class KakaoPayService implements PaymentService {
 					.payment(payment)
 					.build()
 			);
-
 			order.setPayment(payment);
 			return readyResponse;
 		} catch (Exception e) {
@@ -147,8 +150,24 @@ public class KakaoPayService implements PaymentService {
 			HttpEntity request = new HttpEntity(params, headers);
 			CreatePayment.ApprovalResponse response = restTemplate.postForObject(approvalApiAddress, request, CreatePayment.ApprovalResponse.class);
 			payment.toPaymentSuccess();
-			orderProducts.forEach(orderProduct -> orderProduct.getProduct().decrease(orderProduct.getQuantity()));
 			order.toOrderSuccess();
+
+			List<ProductStock> productStocks = orderProducts.stream().map(OrderProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
+
+			//재고 감소
+			Map<Long, Long> orderProductIdsAndQuantities = orderProducts.stream().collect(Collectors.toMap(
+					(orderProduct -> orderProduct.getProduct().getId()),
+					(orderProduct -> orderProduct.getQuantity()))
+			);
+
+			for (OrderProduct orderProduct : orderProducts) {
+				Product product = orderProduct.getProduct();
+				ProductStock productStock = product.getProductStock();
+
+				productStock.decrease(orderProductIdsAndQuantities.get(product.getId()));
+			}
+
+
 			return response;
 		} catch (Exception e) {
 			payment.toPaymentFailure();

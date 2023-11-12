@@ -10,9 +10,11 @@ import com.artx.artx.cart.repository.CartRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.order.model.CreateOrder;
-import com.artx.artx.order.model.OrderDetail;
+import com.artx.artx.order.model.OrderProductIdAndQuantity;
 import com.artx.artx.order.service.OrderService;
+import com.artx.artx.payment.model.CreatePayment;
 import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,23 +72,29 @@ public class CartService {
 	}
 
 	@Transactional
-	public void createOrder(Long cartId, CreateOrder.Request request) {
-		orderService.createOrder(request);
+	public CreatePayment.ReadyResponse createOrder(Long cartId, CreateOrder.Request request) {
+		CreatePayment.ReadyResponse response = orderService.createOrder(request);
 		cartItemRepository.deleteAllByCartIdAndProductIds(
 				cartId,
 				request.getOrderDetails().stream()
-						.map(OrderDetail::getProductId)
+						.map(OrderProductIdAndQuantity::getProductId)
 						.collect(Collectors.toList()));
+
+		return response;
 	}
 
 	@Transactional(readOnly = true)
 	public ReadCartItem.Response fetchCarItemsByCartId(Long cartId) {
 		Cart cart = getCartById(cartId);
 		List<CartItem> cartItems = cart.getCartItems();
+		List<ProductStock> productStocks = cartItems.stream().map(CartItem::getProduct).map(Product::getProductStock).collect(Collectors.toList());
+		Map<Long, ProductStock> productIdsAndQuantities = productStocks.stream()
+				.collect(Collectors.toMap(productStock -> productStock.getProduct().getId(), productStock -> productStock));
+
 		return ReadCartItem.Response.from(
 				cartId,
 				cartItems.stream()
-						.map(cartItem -> ReadCartItem.CartItemDetail.from(imagesApiAddress, cartItem))
+						.map(cartItem -> ReadCartItem.CartItemDetail.from(imagesApiAddress, cartItem, productIdsAndQuantities.get(cartItem.getProduct().getId()).getQuantity()))
 						.collect(Collectors.toList())
 		);
 	}

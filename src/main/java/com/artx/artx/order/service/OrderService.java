@@ -6,7 +6,7 @@ import com.artx.artx.order.entity.Delivery;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.order.model.CreateOrder;
-import com.artx.artx.order.model.OrderDetail;
+import com.artx.artx.order.model.OrderProductIdAndQuantity;
 import com.artx.artx.order.model.ReadOrder;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
@@ -15,6 +15,7 @@ import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
 import com.artx.artx.payment.service.PaymentService;
 import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.service.UserService;
@@ -42,14 +43,15 @@ public class OrderService {
 		User user = userService.getUserByUserId(request.getUserId());
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
 		List<Product> products = productService.getAllProductByIds(productIdsAndQuantities.keySet());
+		List<ProductStock> productStocks = products.stream().map(Product::getProductStock).collect(Collectors.toList());
 
 		if(products.isEmpty()){
 			throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
 		}
 
 		//재고 확인
-		products.stream().forEach(product -> {
-			if(product.getQuantity() < productIdsAndQuantities.get(product.getId())){
+		productStocks.stream().forEach(productStock -> {
+			if(productStock.getQuantity() < productIdsAndQuantities.get(productStock.getProduct().getId())){
 				throw new BusinessException(ErrorCode.NOT_ENOUGH_QUANTITY);
 			}
 		});
@@ -71,10 +73,11 @@ public class OrderService {
 		});
 
 		try{
-			products.stream().forEach(product -> {
-				//재고 수량 감소 여부 확인
-				product.canDecrease(productIdsAndQuantities.get(product.getId()));
+			//재고 수량 감소 가능 확인
+			productStocks.stream().forEach(productStock -> {
+				productStock.canDecrease(productIdsAndQuantities.get(productStock.getProduct().getId()));
 			});
+
 			CreatePayment.ReadyResponse readyResponse = paymentService.readyPayment(order);
 			return readyResponse;
 
@@ -96,7 +99,7 @@ public class OrderService {
 
 	private Map<Long, Long> extractProductIdsAndQuantities(CreateOrder.Request request) {
 		return request.getOrderDetails().stream()
-				.collect(Collectors.toMap(OrderDetail::getProductId, OrderDetail::getProductQuantity));
+				.collect(Collectors.toMap(OrderProductIdAndQuantity::getProductId, OrderProductIdAndQuantity::getProductQuantity));
 	}
 
 	@Transactional(readOnly = true)
@@ -115,6 +118,21 @@ public class OrderService {
 		order.isCancelable();
 		payment.isCancelable();
 
-		return paymentService.cancelPayment(payment);
+		try {
+			CancelPayment response = paymentService.cancelPayment(payment);
+			List<OrderProduct> orderProducts = order.getOrderProducts();
+			List<ProductStock> productStocks = orderProducts.stream().map(OrderProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
+			Map<Long, ProductStock> productIdsAndStocks = productStocks.stream().collect(Collectors.toMap((productStock -> productStock.getProduct().getId()), (productStock -> productStock)));
+
+			orderProducts.stream().forEach(orderProduct -> {
+				ProductStock productStock = productIdsAndStocks.get(orderProduct.getProduct().getId());
+				productStock.increase(orderProduct.getQuantity());
+			});
+			return response;
+
+		}catch (Exception e){
+
+		}
+		return null;
 	}
 }

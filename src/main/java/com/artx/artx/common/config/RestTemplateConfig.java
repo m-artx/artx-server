@@ -22,11 +22,14 @@ public class RestTemplateConfig {
 	public RestTemplate restTemplate(){
 
 		RestTemplate restTemplate = new RestTemplate();
-		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		if(proxyHost != null && !proxyHost.equals("") && proxyPort != 0){
+			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 
-		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
-		requestFactory.setProxy(proxy);
-		restTemplate.setRequestFactory(requestFactory);
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+			requestFactory.setProxy(proxy);
+			restTemplate.setRequestFactory(requestFactory);
+		}
+
 
 		return restTemplate;
 	}

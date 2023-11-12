@@ -6,6 +6,7 @@ import com.artx.artx.common.service.RedisCacheService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductImage;
+import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.model.CreateProduct;
 import com.artx.artx.product.model.ReadProduct;
 import com.artx.artx.product.model.ReadProductCategory;
@@ -56,10 +57,17 @@ public class ProductService {
 	public CreateProduct.Response createProduct(CreateProduct.Request request, List<MultipartFile> files) {
 		User user = getUserById(request.getUserId());
 		user.canCreateProduct();
+
+		// 작품 등록
 		Product product = productRepository.save(
-				Product.from(request, getProductCategoryById(request.getProductCategoryType()), user)
+				Product.from(request)
 		);
+
+		product.setCategory(getProductCategoryById(request.getProductCategoryType()));
+		product.setUser(user);
+		product.setProductStock(ProductStock.builder().quantity(request.getProductQuantity()).build());
 		product.saveProductImages(saveProductImages(product, imagesUploadDirectory, files));
+
 		return CreateProduct.Response.from(product);
 	}
 
@@ -67,7 +75,7 @@ public class ProductService {
 	public List<ProductImage> saveProductImages(Product product, String uploadDir, List<MultipartFile> files) {
 		List<ProductImage> productImages = new ArrayList<>();
 
-		for(int i = 0; i < files.size(); i++){
+		for (int i = 0; i < files.size(); i++) {
 			MultipartFile file = files.get(i);
 
 			try {
@@ -80,7 +88,7 @@ public class ProductService {
 						.build()
 				);
 
-				if(i == 0){
+				if (i == 0) {
 					product.setReresentativeImage(filename);
 				}
 
@@ -101,12 +109,12 @@ public class ProductService {
 	// 작품 유저 또는 제목 검색
 	@Transactional
 	public Page<ReadProduct.SimpleResponse> searchProducts(SearchType type, String name, Pageable pageable) {
-		if(type == SearchType.USER){
+		if (type == SearchType.USER) {
 			return productRepository.findAllByUser_Nickname(name, pageable)
 					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}
 
-		if(type == SearchType.TITLE){
+		if (type == SearchType.TITLE) {
 			return productRepository.findAllByTitle(name, pageable)
 					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}
@@ -116,8 +124,9 @@ public class ProductService {
 
 	// 특정 작품 상세페이지
 	@Transactional(readOnly = true)
-	public ReadProduct.Response readProductDetail(Long productId){
+	public ReadProduct.Response readProductDetail(Long productId) {
 		Product product = productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
 		redisCacheService.countProductView(productId);
 		return ReadProduct.Response.from(imagesApiAddress, product);
 	}
@@ -125,11 +134,11 @@ public class ProductService {
 	// 최근 작품 및 인기 작품
 	@Transactional(readOnly = true)
 	public List<ReadProduct.SimpleResponse> readMainPageProducts(FilterType type) {
-		if(type == FilterType.LATEST){
+		if (type == FilterType.LATEST) {
 			return productRepository.findMainPageProductsByLatest().stream().map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 
-		if(type == FilterType.POPULARITY){
+		if (type == FilterType.POPULARITY) {
 			return productRepository.findMainPageProductsByPopularity().stream().map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 
@@ -137,7 +146,7 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ReadProductCategory.ResponseAll> readCategories(){
+	public List<ReadProductCategory.ResponseAll> readCategories() {
 		List<ProductCategory> categories = productCategoryRepository.findAllWithProductCategoryImage();
 		return categories.stream().map(category -> ReadProductCategory.ResponseAll.from(imagesApiAddress, category)).collect(Collectors.toList());
 	}
@@ -145,8 +154,8 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public Page<ReadProduct.SimpleResponse> readProductsByCategory(ProductCategoryType type, Pageable pageable) {
 
-		if(type == ProductCategoryType.ALL){
-			return	productRepository.findProductsByCategory(pageable)
+		if (type == ProductCategoryType.ALL) {
+			return productRepository.findProductsByCategory(pageable)
 					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));
 		}
 
@@ -179,6 +188,5 @@ public class ProductService {
 	public List<Product> getAllProductByIds(Set<Long> productId) {
 		return productRepository.findAllById(productId);
 	}
-
 
 }

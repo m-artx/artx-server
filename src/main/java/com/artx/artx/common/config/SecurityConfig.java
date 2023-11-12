@@ -42,7 +42,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(it -> {
 					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
 					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
-					it.requestMatchers(HttpMethod.POST, "/api/payments").permitAll();
+					it.requestMatchers("/api/payments/**").permitAll();
 					it.anyRequest().authenticated();
 				})
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
