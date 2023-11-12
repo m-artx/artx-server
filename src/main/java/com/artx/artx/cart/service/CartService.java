@@ -1,6 +1,7 @@
 package com.artx.artx.cart.service;
 
 import com.artx.artx.cart.dto.CreateCartItem;
+import com.artx.artx.cart.dto.DeleteCartItem;
 import com.artx.artx.cart.dto.ReadCartItem;
 import com.artx.artx.cart.model.Cart;
 import com.artx.artx.cart.model.CartItem;
@@ -18,6 +19,10 @@ import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,22 +89,25 @@ public class CartService {
 	}
 
 	@Transactional(readOnly = true)
-	public ReadCartItem.Response fetchCarItemsByCartId(Long cartId) {
+	public ReadCartItem.Response readAllCarItemsByCartId(Long cartId, Pageable pageable) {
 		Cart cart = getCartById(cartId);
 		List<CartItem> cartItems = cart.getCartItems();
 		List<ProductStock> productStocks = cartItems.stream().map(CartItem::getProduct).map(Product::getProductStock).collect(Collectors.toList());
 		Map<Long, ProductStock> productIdsAndQuantities = productStocks.stream()
 				.collect(Collectors.toMap(productStock -> productStock.getProduct().getId(), productStock -> productStock));
 
+		Page<CartItem> cartItemPages = new PageImpl<>(cartItems, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), cartItems.size());
+
 		return ReadCartItem.Response.from(
 				cartId,
-				cartItems.stream()
-						.map(cartItem -> ReadCartItem.CartItemDetail.from(imagesApiAddress, cartItem, productIdsAndQuantities.get(cartItem.getProduct().getId()).getQuantity()))
-						.collect(Collectors.toList())
+				cartItemPages.map(cartItem -> ReadCartItem.CartItemDetail.from(
+						imagesApiAddress,
+						cartItem,
+						productIdsAndQuantities.get(cartItem.getProduct().getId()).getQuantity())
+				)
 		);
 	}
 
-	//TODO: N+1
 	private Cart getCartById(Long cartId) {
 		return cartRepository.readCartWithCartItemAndProductByCartId(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
 	}
@@ -109,12 +117,14 @@ public class CartService {
 	}
 
 	@Transactional
-	public void deleteCarItems(Long cartId) {
+	public void deleteAllCarItems(Long cartId) {
 		Cart cart = getCartById(cartId);
-		List<CartItem> cartItems = cart.getCartItems();
-		for (CartItem cartItem : cartItems) {
-			System.out.println(cartItem.getCartItemId());
-		}
 		cartItemRepository.deleteAllInBatch(cart.getCartItems());
+	}
+
+	@Transactional
+	public void deleteSelectedCartItems(Long cartId, DeleteCartItem.Request request) {
+		List<Long> productIds = request.getProductIds();
+		cartItemRepository.deleteSelectedCartItemsByCartIdAndProductIds(cartId, productIds);
 	}
 }

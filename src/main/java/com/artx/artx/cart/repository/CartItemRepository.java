@@ -19,4 +19,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItemId> 
 	@Modifying
 	@Query("DELETE FROM CartItem c WHERE c.createdAt < :thirtyDaysAgo")
 	void deleteExpiredItems(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
+
+	@Modifying
+	@Query("DELETE FROM CartItem ci WHERE ci.cart.id = :cartId AND ci.product.id IN :productIds")
+	void deleteSelectedCartItemsByCartIdAndProductIds(@Param("cartId")Long cartId, @Param("productIds")List<Long> productIds);
 }

@@ -4,8 +4,7 @@ import com.artx.artx.cart.model.CartItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public class ReadCartItem {
 
@@ -16,9 +15,9 @@ public class ReadCartItem {
 		private Long cartId;
 
 		@Schema(description = "장바구니 작품 상세 정보", nullable = false, example = "")
-		private List<CartItemDetail> cartItemDetails;
+		private Page<CartItemDetail> cartItemDetails;
 
-		public static Response from(Long cartId, List<CartItemDetail> cartItemDetails){
+		public static Response from(Long cartId, Page<CartItemDetail> cartItemDetails){
 			return Response.builder()
 					.cartId(cartId)
 					.cartItemDetails(cartItemDetails)
@@ -29,8 +28,7 @@ public class ReadCartItem {
 	@Getter
 	@Builder
 	public static class CartItemDetail {
-		@Schema(description = "장바구니 고유 식별 번호", nullable = false, example = "1")
-		private Long cartId;
+
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 		@Schema(description = "작품 대표 이미지", nullable = false, example = "http://127.0.0.1:8080/api/images/1f66d818-4ff2-4a14-9c0c-d77dc30c0639_Rectangle_635.png")
@@ -46,7 +44,6 @@ public class ReadCartItem {
 
 		public static CartItemDetail from(String imagesApiAddress, CartItem cartItem, Long carItemQuantity){
 			return CartItemDetail.builder()
-					.cartId(cartItem.getCartItemId().getCartId())
 					.productId(cartItem.getCartItemId().getProductId())
 					.productRepresentativeImage(imagesApiAddress + cartItem.getProduct().getRepresentativeImage())
 					.productTitle(cartItem.getProduct().getTitle())
