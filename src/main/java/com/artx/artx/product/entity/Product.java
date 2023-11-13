@@ -41,6 +41,7 @@ public class Product extends BaseEntity {
 	private String description;
 	private long price;
 	private long views;
+	private boolean isDeleted;
 
 	//fetch lazy(X)
 	@OneToOne(cascade = CascadeType.ALL)
@@ -52,11 +53,9 @@ public class Product extends BaseEntity {
 				.title(request.getProductTitle())
 				.description(request.getProductDescription())
 				.price(request.getProductPrice())
+				.isDeleted(false)
 				.build();
 	}
-
-
-
 
 	//TODO: list 개수 제한 필요
 	public void addProductImage(ProductImage productImage){
@@ -67,9 +66,16 @@ public class Product extends BaseEntity {
 	}
 
 	public void setProductImages(List<MultipartFile> multipartFiles) {
-		List<ProductImage> productImages = multipartFiles.stream().map(ProductImage::from).collect(Collectors.toList());
-		productImages.stream().forEach(productImage -> productImage.setProduct(this));
-		this.productImages = productImages;
+		if(multipartFiles != null){
+			List<ProductImage> productImages = multipartFiles.stream().map(ProductImage::from).collect(Collectors.toList());
+			productImages.stream().forEach(productImage -> productImage.setProduct(this));
+			this.representativeImage = productImages.get(0).getName();
+			this.productImages = productImages;
+		} else {
+			this.productImages.stream().forEach(productImage -> productImage.setProduct(null));
+			this.representativeImage = null;
+			this.productImages.removeAll(this.productImages);
+		}
 	}
 
 	public void setReresentativeImage(String fileName) {

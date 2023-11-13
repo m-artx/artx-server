@@ -1,5 +1,7 @@
 package com.artx.artx.image.service;
 
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.image.model.CustomMultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -39,11 +41,17 @@ public class ImageService {
 	}
 
 	public List<MultipartFile> saveProductImages(List<MultipartFile> files) {
+		if(files.size() <= 0){
+			return null;
+		}
+
 		List<MultipartFile> modifiedMultipartFile = new ArrayList<>();
 
 		for (int i = 0; i < files.size(); i++) {
 			MultipartFile file = files.get(i);
-
+			if(file.getOriginalFilename() == null || file.getOriginalFilename().equals("")){
+				continue;
+			}
 			try {
 				String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
 				Path path = Paths.get(imagesUploadDirectory, filename);
@@ -63,5 +71,19 @@ public class ImageService {
 
 		}
 		return modifiedMultipartFile;
+	}
+
+	public void deleteImages(List<String> images) {
+		for (String filename : images) {
+			Path path = Paths.get(imagesUploadDirectory, filename);
+
+			File file = path.toFile();
+			if(file.exists()){
+				boolean isDeleted = file.delete();
+				if(!isDeleted){
+					throw new BusinessException(ErrorCode.FILE_NOT_DELETED);
+				}
+			}
+		}
 	}
 }

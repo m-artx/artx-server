@@ -5,6 +5,7 @@ import com.artx.artx.product.type.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -70,4 +71,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	)
 	List<Product> findMainPageProductsByPopularity();
 
+	@Modifying
+	@Query("UPDATE Product p SET p.isDeleted = :isDeleted WHERE p = :product")
+	void updateToDeleted(@Param("product")Product product, boolean isDeleted);
+
+	@Modifying
+	@Query("UPDATE Product p SET p.isDeleted = :isDeleted WHERE p IN :products")
+	void updateToDeleted(@Param("products")List<Product> product, boolean isDeleted);
 }

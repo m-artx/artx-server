@@ -1,6 +1,7 @@
 package com.artx.artx.product.controller;
 
 import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.product.model.DeleteProduct;
 import com.artx.artx.product.model.ReadProduct;
 import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.service.ProductService;
@@ -31,7 +32,7 @@ public class ProductController {
 	@PostMapping
 	public ResponseEntity<CreateProduct.Response> create(
 			@RequestPart CreateProduct.Request request,
-			@RequestPart List<MultipartFile> files
+			@Nullable @RequestPart List<MultipartFile> files
 	){
 		return ResponseEntity.ok(productService.createProduct(request, files));
 	}
@@ -44,6 +45,20 @@ public class ProductController {
 			@Nullable @RequestParam String name,
 			Pageable pageable){
 		return ResponseEntity.ok(productService.readAllProducts(category, type, name , pageable));
+	}
+
+	@Operation(summary = "작품 삭제", description = "작품을 삭제할 수 있다.")
+	@DeleteMapping("/{productId}")
+	public ResponseEntity<Page<ReadProduct.SimpleResponse>> deleteProduct(@PathVariable Long productId){
+		productService.deleteProduct(productId);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "작품 선택 삭제", description = "작품을 선택 삭제할 수 있다.")
+	@DeleteMapping
+	public ResponseEntity<Page<ReadProduct.SimpleResponse>> deleteAllProducts(@RequestBody DeleteProduct.Request request){
+		productService.deleteAllProducts(request);
+		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "작품 상세 페이지 조회", description = "특정 작품의 상세 페이지를 조회할 수 있다.")

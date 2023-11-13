@@ -31,6 +31,8 @@ public class ReadProduct {
 		private Long productQuantity;
 		@Schema(description = "작품 가격", nullable = false, example = "100000")
 		private Long productPrice;
+		@Schema(description = "작품 등록 여부", nullable = false, example = "true")
+		private Boolean isDeleted;
 		@Schema(description = "작품 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
 		private LocalDate productCreatedAt;
 
@@ -51,6 +53,7 @@ public class ReadProduct {
 					.productPrice(product.getPrice())
 					.productQuantity(product.getProductStock().getQuantity())
 					.productCreatedAt(LocalDate.from(product.getCreatedAt()))
+					.isDeleted(product.isDeleted())
 					.build();
 		}
 	}

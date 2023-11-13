@@ -6,8 +6,10 @@ import com.artx.artx.common.service.RedisCacheService;
 import com.artx.artx.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
+import com.artx.artx.product.entity.ProductImage;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.product.model.DeleteProduct;
 import com.artx.artx.product.model.ReadProduct;
 import com.artx.artx.product.model.ReadProductCategory;
 import com.artx.artx.product.repository.ProductCategoryRepository;
@@ -26,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,6 +111,27 @@ public class ProductService {
 		return categories.stream().map(category -> ReadProductCategory.ResponseAll.from(imagesApiAddress, category)).collect(Collectors.toList());
 	}
 
+	@Transactional
+	public void deleteProduct(Long productId) {
+		Product product = getProductByIdWithProductImages(productId);
+		List<String> images = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
+		imageService.deleteImages(images);
+		product.setProductImages(null);
+		productRepository.updateToDeleted(product, true);
+	}
+
+	@Transactional
+	public void deleteAllProducts(DeleteProduct.Request request) {
+		List<Product> products = getAllProductByIds(request.getProductIds());
+		for (Product product : products) {
+			List<String> images = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
+			imageService.deleteImages(images);
+			product.setProductImages(null);
+		}
+
+		productRepository.updateToDeleted(products, true);
+	}
+
 	public Product getProductById(Long productId) {
 		return productRepository.findById(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 	}
@@ -118,7 +140,7 @@ public class ProductService {
 		return productRepository.findByIdWithProductImages(productId).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 	}
 
-	public List<Product> getAllProductByIds(Set<Long> productId) {
+	public List<Product> getAllProductByIds(List<Long> productId) {
 		return productRepository.findAllById(productId);
 	}
 
