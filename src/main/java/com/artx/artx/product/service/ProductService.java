@@ -66,6 +66,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public Page<ReadProduct.SimpleResponse> readAllProducts(Category category, Type type, String name, Pageable pageable) {
+
 		if (type == null){
 			return productRepository.findAllByTitleWithProductImages(category, name, pageable)
 					.map(product -> ReadProduct.SimpleResponse.from(imagesApiAddress, productsApiAddress, product));

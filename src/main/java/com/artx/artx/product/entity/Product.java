@@ -66,20 +66,19 @@ public class Product extends BaseEntity {
 	}
 
 	public void setProductImages(List<MultipartFile> multipartFiles) {
-		if(multipartFiles != null){
-			List<ProductImage> productImages = multipartFiles.stream().map(ProductImage::from).collect(Collectors.toList());
-			productImages.stream().forEach(productImage -> productImage.setProduct(this));
-			this.representativeImage = productImages.get(0).getName();
-			this.productImages = productImages;
-		} else {
-			this.productImages.stream().forEach(productImage -> productImage.setProduct(null));
-			this.representativeImage = null;
-			this.productImages.removeAll(this.productImages);
-		}
-	}
+		if(multipartFiles != null && multipartFiles.size() > 0){
 
-	public void setReresentativeImage(String fileName) {
-		this.representativeImage = fileName;
+			List<ProductImage> productImages = multipartFiles.stream()
+					.map(ProductImage::from)
+					.peek(productImage -> productImage.setProduct(this))
+					.collect(Collectors.toList());
+
+			if(productImages != null && productImages.size() > 0){
+				this.representativeImage = productImages.get(0).getName();
+			}
+
+			this.productImages = productImages;
+		}
 	}
 
 	public void setViews(long views) {

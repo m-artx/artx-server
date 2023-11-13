@@ -41,7 +41,7 @@ public class ImageService {
 	}
 
 	public List<MultipartFile> saveProductImages(List<MultipartFile> files) {
-		if(files.size() <= 0){
+		if(files == null){
 			return null;
 		}
 
