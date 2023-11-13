@@ -6,7 +6,6 @@ import com.artx.artx.common.service.RedisCacheService;
 import com.artx.artx.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
-import com.artx.artx.product.entity.ProductImage;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.model.CreateProduct;
 import com.artx.artx.product.model.DeleteProduct;
@@ -115,21 +114,12 @@ public class ProductService {
 	@Transactional
 	public void deleteProduct(Long productId) {
 		Product product = getProductByIdWithProductImages(productId);
-		List<String> images = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
-		imageService.deleteImages(images);
-		product.setProductImages(null);
 		productRepository.updateToDeleted(product, true);
 	}
 
 	@Transactional
 	public void deleteAllProducts(DeleteProduct.Request request) {
 		List<Product> products = getAllProductByIds(request.getProductIds());
-		for (Product product : products) {
-			List<String> images = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
-			imageService.deleteImages(images);
-			product.setProductImages(null);
-		}
-
 		productRepository.updateToDeleted(products, true);
 	}
 
