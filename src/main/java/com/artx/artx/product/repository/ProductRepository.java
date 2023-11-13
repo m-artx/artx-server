@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query(
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages pi " +
-					"WHERE p.id = :productId"
+					"WHERE p.id = :productId AND p.isDeleted = false"
 	)
 	Optional<Product> findByIdWithProductImages(@Param("productId") Long productId);
 
@@ -33,7 +33,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
 					"WHERE (:category IS NULL OR p.productCategory.type = :category) " +
-					"AND (:name IS NULL OR p.title = :name) "
+					"AND (:name IS NULL OR p.title = :name) " +
+					"AND p.isDeleted = false"
 	)
 	Page<Product> findAllByTitleWithProductImages(@Param("category") Category category, @Param("name") String name, Pageable pageable);
 
@@ -45,7 +46,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
 					"WHERE (:category IS NULL OR p.productCategory.type = :category) " +
-					"AND (:name IS NULL OR p.user.nickname = :name) "
+					"AND (:name IS NULL OR p.user.nickname = :name) " +
+					"AND p.isDeleted = false"
 	)
 	Page<Product> findAllByNicknameWithProductImages(@Param("category") Category category, @Param("name") String name, Pageable pageable);
 
@@ -56,7 +58,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query(
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
+					"WHERE p.isDeleted = false " +
 					"ORDER BY p.createdAt ASC LIMIT 10"
+
 	)
 	List<Product> findMainPageProductsByLatest();
 
@@ -67,6 +71,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query(
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
+					"WHERE p.isDeleted = false " +
 					"ORDER BY p.views DESC LIMIT 10"
 	)
 	List<Product> findMainPageProductsByPopularity();
