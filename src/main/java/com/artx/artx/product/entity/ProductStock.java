@@ -2,6 +2,7 @@ package com.artx.artx.product.entity;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.product.model.CreateProduct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,10 @@ public class ProductStock {
 
 	@Version
 	private Long quantity;
+
+	public static ProductStock from(CreateProduct.Request request){
+		return ProductStock.builder().quantity(request.getProductQuantity()).build();
+	}
 
 	public void increase(long quantity) {
 		if(quantity <= 0){

@@ -2,7 +2,6 @@ package com.artx.artx.product.model;
 
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductImage;
-import com.artx.artx.product.entity.ProductStock;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +16,7 @@ public class ReadProduct {
 	@Getter
 	@Builder
 	public static class Response {
+
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 		@Schema(description = "작품 대표 이미지", nullable = false, example = "http://127.0.0.1:8080/api/images/1f66d818-4ff2-4a14-9c0c-d77dc30c0639_Rectangle_635.png")
@@ -31,6 +31,8 @@ public class ReadProduct {
 		private Long productQuantity;
 		@Schema(description = "작품 가격", nullable = false, example = "100000")
 		private Long productPrice;
+		@Schema(description = "작품 등록 여부", nullable = false, example = "true")
+		private Boolean isDeleted;
 		@Schema(description = "작품 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
 		private LocalDate productCreatedAt;
 
@@ -51,6 +53,7 @@ public class ReadProduct {
 					.productPrice(product.getPrice())
 					.productQuantity(product.getProductStock().getQuantity())
 					.productCreatedAt(LocalDate.from(product.getCreatedAt()))
+					.isDeleted(product.isDeleted())
 					.build();
 		}
 	}

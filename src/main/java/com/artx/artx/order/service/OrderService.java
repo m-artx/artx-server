@@ -42,7 +42,7 @@ public class OrderService {
 	public CreatePayment.ReadyResponse createOrder(CreateOrder.Request request) {
 		User user = userService.getUserByUserId(request.getUserId());
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
-		List<Product> products = productService.getAllProductByIds(productIdsAndQuantities.keySet());
+		List<Product> products = productService.getAllProductByIds(productIdsAndQuantities.keySet().stream().toList());
 		List<ProductStock> productStocks = products.stream().map(Product::getProductStock).collect(Collectors.toList());
 
 		if(products.isEmpty()){
