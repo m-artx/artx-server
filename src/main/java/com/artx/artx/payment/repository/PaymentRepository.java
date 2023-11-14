@@ -25,8 +25,14 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
 
 	@Modifying
 	@Query("UPDATE Payment p SET p.status = :afterStatus WHERE p.createdAt < :sevenDaysAgo AND p.status = :beforeStatus")
-	void updateExpiredPaymentToCancel(@Param("sevenDaysAgo")LocalDateTime sevenDaysAgo, @Param("beforeStatus") PaymentStatus beforeStatus, PaymentStatus afterStatus);
+	void updateExpiredPaymentToCancel(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo, @Param("beforeStatus") PaymentStatus beforeStatus, PaymentStatus afterStatus);
 
-	@Query("SELECT p from Payment p LEFT JOIN FETCH p.order o WHERE o.user.userId = :userId")
-	Page<Payment> findAllByUserIdWithOrder(@Param("userId") UUID userId, Pageable pageable);
+	@Query(
+			"SELECT p from Payment p " +
+					"LEFT JOIN FETCH p.order o " +
+					"WHERE o.user.userId = :userId " +
+					"AND (:startDateTime IS NULL OR p.createdAt >= :startDateTime )" +
+					"AND (:endDateTime IS NULL OR p.createdAt <= :endDateTime )"
+	)
+	Page<Payment> findAllByUserIdWithOrder(@Param("userId") UUID userId, LocalDateTime startDateTime, LocalDateTime endDateTime, Pageable pageable);
 }

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -18,9 +20,16 @@ public class PaymentService {
 	private final PaymentRepository paymentRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ReadPayment.Response> readAllPayments(UUID userId, Pageable pageable){
-		Page<Payment> payments = paymentRepository.findAllByUserIdWithOrder(userId, pageable);
+	public Page<ReadPayment.Response> readAllPayments(UUID userId, LocalDate startDate, LocalDate endDate, Pageable pageable){
+
+
+		LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+		LocalDateTime endDateTime = endDate != null ? endDate.atStartOfDay().plusDays(1L) : null;
+
+		Page<Payment> payments = paymentRepository.findAllByUserIdWithOrder(userId, startDateTime, endDateTime, pageable);
 		return payments.map(ReadPayment.Response::from);
 	}
+
+
 
 }
