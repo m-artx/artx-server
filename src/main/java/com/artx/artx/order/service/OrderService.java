@@ -13,7 +13,7 @@ import com.artx.artx.order.type.OrderStatus;
 import com.artx.artx.payment.entity.Payment;
 import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
-import com.artx.artx.payment.service.PaymentService;
+import com.artx.artx.payment.service.KakaoPayService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.service.ProductService;
@@ -36,7 +36,7 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final UserService userService;
 	private final ProductService productService;
-	private final PaymentService paymentService;
+	private final KakaoPayService kakaoPayService;
 
 	@Transactional
 	public CreatePayment.ReadyResponse createOrder(CreateOrder.Request request) {
@@ -78,7 +78,7 @@ public class OrderService {
 				productStock.canDecrease(productIdsAndQuantities.get(productStock.getProduct().getId()));
 			});
 
-			CreatePayment.ReadyResponse readyResponse = paymentService.readyPayment(order);
+			CreatePayment.ReadyResponse readyResponse = kakaoPayService.readyPayment(order);
 			return readyResponse;
 
 		}catch (Exception e){
@@ -91,7 +91,7 @@ public class OrderService {
 		String representativeProductName = products.get(0).getTitle();
 		Integer orderProductsSize = products.size();
 
-		String orderTitle = orderProductsSize > 0 ?
+		String orderTitle = orderProductsSize > 1 ?
 				representativeProductName + " 외 " + (orderProductsSize - 1) +"개의 작품" :
 				representativeProductName;
 		return orderTitle;
@@ -119,7 +119,7 @@ public class OrderService {
 		payment.isCancelable();
 
 		try {
-			CancelPayment response = paymentService.cancelPayment(payment);
+			CancelPayment response = kakaoPayService.cancelPayment(payment);
 			List<OrderProduct> orderProducts = order.getOrderProducts();
 			List<ProductStock> productStocks = orderProducts.stream().map(OrderProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
 			Map<Long, ProductStock> productIdsAndStocks = productStocks.stream().collect(Collectors.toMap((productStock -> productStock.getProduct().getId()), (productStock -> productStock)));

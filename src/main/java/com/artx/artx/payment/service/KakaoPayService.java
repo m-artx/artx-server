@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoPayService implements PaymentService {
+public class KakaoPayService {
 
 	private final RestTemplate restTemplate;
 	private final KakaoPaymentRepository kakaoPaymentRepository;
@@ -100,7 +100,6 @@ public class KakaoPayService implements PaymentService {
 
 	}
 
-	@Override
 	@Transactional
 	public CancelPayment cancelPayment(Payment payment) {
 		HttpHeaders headers = new HttpHeaders();

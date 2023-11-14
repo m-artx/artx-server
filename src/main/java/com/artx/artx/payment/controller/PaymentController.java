@@ -1,40 +1,33 @@
 package com.artx.artx.payment.controller;
 
-import com.artx.artx.payment.service.KakaoPayService;
+
+import com.artx.artx.payment.model.ReadPayment;
+import com.artx.artx.payment.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.time.LocalDate;
+import java.util.UUID;
 
 @Tag(name = "결제")
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/api/users/{userId}/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
-	private final KakaoPayService kakaoPayService;
+	private final PaymentService paymentService;
 
-	@GetMapping("/approval")
-	public void approval(
-			@RequestParam(name = "partner_order_id") Long orderId,
-			@RequestParam String pg_token,
-			HttpServletResponse response
-	) throws IOException {
-		kakaoPayService.approvalPayment(orderId, pg_token);
-		response.sendRedirect("/success");
+	@GetMapping
+	public ResponseEntity<Page<ReadPayment.Response>> readAllPayments(
+			@PathVariable UUID userId,
+			@Nullable @RequestParam LocalDate startDate,
+			@Nullable @RequestParam LocalDate endDate,
+			Pageable pageable){
+		return ResponseEntity.ok(paymentService.readAllPayments(userId, startDate, endDate, pageable));
 	}
-
-	@PostMapping("/fail")
-	public void fail(HttpServletResponse response) throws IOException {
-		response.sendRedirect("/fail");
-	}
-
-	@PostMapping("/cancel")
-	public ResponseEntity<Void> cancel() {
-		return ResponseEntity.ok().build();
-	}
-
 }
