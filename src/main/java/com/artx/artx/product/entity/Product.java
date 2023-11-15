@@ -39,6 +39,7 @@ public class Product extends BaseEntity {
 	private String representativeImage;
 	private String title;
 	private String description;
+	private String commissionNotice;
 	private long price;
 	private long views;
 	private boolean isDeleted;

@@ -1,4 +1,4 @@
-package com.artx.artx.cart.model;
+package com.artx.artx.cart.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,15 +21,15 @@ public class Cart {
 	private Long id;
 
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-	private List<CartItem> cartItems;
+	private List<CartProduct> cartProducts;
 
-	public void addCartItem(CartItem cartItem) {
-		cartItem.setCart(this);
+	public void addCartProduct(CartProduct cartProduct) {
+		cartProduct.setCart(this);
 
-		if(this.cartItems == null){
-			this.cartItems = new ArrayList<>();
+		if(this.cartProducts == null){
+			this.cartProducts = new ArrayList<>();
 		}
-		this.cartItems.add(cartItem);
+		this.cartProducts.add(cartProduct);
 	}
 }
 

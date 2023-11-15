@@ -1,4 +1,4 @@
-package com.artx.artx.order.entity;
+package com.artx.artx.delivery.entity;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @Getter
 @Entity
@@ -20,8 +21,9 @@ import lombok.NoArgsConstructor;
 public class Delivery extends BaseEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue(generator = "delivery-id-generator")
+	@GenericGenerator(name = "delivery-id-generator", strategy = "com.artx.artx.common.util.DeliveryGenerator")
+	private String id;
 
 	@Embedded
 	private Address address;

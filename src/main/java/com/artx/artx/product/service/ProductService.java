@@ -7,10 +7,7 @@ import com.artx.artx.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductStock;
-import com.artx.artx.product.model.CreateProduct;
-import com.artx.artx.product.model.DeleteProduct;
-import com.artx.artx.product.model.ReadProduct;
-import com.artx.artx.product.model.ReadProductCategory;
+import com.artx.artx.product.model.*;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.Category;
@@ -47,7 +44,6 @@ public class ProductService {
 
 	@Transactional
 	public CreateProduct.Response createProduct(CreateProduct.Request request, List<MultipartFile> files) {
-		List<MultipartFile> modifiedProductImages = imageService.saveProductImages(files);
 		User user = userService.getUserByUserId(request.getUserId());
 		user.canCreateProduct();
 
@@ -58,9 +54,17 @@ public class ProductService {
 		product.setCategory(getProductCategoryById(request.getProductCategory()));
 		product.setUser(user);
 		product.setProductStock(ProductStock.from(request));
-		product.setProductImages(modifiedProductImages);
+
+		if(existsFiles(files)){
+			List<MultipartFile> modifiedProductImages = imageService.saveProductImages(files);
+			product.setProductImages(modifiedProductImages);
+		}
 
 		return CreateProduct.Response.from(product);
+	}
+
+	private boolean existsFiles(List<MultipartFile> files) {
+		return files != null && files.size() > 0;
 	}
 
 	@Transactional(readOnly = true)
@@ -140,4 +144,10 @@ public class ProductService {
 				.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
 
+	public void requestCommission(CreateCommission.Request request, Long productId) {
+		User user = userService.getUserByUserId(request.getUserId());
+		Product product = getProductById(productId);
+
+
+	}
 }

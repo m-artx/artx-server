@@ -16,7 +16,7 @@ public class ReadPayment {
 	public static class Response{
 
 		private UUID paymentId;
-		private Long orderId;
+		private String orderId;
 		private String orderTitle;
 		private Long paymentTotalAmount;
 		private PaymentType paymentType;

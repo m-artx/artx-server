@@ -24,14 +24,15 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-
 	@Transactional
 	public CreateUser.Response createUser(CreateUser.Request request){
 		if(userRepository.existsByUsername(request.getUsername())){
 			throw new BusinessException(ErrorCode.DUPLICATED_USERNAME);
 		}
 
-		User user = userRepository.save(User.from(request, passwordEncoder));
+		User user = userRepository.save(User.from(request));
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+
 		return CreateUser.Response.from(user);
 	}
 
@@ -46,8 +47,25 @@ public class UserService {
 		return userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 	}
 
+
+	@Transactional(readOnly = true)
+	public User getUserByUserIdWithCart(UUID userId){
+		return userRepository.findByIdWithCart(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	}
+
 	@Transactional(readOnly = true)
 	public Page<ReadUserDto> getNewArtists(Pageable pageable){
 		return userRepository.getNewArtists(UserRole.ARTIST, pageable);
 	}
+
+	@Transactional(readOnly = true)
+	public User getUserByUsername(String username) {
+		return userRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USERNAME));
+	}
+
+//	@Transactional
+//	public CreateUser.Response createInquiry(CreateInquiry.Request request) {
+//		request
+
+//	}
 }

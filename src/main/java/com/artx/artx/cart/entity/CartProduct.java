@@ -1,4 +1,4 @@
-package com.artx.artx.cart.model;
+package com.artx.artx.cart.entity;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -17,10 +17,10 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItem extends BaseEntity {
+public class CartProduct extends BaseEntity {
 
 	@EmbeddedId
-	private CartItemId cartItemId;
+	private CartProductId cartProductId;
 
 	@MapsId("cartId")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -34,14 +34,14 @@ public class CartItem extends BaseEntity {
 
 	@PrePersist
 	public void prePersist(){
-		if(this.cartItemId == null){
-			this.cartItemId = CartItemId.from(cart, product);
+		if(this.cartProductId == null){
+			this.cartProductId = CartProductId.from(cart, product);
 		}
 	}
 
-	public static CartItem from(Cart cart, Product product){
+	public static CartProduct from(Cart cart, Product product){
 
-		return CartItem.builder()
+		return CartProduct.builder()
 				.cart(cart)
 				.product(product)
 				.quantity(1L)
@@ -55,8 +55,8 @@ public class CartItem extends BaseEntity {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof CartItem cartItem)) return false;
-		return cart.equals(cartItem.cart) && product.equals(cartItem.product);
+		if (!(o instanceof CartProduct cartProduct)) return false;
+		return cart.equals(cartProduct.cart) && product.equals(cartProduct.product);
 	}
 
 	@Override

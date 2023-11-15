@@ -41,8 +41,8 @@ public class ImageService {
 	}
 
 	public List<MultipartFile> saveProductImages(List<MultipartFile> files) {
-		if(files == null){
-			return null;
+		if(files == null || files.size() <= 0){
+			throw new BusinessException(ErrorCode.NO_FILE);
 		}
 
 		List<MultipartFile> modifiedMultipartFile = new ArrayList<>();

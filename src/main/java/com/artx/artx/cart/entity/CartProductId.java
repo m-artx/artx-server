@@ -1,4 +1,4 @@
-package com.artx.artx.cart.model;
+package com.artx.artx.cart.entity;
 
 import com.artx.artx.product.entity.Product;
 import jakarta.persistence.Embeddable;
@@ -14,20 +14,20 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class CartItemId implements Serializable {
+public class CartProductId implements Serializable {
 
 	private Long cartId;
 	private Long productId;
 
-	public static CartItemId from(Cart cart, Product product){
-		return CartItemId.builder()
+	public static CartProductId from(Cart cart, Product product){
+		return CartProductId.builder()
 				.cartId(cart.getId())
 				.productId(product.getId())
 				.build();
 	}
 
-	public static CartItemId from(Long cartId, Long productId){
-		return CartItemId.builder()
+	public static CartProductId from(Long cartId, Long productId){
+		return CartProductId.builder()
 				.cartId(cartId)
 				.productId(productId)
 				.build();

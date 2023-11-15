@@ -1,8 +1,8 @@
 package com.artx.artx.cart.controller;
 
-import com.artx.artx.cart.dto.CreateCartItem;
-import com.artx.artx.cart.dto.DeleteCartItem;
-import com.artx.artx.cart.dto.ReadCartItem;
+import com.artx.artx.cart.model.CreateCartProduct;
+import com.artx.artx.cart.model.DeleteCartProduct;
+import com.artx.artx.cart.model.ReadCartProduct;
 import com.artx.artx.cart.service.CartService;
 import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.payment.model.CreatePayment;
@@ -23,7 +23,7 @@ public class CartController {
 
 	@Operation(summary = "장바구니 상품 추가", description = "상품을 장바구니에 추가할 수 있다.")
 	@PostMapping("/{cartId}/products/{productId}")
-	public ResponseEntity<CreateCartItem.Response> addToCart(@PathVariable Long cartId, @PathVariable Long productId) {
+	public ResponseEntity<CreateCartProduct.Response> addToCartProduct(@PathVariable Long cartId, @PathVariable Long productId) {
 		return ResponseEntity.ok(cartService.addProduct(cartId, productId));
 	}
 
@@ -58,29 +58,29 @@ public class CartController {
 
 	@Operation(summary = "장바구니 전체 조회", description = "장바구니에 있는 상품들을 전체 조회할 수 있다.")
 	@GetMapping("/{cartId}")
-	public ResponseEntity<ReadCartItem.Response> readAllCartItems(
+	public ResponseEntity<ReadCartProduct.Response> readAllCartItems(
 			@PathVariable Long cartId,
 			Pageable pageable
 	) {
-		return ResponseEntity.ok(cartService.readAllCarItemsByCartId(cartId, pageable));
+		return ResponseEntity.ok(cartService.readAllCarProductsByCartId(cartId, pageable));
 	}
 
 	@Operation(summary = "장바구니 전체 삭제", description = "장바구니에 있는 상품들을 전체 삭제할 수 있다.")
 	@DeleteMapping("/{cartId}/all")
-	public ResponseEntity<ReadCartItem.Response> deleteAllCartItems(
+	public ResponseEntity<ReadCartProduct.Response> deleteAllCartItems(
 			@PathVariable Long cartId
 	) {
-		cartService.deleteAllCarItems(cartId);
+		cartService.deleteAllCarProducts(cartId);
 		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "장바구니 선택 삭제", description = "장바구니에 있는 상품들을 전체 삭제할 수 있다.")
 	@DeleteMapping("/{cartId}")
-	public ResponseEntity<ReadCartItem.Response> deleteCartItems(
+	public ResponseEntity<ReadCartProduct.Response> deleteCartItems(
 			@PathVariable Long cartId,
-			@RequestBody DeleteCartItem.Request request
+			@RequestBody DeleteCartProduct.Request request
 	) {
-		cartService.deleteSelectedCartItems(cartId, request);
+		cartService.deleteSelectedCartProducts(cartId, request);
 		return ResponseEntity.ok().build();
 	}
 

@@ -20,6 +20,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 	Optional<User> findByUsername(String username);
 
+	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c")
+	Optional<User> findByIdWithCart(UUID userId);
+
 	@Query("SELECT new com.artx.artx.user.model.ReadUserDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
 	Page<ReadUserDto> getNewArtists(@Param("userRole") UserRole userRole, Pageable pageable);
 

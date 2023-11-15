@@ -1,12 +1,9 @@
 package com.artx.artx.product.controller;
 
-import com.artx.artx.product.model.CreateProduct;
-import com.artx.artx.product.model.DeleteProduct;
-import com.artx.artx.product.model.ReadProduct;
-import com.artx.artx.product.model.ReadProductCategory;
+import com.artx.artx.product.model.*;
 import com.artx.artx.product.service.ProductService;
-import com.artx.artx.product.type.Filter;
 import com.artx.artx.product.type.Category;
+import com.artx.artx.product.type.Filter;
 import com.artx.artx.product.type.Type;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -77,6 +74,16 @@ public class ProductController {
 	@GetMapping("/categories")
 	public ResponseEntity<List<ReadProductCategory.ResponseAll>> readCategories(){
 		return ResponseEntity.ok(productService.readCategories());
+	}
+
+	@Operation(summary = "전체 카테고리 조회", description = "모든 카테고리의 이름, 상세 설명, 대표 이미지를 조회할 수 있다.")
+	@PostMapping("/{productId}/commission")
+	public ResponseEntity<List<ReadProductCategory.ResponseAll>> requestCommission(
+			@PathVariable Long productId,
+			@RequestBody CreateCommission.Request request
+	){
+		productService.requestCommission(request, productId);
+		return ResponseEntity.ok().build();
 	}
 
 }

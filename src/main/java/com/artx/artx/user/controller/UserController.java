@@ -42,4 +42,12 @@ public class UserController {
 		return ResponseEntity.ok(userService.getNewArtists(pageable));
 	}
 
+//	@Operation(summary = "작가 문의", description = "작가에게 문의를 할 수 있다.")
+//	@PostMapping
+//	public ResponseEntity<CreateInquiry.Response> create(@RequestBody CreateUser.Request request){
+//		CreateUser.Response response = userService.createInquiry(request);
+//		return ResponseEntity.ok(response);
+//	}
+
+
 }

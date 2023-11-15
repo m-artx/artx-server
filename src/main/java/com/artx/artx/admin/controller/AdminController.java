@@ -1,9 +1,11 @@
 package com.artx.artx.admin.controller;
 
 import com.artx.artx.admin.model.CreateBanner;
+import com.artx.artx.admin.model.CreateNotice;
 import com.artx.artx.admin.model.CreateProductCategory;
 import com.artx.artx.admin.model.ReadBanner;
 import com.artx.artx.admin.service.BannerService;
+import com.artx.artx.admin.service.NoticeService;
 import com.artx.artx.admin.service.ProductCategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.List;
 public class AdminController {
 
 	private final BannerService bannerService;
+	private final NoticeService noticeService;
 	private final ProductCategoryService productCategoryService;
 
 	@GetMapping("/test")
@@ -39,6 +42,11 @@ public class AdminController {
 	public ResponseEntity<Void> createCategory(@RequestPart MultipartFile file, @RequestPart CreateProductCategory.Request request){
 		productCategoryService.createCategory(file, request);
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/notice")
+	public ResponseEntity<CreateNotice.Response> createNotice(@RequestPart CreateNotice.Request request){
+		return ResponseEntity.ok(noticeService.createNotice(request));
 	}
 
 	@GetMapping

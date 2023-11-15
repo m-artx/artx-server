@@ -1,12 +1,12 @@
-package com.artx.artx.cart.dto;
+package com.artx.artx.cart.model;
 
-import com.artx.artx.cart.model.CartItem;
+import com.artx.artx.cart.entity.CartProduct;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
-public class ReadCartItem {
+public class ReadCartProduct {
 
 	@Getter
 	@Builder
@@ -15,19 +15,19 @@ public class ReadCartItem {
 		private Long cartId;
 
 		@Schema(description = "장바구니 작품 상세 정보", nullable = false, example = "")
-		private Page<CartItemDetail> cartItemDetails;
+		private Page<CartProductDetail> cartProductDetails;
 
-		public static Response from(Long cartId, Page<CartItemDetail> cartItemDetails){
+		public static Response from(Long cartId, Page<CartProductDetail> cartProductDetails){
 			return Response.builder()
 					.cartId(cartId)
-					.cartItemDetails(cartItemDetails)
+					.cartProductDetails(cartProductDetails)
 					.build();
 		}
 	}
 
 	@Getter
 	@Builder
-	public static class CartItemDetail {
+	public static class CartProductDetail {
 
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
@@ -42,14 +42,14 @@ public class ReadCartItem {
 		@Schema(description = "작품 가격", nullable = false, example = "100000")
 		private Long productPrice;
 
-		public static CartItemDetail from(String imagesApiAddress, CartItem cartItem, Long carItemQuantity){
-			return CartItemDetail.builder()
-					.productId(cartItem.getCartItemId().getProductId())
-					.productRepresentativeImage(imagesApiAddress + cartItem.getProduct().getRepresentativeImage())
-					.productTitle(cartItem.getProduct().getTitle())
-					.productPrice(cartItem.getProduct().getPrice())
-					.productQuantity(carItemQuantity)
-					.cartProductQuantity(cartItem.getQuantity())
+		public static CartProductDetail from(String imagesApiAddress, CartProduct cartProduct, Long carProductQuantity){
+			return CartProductDetail.builder()
+					.productId(cartProduct.getCartProductId().getProductId())
+					.productRepresentativeImage(imagesApiAddress + cartProduct.getProduct().getRepresentativeImage())
+					.productTitle(cartProduct.getProduct().getTitle())
+					.productPrice(cartProduct.getProduct().getPrice())
+					.productQuantity(carProductQuantity)
+					.cartProductQuantity(cartProduct.getQuantity())
 					.build();
 		}
 	}

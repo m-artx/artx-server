@@ -1,12 +1,12 @@
 package com.artx.artx.cart.service;
 
-import com.artx.artx.cart.dto.CreateCartItem;
-import com.artx.artx.cart.dto.DeleteCartItem;
-import com.artx.artx.cart.dto.ReadCartItem;
-import com.artx.artx.cart.model.Cart;
-import com.artx.artx.cart.model.CartItem;
-import com.artx.artx.cart.model.CartItemId;
-import com.artx.artx.cart.repository.CartItemRepository;
+import com.artx.artx.cart.entity.Cart;
+import com.artx.artx.cart.entity.CartProduct;
+import com.artx.artx.cart.entity.CartProductId;
+import com.artx.artx.cart.model.CreateCartProduct;
+import com.artx.artx.cart.model.DeleteCartProduct;
+import com.artx.artx.cart.model.ReadCartProduct;
+import com.artx.artx.cart.repository.CartProductRepository;
 import com.artx.artx.cart.repository.CartRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartService {
 
-	private final CartItemRepository cartItemRepository;
+	private final CartProductRepository cartProductRepository;
 	private final CartRepository cartRepository;
 	private final OrderService orderService;
 	private final ProductService productService;
@@ -43,43 +43,43 @@ public class CartService {
 	private String imagesApiAddress;
 
 	@Transactional
-	public CreateCartItem.Response addProduct(Long cartId, Long productId) {
+	public CreateCartProduct.Response addProduct(Long cartId, Long productId) {
 
 		Cart cart = getCartById(cartId);
 		Product product = productService.getProductById(productId);
 
-		CartItem cartItem = CartItem.from(cart, product);
-		boolean hasCartItem = cart.getCartItems().contains(cartItem);
+		CartProduct cartProduct = CartProduct.from(cart, product);
+		boolean hasCartProduct = cart.getCartProducts().contains(cartProduct);
 
-		if (hasCartItem) {
+		if (hasCartProduct) {
 			throw new BusinessException(ErrorCode.DUPLICATED_CARTITEM);
 		}
 
-		CartItem item = cartItemRepository.save(cartItem);
-		cart.addCartItem(item);
+		cartProductRepository.save(cartProduct);
+		cart.addCartProduct(cartProduct);
 
-		return CreateCartItem.Response.from(cartItem);
+		return CreateCartProduct.Response.from(cartProduct);
 	}
 
 	@Transactional
 	public void increaseProductQuantity(Long cartId, Long productId) {
-		CartItem cartItem = getCartItemByCartIdAndProductId(cartId, productId);
-		cartItem.increase();
+		CartProduct cartProduct = getCartProductByCartIdAndProductId(cartId, productId);
+		cartProduct.increase();
 	}
 
 	@Transactional
 	public void decreaseProductQuantity(Long cartId, Long productId) {
-		CartItem cartItem = getCartItemByCartIdAndProductId(cartId, productId);
-		cartItem.decrease();
-		if (cartItem.isEmpty()) {
-			cartItemRepository.delete(cartItem);
+		CartProduct cartProduct = getCartProductByCartIdAndProductId(cartId, productId);
+		cartProduct.decrease();
+		if (cartProduct.isEmpty()) {
+			cartProductRepository.delete(cartProduct);
 		}
 	}
 
 	@Transactional
 	public CreatePayment.ReadyResponse createOrder(Long cartId, CreateOrder.Request request) {
 		CreatePayment.ReadyResponse response = orderService.createOrder(request);
-		cartItemRepository.deleteAllByCartIdAndProductIds(
+		cartProductRepository.deleteAllByCartIdAndProductIds(
 				cartId,
 				request.getOrderDetails().stream()
 						.map(OrderProductIdAndQuantity::getProductId)
@@ -89,42 +89,42 @@ public class CartService {
 	}
 
 	@Transactional(readOnly = true)
-	public ReadCartItem.Response readAllCarItemsByCartId(Long cartId, Pageable pageable) {
+	public ReadCartProduct.Response readAllCarProductsByCartId(Long cartId, Pageable pageable) {
 		Cart cart = getCartById(cartId);
-		List<CartItem> cartItems = cart.getCartItems();
-		List<ProductStock> productStocks = cartItems.stream().map(CartItem::getProduct).map(Product::getProductStock).collect(Collectors.toList());
+		List<CartProduct> cartProducts = cart.getCartProducts();
+		List<ProductStock> productStocks = cartProducts.stream().map(CartProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
 		Map<Long, ProductStock> productIdsAndQuantities = productStocks.stream()
 				.collect(Collectors.toMap(productStock -> productStock.getProduct().getId(), productStock -> productStock));
 
-		Page<CartItem> cartItemPages = new PageImpl<>(cartItems, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), cartItems.size());
+		Page<CartProduct> cartProductPages = new PageImpl<>(cartProducts, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), cartProducts.size());
 
-		return ReadCartItem.Response.from(
+		return ReadCartProduct.Response.from(
 				cartId,
-				cartItemPages.map(cartItem -> ReadCartItem.CartItemDetail.from(
+				cartProductPages.map(cartProduct -> ReadCartProduct.CartProductDetail.from(
 						imagesApiAddress,
-						cartItem,
-						productIdsAndQuantities.get(cartItem.getProduct().getId()).getQuantity())
+						cartProduct,
+						productIdsAndQuantities.get(cartProduct.getProduct().getId()).getQuantity())
 				)
 		);
 	}
 
 	private Cart getCartById(Long cartId) {
-		return cartRepository.readCartWithCartItemAndProductByCartId(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
+		return cartRepository.readCartWithCartProductAndProductByCartId(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
 	}
 
-	private CartItem getCartItemByCartIdAndProductId(Long cartId, Long productId) {
-		return cartItemRepository.findById(CartItemId.from(cartId, productId)).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
+	private CartProduct getCartProductByCartIdAndProductId(Long cartId, Long productId) {
+		return cartProductRepository.findById(CartProductId.from(cartId, productId)).orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
 	}
 
 	@Transactional
-	public void deleteAllCarItems(Long cartId) {
+	public void deleteAllCarProducts(Long cartId) {
 		Cart cart = getCartById(cartId);
-		cartItemRepository.deleteAllInBatch(cart.getCartItems());
+		cartProductRepository.deleteAllInBatch(cart.getCartProducts());
 	}
 
 	@Transactional
-	public void deleteSelectedCartItems(Long cartId, DeleteCartItem.Request request) {
+	public void deleteSelectedCartProducts(Long cartId, DeleteCartProduct.Request request) {
 		List<Long> productIds = request.getProductIds();
-		cartItemRepository.deleteSelectedCartItemsByCartIdAndProductIds(cartId, productIds);
+		cartProductRepository.deleteSelectedCartProductsByCartIdAndProductIds(cartId, productIds);
 	}
 }

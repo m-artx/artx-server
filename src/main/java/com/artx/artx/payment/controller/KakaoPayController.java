@@ -19,7 +19,7 @@ public class KakaoPayController {
 
 	@GetMapping("/approval")
 	public void approval(
-			@RequestParam(name = "partner_order_id") Long orderId,
+			@RequestParam(name = "partner_order_id") String orderId,
 			@RequestParam String pg_token,
 			HttpServletResponse response
 	) throws IOException {

@@ -1,7 +1,7 @@
-package com.artx.artx.order.model;
+package com.artx.artx.delivery.model;
 
 import com.artx.artx.common.model.Address;
-import com.artx.artx.order.entity.Delivery;
+import com.artx.artx.delivery.entity.Delivery;
 import com.artx.artx.order.type.DeliveryStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class DeliveryDetail {
+
 	private String deliveryReceiver;
 	private String deliveryReceiverPhoneNumber;
 	private String deliveryReceiverAddress;
@@ -26,4 +27,5 @@ public class DeliveryDetail {
 				.deliveryStatus(delivery.getStatus())
 				.build();
 	}
+
 }

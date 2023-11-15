@@ -1,13 +1,13 @@
-package com.artx.artx.cart.dto;
+package com.artx.artx.cart.model;
 
-import com.artx.artx.cart.model.CartItem;
+import com.artx.artx.cart.entity.CartProduct;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-public class CreateCartItem {
+public class CreateCartProduct {
 
 	@Getter
 	public static class Request {
@@ -23,13 +23,13 @@ public class CreateCartItem {
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 		@Schema(description = "장바구니 작품 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime cartItemCreatedAt;
+		private LocalDateTime cartProductCreatedAt;
 
-		public static Response from(CartItem cartItem) {
-			return CreateCartItem.Response.builder()
-					.cartId(cartItem.getCartItemId().getCartId())
-					.productId(cartItem.getCartItemId().getProductId())
-					.cartItemCreatedAt(cartItem.getCreatedAt())
+		public static Response from(CartProduct cartProduct) {
+			return CreateCartProduct.Response.builder()
+					.cartId(cartProduct.getCartProductId().getCartId())
+					.productId(cartProduct.getCartProductId().getProductId())
+					.cartProductCreatedAt(cartProduct.getCreatedAt())
 					.build();
 		}
 	}

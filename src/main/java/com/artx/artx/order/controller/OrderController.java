@@ -23,19 +23,24 @@ public class OrderController {
 
 	@Operation(summary = "주문 생성", description = "주문 정보와 함께 주문할 수 있다.")
 	@PostMapping
-	public ResponseEntity<CreatePayment.ReadyResponse> createOrder(@RequestBody CreateOrder.Request request){
+	public ResponseEntity<CreatePayment.ReadyResponse> createOrder(
+			@RequestBody CreateOrder.Request request
+	){
 		return ResponseEntity.ok(orderService.createOrder(request));
 	}
 
 	@Operation(summary = "주문 조회", description = "주문 정보를 조회할 수 있다.")
 	@GetMapping
-	public ResponseEntity<Page<ReadOrder.ResponseAll>> readOrder(@RequestBody ReadOrder.Request request, Pageable pageable){
+	public ResponseEntity<Page<ReadOrder.ResponseAll>> readOrder(
+			@RequestBody ReadOrder.Request request,
+			Pageable pageable
+	){
 		return ResponseEntity.ok(orderService.readOrder(request, pageable));
 	}
 
 	@Operation(summary = "주문 취소", description = "주문을 취소할 수 있다.")
 	@PatchMapping("/{orderId}/cancel")
-	public ResponseEntity<CancelPayment> cancelOrder(@PathVariable Long orderId){
+	public ResponseEntity<CancelPayment> cancelOrder(@PathVariable String orderId){
 		return ResponseEntity.ok(orderService.cancelOrder(orderId));
 	}
 

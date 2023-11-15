@@ -21,7 +21,7 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
 					"LEFT JOIN FETCH po.user u " +
 					"WHERE p.order.id = :orderId"
 	)
-	Optional<Payment> findByOrder_Id(@Param("orderId") Long orderId);
+	Optional<Payment> findByOrder_Id(@Param("orderId") String orderId);
 
 	@Modifying
 	@Query("UPDATE Payment p SET p.status = :afterStatus WHERE p.createdAt < :sevenDaysAgo AND p.status = :beforeStatus")

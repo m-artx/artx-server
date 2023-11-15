@@ -1,10 +1,10 @@
-package com.artx.artx.cart.dto;
+package com.artx.artx.cart.model;
 
 import lombok.Getter;
 
 import java.util.List;
 
-public class DeleteCartItem {
+public class DeleteCartProduct {
 
 	@Getter
 	public static class Request{

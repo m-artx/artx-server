@@ -1,5 +1,6 @@
 package com.artx.artx.order.model;
 
+import com.artx.artx.delivery.model.DeliveryDetail;
 import com.artx.artx.order.entity.Order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class CreateOrder {
 	@Getter
 	public static class Response {
 		@Schema(description = "주문 고유 식별 번호", nullable = false, example = "1")
-		private Long orderId;
+		private String orderId;
 		@Schema(description = "주문명", nullable = false, example = "개화 및 3개의 작품")
 		private String orderTitle;
 		@Schema(description = "주문 총 금액", nullable = false, example = "100000")

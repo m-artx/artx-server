@@ -14,7 +14,6 @@ import com.artx.artx.payment.type.PaymentStatus;
 import com.artx.artx.payment.type.PaymentType;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductStock;
-import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -37,7 +36,6 @@ public class KakaoPayService {
 	private final RestTemplate restTemplate;
 	private final KakaoPaymentRepository kakaoPaymentRepository;
 	private final PaymentRepository paymentRepository;
-	private final ProductService productService;
 
 	@Value("${kakaopay.key}")
 	private String apiKey;
@@ -91,7 +89,6 @@ public class KakaoPayService {
 					.payment(payment)
 					.build()
 			);
-			order.setPayment(payment);
 			return readyResponse;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,7 +123,7 @@ public class KakaoPayService {
 	}
 
 	@Transactional
-	public CreatePayment.ApprovalResponse approvalPayment(Long orderId, String pgToken) {
+	public CreatePayment.ApprovalResponse approvalPayment(String orderId, String pgToken) {
 
 		Payment payment = paymentRepository.findByOrder_Id(orderId)
 				.orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));

@@ -30,6 +30,4 @@ public class PaymentService {
 		return payments.map(ReadPayment.Response::from);
 	}
 
-
-
 }
