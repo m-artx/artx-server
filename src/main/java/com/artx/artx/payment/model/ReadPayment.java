@@ -18,21 +18,24 @@ public class ReadPayment {
 		private UUID paymentId;
 		private String orderId;
 		private String orderTitle;
+		private String orderLink;
 		private Long paymentTotalAmount;
 		private PaymentType paymentType;
 		private PaymentStatus paymentStatus;
 		private LocalDateTime paymentCreatedAt;
 
-		public static Response from(Payment payment){
+		public static Response from(String ordersApiAddress, Payment payment){
 			return Response.builder()
 					.paymentId(payment.getId())
 					.orderId(payment.getOrder().getId())
-					.paymentTotalAmount(payment.getTotalAmount())
 					.orderTitle(payment.getOrder().getTitle())
+					.orderLink(ordersApiAddress + payment.getOrder().getId())
+					.paymentTotalAmount(payment.getTotalAmount())
 					.paymentType(payment.getType())
 					.paymentStatus(payment.getStatus())
 					.paymentCreatedAt(payment.getCreatedAt())
 					.build();
 		}
 	}
+
 }

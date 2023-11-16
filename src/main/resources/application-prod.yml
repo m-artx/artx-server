@@ -38,6 +38,7 @@ artx:
 
 api:
   products: ${artx.address}/api/products/
+  orders: ${artx.address}/api/orders/
   images: ${artx.address}/api/images/
   permissions: ${artx.address}/api/admin/permission-requests/
 springdoc:

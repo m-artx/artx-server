@@ -30,4 +30,6 @@ public class PaymentController {
 			Pageable pageable){
 		return ResponseEntity.ok(paymentService.readAllPayments(userId, startDate, endDate, pageable));
 	}
+
 }
+
