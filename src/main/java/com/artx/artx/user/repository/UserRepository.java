@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +21,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 	Optional<User> findByUsername(String username);
 
+	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c")
+	Optional<User> findByIdWithCart(UUID userId);
+
 	@Query("SELECT new com.artx.artx.user.model.ReadUserDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
 	Page<ReadUserDto> getNewArtists(@Param("userRole") UserRole userRole, Pageable pageable);
+
+	@Query("SELECT u.userRole, count(u) FROM User u GROUP BY u.userRole")
+	List<Object[]> readAllDailyUserAndArtistCounts();
 
 }

@@ -1,5 +1,6 @@
 package com.artx.artx.order.model;
 
+import com.artx.artx.delivery.model.DeliveryDetail;
 import com.artx.artx.order.entity.Order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -25,13 +26,13 @@ public class CreateOrder {
 	@Getter
 	public static class Response {
 		@Schema(description = "주문 고유 식별 번호", nullable = false, example = "1")
-		private Long orderId;
+		private String orderId;
 		@Schema(description = "주문명", nullable = false, example = "개화 및 3개의 작품")
 		private String orderTitle;
 		@Schema(description = "주문 총 금액", nullable = false, example = "100000")
 		private Long orderTotalAmount;
 		@Schema(description = "주문 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime orderCreatedAt;
+		private LocalDateTime createdAt;
 
 		public static Response from(Order order) {
 			String representativeProductName = order.getOrderProducts().get(0).getProduct().getTitle();
@@ -45,7 +46,7 @@ public class CreateOrder {
 					.orderId(order.getId())
 					.orderTitle(orderTitle)
 					.orderTotalAmount(order.getTotalAmount())
-					.orderCreatedAt(order.getCreatedAt())
+					.createdAt(order.getCreatedAt())
 					.build();
 		}
 	}

@@ -32,7 +32,6 @@ public class AuthService {
 			//검증 실패 시 예외 발생
 			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-
 		} catch (UsernameNotFoundException e) {
 			throw new BusinessException(ErrorCode.INVALID_USERNAME);
 		} catch (BadCredentialsException e){

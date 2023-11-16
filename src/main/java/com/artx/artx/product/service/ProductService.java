@@ -3,14 +3,11 @@ package com.artx.artx.product.service;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.service.RedisCacheService;
-import com.artx.artx.image.service.ImageService;
+import com.artx.artx.common.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductStock;
-import com.artx.artx.product.model.CreateProduct;
-import com.artx.artx.product.model.DeleteProduct;
-import com.artx.artx.product.model.ReadProduct;
-import com.artx.artx.product.model.ReadProductCategory;
+import com.artx.artx.product.model.*;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductRepository;
 import com.artx.artx.product.type.Category;
@@ -47,7 +44,6 @@ public class ProductService {
 
 	@Transactional
 	public CreateProduct.Response createProduct(CreateProduct.Request request, List<MultipartFile> files) {
-		List<MultipartFile> modifiedProductImages = imageService.saveProductImages(files);
 		User user = userService.getUserByUserId(request.getUserId());
 		user.canCreateProduct();
 
@@ -58,7 +54,11 @@ public class ProductService {
 		product.setCategory(getProductCategoryById(request.getProductCategory()));
 		product.setUser(user);
 		product.setProductStock(ProductStock.from(request));
-		product.setProductImages(modifiedProductImages);
+
+		if(existsFiles(files)){
+			List<MultipartFile> modifiedProductImages = imageService.saveImages(files);
+			product.setProductImages(modifiedProductImages);
+		}
 
 		return CreateProduct.Response.from(product);
 	}
@@ -87,8 +87,9 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ReadProduct.Response readProductDetail(Long productId) {
 		Product product = getProductByIdWithProductImages(productId);
+		User user = product.getUser();
 		redisCacheService.countProductView(productId);
-		return ReadProduct.Response.from(imagesApiAddress, product);
+		return ReadProduct.Response.from(imagesApiAddress, product, user);
 	}
 
 	@Transactional(readOnly = true)
@@ -138,6 +139,15 @@ public class ProductService {
 	private ProductCategory getProductCategoryById(Category category) {
 		return productCategoryRepository.findByType(category)
 				.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
+	}
+//
+//	public void requestCommission(CreateCommission.Request request, Long productId) {
+//		User user = userService.getUserByUserId(request.getUserId());
+//		Product product = getProductById(productId);
+//	}
+
+	private boolean existsFiles(List<MultipartFile> files) {
+		return files != null && files.size() > 0;
 	}
 
 }

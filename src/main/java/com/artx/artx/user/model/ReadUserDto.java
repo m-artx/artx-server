@@ -17,4 +17,5 @@ public class ReadUserDto {
 		this.userId = userId;
 		this.username = username;
 	}
+
 }

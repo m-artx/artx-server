@@ -14,12 +14,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderProduct {
 
-	@Id
+	@EmbeddedId
+	private OrderProductId orderProductId;
+
+	@MapsId("productId")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	@Id
+	@MapsId("orderId")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
 	private Order order;
@@ -30,8 +33,9 @@ public class OrderProduct {
 		this.order = order;
 	}
 
-	public static OrderProduct from(Order order, Product product, Long quantity){
+	public static OrderProduct from(OrderProductId orderProductId, Order order, Product product, Long quantity){
 		return OrderProduct.builder()
+				.orderProductId(orderProductId)
 				.quantity(quantity)
 				.order(order)
 				.product(product)

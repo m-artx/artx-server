@@ -1,12 +1,9 @@
 package com.artx.artx.product.controller;
 
-import com.artx.artx.product.model.CreateProduct;
-import com.artx.artx.product.model.DeleteProduct;
-import com.artx.artx.product.model.ReadProduct;
-import com.artx.artx.product.model.ReadProductCategory;
+import com.artx.artx.product.model.*;
 import com.artx.artx.product.service.ProductService;
-import com.artx.artx.product.type.Filter;
 import com.artx.artx.product.type.Category;
+import com.artx.artx.product.type.Filter;
 import com.artx.artx.product.type.Type;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +24,7 @@ import java.util.List;
 public class ProductController {
 
 	private final ProductService productService;
+//	private final CommissionService commissionService;
 
 	@Operation(summary = "작품 등록", description = "작가는 새로운 작품을 등록할 수 있다.")
 	@PostMapping
@@ -78,5 +76,14 @@ public class ProductController {
 	public ResponseEntity<List<ReadProductCategory.ResponseAll>> readCategories(){
 		return ResponseEntity.ok(productService.readCategories());
 	}
+//
+//	@PostMapping("/{productId}/commissions")
+//	@Operation(summary = "커미션 신청", description = "커미션을 신청할 수 있다.")
+//	public ResponseEntity<CreateCommission.Response> createCommission(
+//			@PathVariable Long productId,
+//			@RequestBody CreateCommission.Request request
+//	) {
+//		return ResponseEntity.ok(commissionService.createCommission(productId, request));
+//	}
 
 }

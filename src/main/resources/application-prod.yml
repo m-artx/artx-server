@@ -39,6 +39,7 @@ artx:
 api:
   products: ${artx.address}/api/products/
   images: ${artx.address}/api/images/
+  permissions: ${artx.address}/api/admin/permission-requests/
 springdoc:
   swagger-ui:
     # swagger-ui 접근 경로. default 값은 /swagger-ui.html이다.
@@ -66,6 +67,8 @@ springdoc:
     paths-to-match:
       - /api/**
   use-fqn: true
+
+serverAddress: https://ka8d596e67406a.user-app.krampoline.com
 
 kakaopay:
   ready: https://kapi.kakao.com/v1/payment/ready
