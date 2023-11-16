@@ -56,7 +56,7 @@ public class PermissionService {
 
 		if(permissionRequestStatus == PermissionRequestStatus.APPROVAL){
 			User user = permissionRequest.getUser();
-			user.changeRole(permissionRequest.requestedRole);
+			user.setUserRole(permissionRequest.requestedRole);
 		}
 
 		return UpdatePermissionRequest.Response.builder().updatedAt(LocalDateTime.now()).build();

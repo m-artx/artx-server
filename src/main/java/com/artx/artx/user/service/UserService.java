@@ -1,6 +1,7 @@
 package com.artx.artx.user.service;
 
 import com.artx.artx.admin.service.PermissionService;
+import com.artx.artx.common.email.EmailSender;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.image.service.ImageService;
@@ -10,6 +11,7 @@ import com.artx.artx.user.model.permission.CreateUserPermissionRequest;
 import com.artx.artx.user.model.permission.ReadUserPermissionRequest;
 import com.artx.artx.user.repository.UserRepository;
 import com.artx.artx.user.type.UserRole;
+import com.artx.artx.user.type.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,8 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final ImageService imageService;
 	private final PermissionService permissionService;
+	private final EmailSender emailSender;
+
 
 	@Transactional
 	public CreateUser.Response createUser(CreateUser.Request request) {
@@ -41,6 +45,8 @@ public class UserService {
 
 		User user = userRepository.save(User.from(request));
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+		emailSender.send(user.getEmail(), user.getUserId());
 
 		return CreateUser.Response.from(user);
 	}
@@ -135,6 +141,15 @@ public class UserService {
 			map.put(role, count);
 		}
 		return map;
+	}
+
+	@Transactional
+	public void emailAuth(UUID userId) {
+		User user = getUserByUserId(userId);
+		if(user.getUserStatus() == UserStatus.ACTIVE){
+			throw new BusinessException(ErrorCode.ALREADY_AUTHENTICATED_USER);
+		}
+		user.setUserStatus(UserStatus.ACTIVE);
 	}
 
 
