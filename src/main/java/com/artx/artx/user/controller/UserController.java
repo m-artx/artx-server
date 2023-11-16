@@ -93,4 +93,12 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@Operation(summary = "이메일 인증", description = "이메일 인증을 완료한다.")
+	@GetMapping("/{userId}/email-auth")
+	public ResponseEntity<String> emailAuth(
+			@PathVariable UUID userId
+	){
+		userService.emailAuth(userId);
+		return ResponseEntity.ok("인증 완료");
+	}
 }

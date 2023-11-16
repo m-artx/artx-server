@@ -7,6 +7,7 @@ import com.artx.artx.common.model.Address;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.user.model.CreateUser;
 import com.artx.artx.user.type.UserRole;
+import com.artx.artx.user.type.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,9 @@ public class User extends BaseEntity {
 	private String profileImage;
 	private String introduction;
 
+	@Enumerated(EnumType.STRING)
+	private UserStatus userStatus;
+
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
@@ -56,9 +60,9 @@ public class User extends BaseEntity {
 		return true;
 	}
 
-
 	public static User from(CreateUser.Request request){
 		return User.builder()
+				.userStatus(UserStatus.INACTIVE)
 				.userRole(request.getUserRole())
 				.username(request.getUsername())
 				.email(request.getEmail())
@@ -89,8 +93,11 @@ public class User extends BaseEntity {
 		isDeleted = deleted;
 	}
 
-	public void changeRole(UserRole previousRole) {
+	public void setUserRole(UserRole previousRole) {
 		this.userRole = previousRole;
 	}
 
+	public void setUserStatus(UserStatus userStatus) {
+		this.userStatus = userStatus;
+	}
 }
