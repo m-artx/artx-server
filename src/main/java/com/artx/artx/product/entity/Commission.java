@@ -1,5 +1,6 @@
 package com.artx.artx.product.entity;
 
+import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.product.type.CommissionStatus;
 import com.artx.artx.user.entity.User;
 import jakarta.persistence.*;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Commission {
+public class Commission extends BaseEntity {
 
 	@EmbeddedId
 	private CommissionId id;

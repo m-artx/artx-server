@@ -5,7 +5,7 @@ import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.Address;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.order.model.CreateOrder;
-import com.artx.artx.order.type.DeliveryStatus;
+import com.artx.artx.delivery.type.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +31,11 @@ public class Delivery extends BaseEntity {
 	private String receiver;
 	private String receiverPhoneNumber;
 
+	private String company;
+	private String trackingNumber;
+
+	private Long fee;
+
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
 
@@ -44,14 +49,15 @@ public class Delivery extends BaseEntity {
 								.addressDetail(request.getDeliveryDetail().getDeliveryReceiverAddressDetail())
 								.build()
 				)
-				.status(DeliveryStatus.READY)
+				.status(DeliveryStatus.DELIVERY_READY)
 				.build();
 	}
 
 	public boolean isCacnelable() {
-		if(this.status == DeliveryStatus.READY){
+		if(this.status == DeliveryStatus.DELIVERY_READY){
 			return true;
 		}
 		throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
 	}
+
 }

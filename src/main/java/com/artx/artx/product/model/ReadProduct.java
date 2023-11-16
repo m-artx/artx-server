@@ -2,6 +2,7 @@ package com.artx.artx.product.model;
 
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductImage;
+import com.artx.artx.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ReadProduct {
@@ -16,6 +18,16 @@ public class ReadProduct {
 	@Getter
 	@Builder
 	public static class Response {
+
+		@Schema(description = "유저 고유 식별 번호", nullable = false, example = "fafe2100-e770-4cfc-aef7-960837b777df")
+		private UUID userId;
+		@Schema(description = "유저 이미지", nullable = false, example = "http://127.0.0.1:8080/api/images/1f66d818-4ff2-4a14-9c0c-d77dc30c0639_Rectangle_635.png")
+		private String userProfileImage;
+		@Schema(description = "유저 소개", nullable = false, example = "그림 그립니다.")
+		private String userIntroduction;
+//		private String userProductCount;
+//		private String userProductCount;
+
 
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
@@ -36,7 +48,7 @@ public class ReadProduct {
 		@Schema(description = "작품 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
 		private LocalDate productCreatedAt;
 
-		public static Response from(String imagesApiAddress, Product product) {
+		public static Response from(String imagesApiAddress, Product product, User user) {
 			List<String> fileImageNames = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
 			List<String> fileImageUrls = new ArrayList<>();
 

@@ -2,6 +2,8 @@ package com.artx.artx.cart.repository;
 
 import com.artx.artx.cart.entity.CartProduct;
 import com.artx.artx.cart.entity.CartProductId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +25,7 @@ public interface CartProductRepository extends JpaRepository<CartProduct, CartPr
 	@Modifying
 	@Query("DELETE FROM CartProduct ci WHERE ci.cart.id = :cartId AND ci.product.id IN :productIds")
 	void deleteSelectedCartProductsByCartIdAndProductIds(@Param("cartId")Long cartId, @Param("productIds")List<Long> productIds);
+
+	@Query("SELECT cp FROM CartProduct cp WHERE cp.cart.id = :cartId")
+	Page<CartProduct> findAllByCart_Id(@Param("cartId") Long cartId, Pageable pageable);
 }

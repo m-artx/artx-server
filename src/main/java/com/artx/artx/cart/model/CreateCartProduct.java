@@ -23,13 +23,13 @@ public class CreateCartProduct {
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 		@Schema(description = "장바구니 작품 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime cartProductCreatedAt;
+		private LocalDateTime createdAt;
 
 		public static Response from(CartProduct cartProduct) {
 			return CreateCartProduct.Response.builder()
 					.cartId(cartProduct.getCartProductId().getCartId())
 					.productId(cartProduct.getCartProductId().getProductId())
-					.cartProductCreatedAt(cartProduct.getCreatedAt())
+					.createdAt(cartProduct.getCreatedAt())
 					.build();
 		}
 	}

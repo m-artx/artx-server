@@ -1,4 +1,4 @@
-package com.artx.artx.admin.model;
+package com.artx.artx.admin.model.banner;
 
 import com.artx.artx.admin.entity.Banner;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -40,12 +40,12 @@ public class CreateUser {
 		@Schema(description = "유저 고유 식별 번호", nullable = false, example = "fafe2100-e770-4cfc-aef7-960837b777df")
 		private UUID userId;
 		@Schema(description = "유저 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime userCreatedAt;
+		private LocalDateTime createdAt;
 
 		public static Response from(User user) {
 			return Response.builder()
 					.userId(user.getUserId())
-					.userCreatedAt(user.getCreatedAt())
+					.createdAt(user.getCreatedAt())
 					.build();
 		}
 	}

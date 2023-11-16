@@ -1,6 +1,6 @@
 package com.artx.artx.admin.entity;
 
-import com.artx.artx.admin.model.CreateNotice;
+import com.artx.artx.admin.model.notice.CreateNotice;
 import com.artx.artx.common.model.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

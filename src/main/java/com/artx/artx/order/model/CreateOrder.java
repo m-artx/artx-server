@@ -32,7 +32,7 @@ public class CreateOrder {
 		@Schema(description = "주문 총 금액", nullable = false, example = "100000")
 		private Long orderTotalAmount;
 		@Schema(description = "주문 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime orderCreatedAt;
+		private LocalDateTime createdAt;
 
 		public static Response from(Order order) {
 			String representativeProductName = order.getOrderProducts().get(0).getProduct().getTitle();
@@ -46,7 +46,7 @@ public class CreateOrder {
 					.orderId(order.getId())
 					.orderTitle(orderTitle)
 					.orderTotalAmount(order.getTotalAmount())
-					.orderCreatedAt(order.getCreatedAt())
+					.createdAt(order.getCreatedAt())
 					.build();
 		}
 	}

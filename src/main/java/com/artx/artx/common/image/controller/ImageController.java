@@ -1,6 +1,6 @@
-package com.artx.artx.image.controller;
+package com.artx.artx.common.image.controller;
 
-import com.artx.artx.image.service.ImageService;
+import com.artx.artx.common.image.service.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class ImageController {
 
 	@GetMapping("/{filename}")
 	public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
-		return imageService.saveImage(filename);
+		return imageService.getImage(filename);
 	}
 
 }

@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -33,7 +34,8 @@ public class User extends BaseEntity {
 	private String username;
 	private String password;
 	private String email;
-	private Boolean isEmailYn;
+	private boolean isEmailYn;
+	private boolean isDeleted;
 	private String nickname;
 	private String phoneNumber;
 	private String profileImage;
@@ -78,4 +80,17 @@ public class User extends BaseEntity {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public void setProfileImage(MultipartFile file){
+		this.profileImage = file.getName();
+	}
+
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
+	}
+
+	public void changeRole(UserRole previousRole) {
+		this.userRole = previousRole;
+	}
+
 }

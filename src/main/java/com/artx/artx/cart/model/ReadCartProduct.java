@@ -29,6 +29,8 @@ public class ReadCartProduct {
 	@Builder
 	public static class CartProductDetail {
 
+		@Schema(description = "작가 닉네임", nullable = false, example = "이중섭")
+		private String artistNickname;
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 		@Schema(description = "작품 대표 이미지", nullable = false, example = "http://127.0.0.1:8080/api/images/1f66d818-4ff2-4a14-9c0c-d77dc30c0639_Rectangle_635.png")
@@ -44,6 +46,7 @@ public class ReadCartProduct {
 
 		public static CartProductDetail from(String imagesApiAddress, CartProduct cartProduct, Long carProductQuantity){
 			return CartProductDetail.builder()
+					.artistNickname(cartProduct.getProduct().getUser().getNickname())
 					.productId(cartProduct.getCartProductId().getProductId())
 					.productRepresentativeImage(imagesApiAddress + cartProduct.getProduct().getRepresentativeImage())
 					.productTitle(cartProduct.getProduct().getTitle())

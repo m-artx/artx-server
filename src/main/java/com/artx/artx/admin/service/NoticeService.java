@@ -1,7 +1,7 @@
 package com.artx.artx.admin.service;
 
 import com.artx.artx.admin.entity.Notice;
-import com.artx.artx.admin.model.CreateNotice;
+import com.artx.artx.admin.model.notice.CreateNotice;
 import com.artx.artx.admin.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@ package com.artx.artx.product.service;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.service.RedisCacheService;
-import com.artx.artx.image.service.ImageService;
+import com.artx.artx.common.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductStock;
@@ -56,15 +56,11 @@ public class ProductService {
 		product.setProductStock(ProductStock.from(request));
 
 		if(existsFiles(files)){
-			List<MultipartFile> modifiedProductImages = imageService.saveProductImages(files);
+			List<MultipartFile> modifiedProductImages = imageService.saveImages(files);
 			product.setProductImages(modifiedProductImages);
 		}
 
 		return CreateProduct.Response.from(product);
-	}
-
-	private boolean existsFiles(List<MultipartFile> files) {
-		return files != null && files.size() > 0;
 	}
 
 	@Transactional(readOnly = true)
@@ -91,8 +87,9 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ReadProduct.Response readProductDetail(Long productId) {
 		Product product = getProductByIdWithProductImages(productId);
+		User user = product.getUser();
 		redisCacheService.countProductView(productId);
-		return ReadProduct.Response.from(imagesApiAddress, product);
+		return ReadProduct.Response.from(imagesApiAddress, product, user);
 	}
 
 	@Transactional(readOnly = true)
@@ -143,11 +140,14 @@ public class ProductService {
 		return productCategoryRepository.findByType(category)
 				.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
+//
+//	public void requestCommission(CreateCommission.Request request, Long productId) {
+//		User user = userService.getUserByUserId(request.getUserId());
+//		Product product = getProductById(productId);
+//	}
 
-	public void requestCommission(CreateCommission.Request request, Long productId) {
-		User user = userService.getUserByUserId(request.getUserId());
-		Product product = getProductById(productId);
-
-
+	private boolean existsFiles(List<MultipartFile> files) {
+		return files != null && files.size() > 0;
 	}
+
 }

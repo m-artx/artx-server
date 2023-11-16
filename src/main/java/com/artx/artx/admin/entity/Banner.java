@@ -24,7 +24,6 @@ public class Banner extends BaseEntity {
 	@JoinColumn(name = "product")
 	private Product product;
 
-
 	public static Banner from(String productApiAddress, Product product){
 		return Banner.builder()
 				.product(product)

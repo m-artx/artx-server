@@ -1,4 +1,4 @@
-package com.artx.artx.user.model;
+package com.artx.artx.user.model.inquiry;
 
 import lombok.Getter;
 

@@ -27,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -146,5 +148,56 @@ public class OrderService {
 
 		}
 		return null;
+	}
+
+	@Transactional(readOnly = true)
+	public Map<OrderStatus, Long> readAllOrderStatusCounts() {
+
+		List<Object[]> statusCounts = orderRepository.getAllOrderStatusCounts();
+		Map<OrderStatus, Long> map = new HashMap<>();
+
+		for (Object[] statusCount : statusCounts) {
+			map.put((OrderStatus) statusCount[0], (Long) statusCount[1]);
+		}
+		return map;
+	}
+
+	public Map<String, Long> readAllMonthlyOrderCounts() {
+
+		LocalDateTime startDateTime = LocalDateTime.now().minusMonths(1).withDayOfMonth(1);
+		LocalDateTime endDateTime = LocalDateTime.now().plusMonths(1).withDayOfMonth(1).minusDays(1);
+
+		List<Object[]> orderCounts = orderRepository.getAllMontlyOrderCounts(startDateTime, endDateTime);
+
+		Map<String, Long> map = new HashMap<>();
+
+		map.put("previousMonth", (Long) orderCounts.get(0)[1]);
+		map.put("presentMonth", (Long) orderCounts.get(1)[1]);
+
+		return map;
+	}
+
+	public Map<String, Long> readAllYearlyOrderCounts() {
+
+		LocalDateTime startDateTime = LocalDateTime.now().minusYears(1).withDayOfYear(1);
+		LocalDateTime endDateTime = LocalDateTime.now().plusYears(1).withDayOfYear(1).minusDays(1);
+
+		List<Object[]> orderCounts = orderRepository.getAllYearlyOrderCounts(startDateTime, endDateTime);
+
+		Map<String, Long> map = new HashMap<>();
+
+		if (orderCounts.size() == 2) {
+			map.put("previousYear", (Long) orderCounts.get(0)[1]);
+			map.put("presentYear", (Long) orderCounts.get(1)[1]);
+			return map;
+		}
+
+		if (orderCounts.size() == 1) {
+			map.put("presentYear", (Long) orderCounts.get(0)[1]);
+			return map;
+		}
+
+		return map;
+
 	}
 }

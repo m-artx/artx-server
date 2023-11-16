@@ -2,7 +2,7 @@ package com.artx.artx.delivery.model;
 
 import com.artx.artx.common.model.Address;
 import com.artx.artx.delivery.entity.Delivery;
-import com.artx.artx.order.type.DeliveryStatus;
+import com.artx.artx.delivery.type.DeliveryStatus;
 import lombok.Builder;
 import lombok.Getter;
 

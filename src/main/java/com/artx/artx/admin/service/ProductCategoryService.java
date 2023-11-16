@@ -1,6 +1,6 @@
 package com.artx.artx.admin.service;
 
-import com.artx.artx.admin.model.CreateProductCategory;
+import com.artx.artx.admin.model.category.CreateProductCategory;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.product.entity.ProductCategory;

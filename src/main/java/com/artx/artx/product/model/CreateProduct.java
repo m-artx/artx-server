@@ -36,12 +36,12 @@ public class CreateProduct {
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 		@Schema(description = "작품 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime productCreatedAt;
+		private LocalDateTime createdAt;
 
 		public static Response from(Product product) {
 			return Response.builder()
 					.productId(product.getId())
-					.productCreatedAt(product.getCreatedAt())
+					.createdAt(product.getCreatedAt())
 					.build();
 		}
 	}

@@ -20,8 +20,6 @@ import com.artx.artx.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,17 +88,14 @@ public class CartService {
 
 	@Transactional(readOnly = true)
 	public ReadCartProduct.Response readAllCarProductsByCartId(Long cartId, Pageable pageable) {
-		Cart cart = getCartById(cartId);
-		List<CartProduct> cartProducts = cart.getCartProducts();
+		Page<CartProduct> cartProducts = cartProductRepository.findAllByCart_Id(cartId, pageable);
 		List<ProductStock> productStocks = cartProducts.stream().map(CartProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
 		Map<Long, ProductStock> productIdsAndQuantities = productStocks.stream()
 				.collect(Collectors.toMap(productStock -> productStock.getProduct().getId(), productStock -> productStock));
 
-		Page<CartProduct> cartProductPages = new PageImpl<>(cartProducts, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), cartProducts.size());
-
 		return ReadCartProduct.Response.from(
 				cartId,
-				cartProductPages.map(cartProduct -> ReadCartProduct.CartProductDetail.from(
+				cartProducts.map(cartProduct -> ReadCartProduct.CartProductDetail.from(
 						imagesApiAddress,
 						cartProduct,
 						productIdsAndQuantities.get(cartProduct.getProduct().getId()).getQuantity())

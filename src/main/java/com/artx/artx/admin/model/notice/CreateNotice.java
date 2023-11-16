@@ -1,4 +1,4 @@
-package com.artx.artx.admin.model;
+package com.artx.artx.admin.model.notice;
 
 import com.artx.artx.admin.entity.Notice;
 import lombok.Builder;
@@ -17,14 +17,13 @@ public class CreateNotice {
 	@Getter
 	@Builder
 	public static class Response {
-		private Long noticeId;
 		private LocalDateTime createdAt;
 
 		public static Response from(Notice notice){
 			return Response.builder()
-					.noticeId(notice.getId())
 					.createdAt(notice.getCreatedAt())
 					.build();
 		}
 	}
+
 }

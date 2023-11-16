@@ -1,7 +1,9 @@
-package com.artx.artx.admin.model;
+package com.artx.artx.admin.model.banner;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 public class CreateBanner {
 
@@ -10,4 +12,10 @@ public class CreateBanner {
 		@Schema(description = "작품 고유 식별 번호", nullable = false, example = "1")
 		private Long productId;
 	}
+
+	@Getter
+	public static class Response {
+		private LocalDateTime createdAt;
+	}
+
 }

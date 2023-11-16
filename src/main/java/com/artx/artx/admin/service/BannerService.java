@@ -1,8 +1,8 @@
 package com.artx.artx.admin.service;
 
 import com.artx.artx.admin.entity.Banner;
-import com.artx.artx.admin.model.CreateBanner;
-import com.artx.artx.admin.model.ReadBanner;
+import com.artx.artx.admin.model.banner.CreateBanner;
+import com.artx.artx.admin.model.banner.ReadBanner;
 import com.artx.artx.admin.repository.BannerRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;

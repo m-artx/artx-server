@@ -24,6 +24,7 @@ import java.util.List;
 public class ProductController {
 
 	private final ProductService productService;
+//	private final CommissionService commissionService;
 
 	@Operation(summary = "작품 등록", description = "작가는 새로운 작품을 등록할 수 있다.")
 	@PostMapping
@@ -75,15 +76,14 @@ public class ProductController {
 	public ResponseEntity<List<ReadProductCategory.ResponseAll>> readCategories(){
 		return ResponseEntity.ok(productService.readCategories());
 	}
-
-	@Operation(summary = "전체 카테고리 조회", description = "모든 카테고리의 이름, 상세 설명, 대표 이미지를 조회할 수 있다.")
-	@PostMapping("/{productId}/commission")
-	public ResponseEntity<List<ReadProductCategory.ResponseAll>> requestCommission(
-			@PathVariable Long productId,
-			@RequestBody CreateCommission.Request request
-	){
-		productService.requestCommission(request, productId);
-		return ResponseEntity.ok().build();
-	}
+//
+//	@PostMapping("/{productId}/commissions")
+//	@Operation(summary = "커미션 신청", description = "커미션을 신청할 수 있다.")
+//	public ResponseEntity<CreateCommission.Response> createCommission(
+//			@PathVariable Long productId,
+//			@RequestBody CreateCommission.Request request
+//	) {
+//		return ResponseEntity.ok(commissionService.createCommission(productId, request));
+//	}
 
 }

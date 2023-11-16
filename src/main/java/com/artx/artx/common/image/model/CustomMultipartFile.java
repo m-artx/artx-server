@@ -1,4 +1,4 @@
-package com.artx.artx.image.model;
+package com.artx.artx.common.image.model;
 
 import lombok.Builder;
 import lombok.Getter;
