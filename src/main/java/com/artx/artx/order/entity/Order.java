@@ -31,7 +31,7 @@ public class Order extends BaseEntity {
 	private User user;
 
 	@Enumerated(EnumType.STRING)
-	private OrderStatus status = OrderStatus.ORDER_READY;
+	private OrderStatus status;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	List<OrderProduct> orderProducts;
@@ -43,6 +43,7 @@ public class Order extends BaseEntity {
 	public static Order from(User user) {
 		return Order.builder()
 				.user(user)
+				.status(OrderStatus.ORDER_READY)
 				.build();
 	}
 
