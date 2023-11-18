@@ -1,4 +1,4 @@
-package com.artx.artx.payment.model;
+package com.artx.artx.payment.model.kakaopay;
 
 import lombok.Getter;
 

@@ -40,8 +40,6 @@ public class AuthController {
 	@PostMapping("/reissue")
 	public ResponseEntity<Login.Response> reissueAccessToken(HttpServletRequest request){
 		String refreshToken = findRefreshTokenFromCookie(request);
-		System.out.println(refreshToken);
-		//Refresh Token도 만료된 경우 재로그인 필요
 		boolean isValidRefreshToken = authService.isValidRefreshToken(refreshToken);
 		if(isValidRefreshToken){
 			return ResponseEntity.ok(Login.Response.builder().accessToken((AccessToken.from(authService.reissueAccessToken(refreshToken)))).build());

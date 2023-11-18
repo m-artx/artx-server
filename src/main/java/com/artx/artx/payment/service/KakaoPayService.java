@@ -6,16 +6,17 @@ import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.payment.entity.KakaoPayment;
 import com.artx.artx.payment.entity.Payment;
-import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
+import com.artx.artx.payment.model.ReadPayment;
+import com.artx.artx.payment.model.kakaopay.CancelKakaoPayment;
+import com.artx.artx.payment.model.kakaopay.CreateKakaoPayment;
 import com.artx.artx.payment.repository.KakaoPaymentRepository;
 import com.artx.artx.payment.repository.PaymentRepository;
-import com.artx.artx.payment.type.PaymentStatus;
 import com.artx.artx.payment.type.PaymentType;
-import com.artx.artx.product.entity.Product;
-import com.artx.artx.product.entity.ProductStock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,13 +26,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoPayService {
+public class KakaoPayService implements PaymentService{
 
 	private final RestTemplate restTemplate;
 	private final KakaoPaymentRepository kakaoPaymentRepository;
@@ -55,8 +57,12 @@ public class KakaoPayService {
 	@Value("${artx.address}")
 	private String serverAddress;
 
+	@Value(value = "${api.orders}")
+	private String ordersApiAddress;
+
+	@Override
 	@Transactional
-	public CreatePayment.ReadyResponse readyPayment(Order order) {
+	public CreatePayment.Response processPayment(Order order) {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "KakaoAK " + apiKey);
@@ -66,9 +72,9 @@ public class KakaoPayService {
 		params.add("cid", cid);
 		params.add("partner_order_id", order.getId().toString());
 		params.add("partner_user_id", order.getUser().getUserId().toString());
-		params.add("item_name", order.getTitle());
+		params.add("item_name", order.generateOrderTitle());
 		params.add("quantity", "1");
-		params.add("total_amount", String.valueOf(order.getTotalAmount()));
+		params.add("total_amount", String.valueOf(order.generateTotalAmount()));
 		params.add("tax_free_amount", "0");
 		params.add("approval_url", serverAddress + "/api/payments/approval?partner_order_id=" + order.getId());
 		params.add("cancel_url", serverAddress + "/api/payments/cancel");
@@ -77,17 +83,20 @@ public class KakaoPayService {
 		HttpEntity request = new HttpEntity(params, headers);
 
 		try {
-			CreatePayment.ReadyResponse readyResponse = restTemplate.postForObject(readyApiAddress, request, CreatePayment.ReadyResponse.class);
+			CreateKakaoPayment.ReadyResponse readyResponse = restTemplate.postForObject(readyApiAddress, request, CreateKakaoPayment.ReadyResponse.class);
 			Payment payment = Payment.from(
 					order,
-					readyResponse.getTid(),
-					PaymentType.KAKAOPAY,
-					PaymentStatus.PAYMENT_READY
+					readyResponse.getTid()
 			);
-			KakaoPayment kakaoPayment = kakaoPaymentRepository.save(KakaoPayment.builder()
-					.tid(readyResponse.getTid())
-					.payment(payment)
-					.build()
+
+			payment.processPaymentSuccess();
+			payment.setPaymentType(PaymentType.KAKAOPAY);
+
+			KakaoPayment kakaoPayment = kakaoPaymentRepository.save(
+					KakaoPayment.builder()
+							.tid(readyResponse.getTid())
+							.payment(payment)
+							.build()
 			);
 			return readyResponse;
 		} catch (Exception e) {
@@ -97,8 +106,21 @@ public class KakaoPayService {
 
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ReadPayment.Response> readAllPayments(UUID userId, LocalDate startDate, LocalDate endDate, Pageable pageable){
+		LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+		LocalDateTime endDateTime = endDate != null ? endDate.atStartOfDay().plusDays(1L) : null;
+
+		Page<Payment> payments = paymentRepository.findAllByUserIdWithOrder(userId, startDateTime, endDateTime, pageable);
+		return payments.map(payment -> ReadPayment.Response.from(ordersApiAddress, payment));
+	}
+
 	@Transactional
-	public CancelPayment cancelPayment(Payment payment) {
+	public CancelKakaoPayment.Response cancelPayment(String orderId) {
+		KakaoPayment kakaoPayment = kakaoPaymentRepository.fetchKakaoPaymentByOrderId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
+		Payment payment = kakaoPayment.getPayment();
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "KakaoAK " + apiKey);
 		headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
@@ -106,29 +128,27 @@ public class KakaoPayService {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
 		params.add("cid", cid);
-		params.add("tid", payment.getTid());
+		params.add("tid", kakaoPayment.getTid());
 		params.add("cancel_amount", String.valueOf(payment.getTotalAmount()));
 		params.add("cancel_tax_free_amount", "0");
 
 		HttpEntity request = new HttpEntity(params, headers);
 
 		try {
-			CancelPayment response = restTemplate.postForObject(cancelApiAddress, request, CancelPayment.class);
-			payment.toPaymentCancel();
+			CancelKakaoPayment.Response response = restTemplate.postForObject(cancelApiAddress, request, CancelKakaoPayment.Response.class);
+			payment.processPaymentCancel();
 			return response;
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
 		}
 	}
 
-	@Transactional
-	public CreatePayment.ApprovalResponse approvalPayment(String orderId, String pgToken) {
-
-		Payment payment = paymentRepository.findByOrder_Id(orderId)
-				.orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
-
+	public CreateKakaoPayment.ApprovalResponse approvalPayment(String orderId, String pgToken) {
+		KakaoPayment kakaoPayment = kakaoPaymentRepository.fetchKakaoPaymentByOrderId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
+		Payment payment = kakaoPayment.getPayment();
 		Order order = payment.getOrder();
+
 		List<OrderProduct> orderProducts = order.getOrderProducts();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -137,37 +157,23 @@ public class KakaoPayService {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("cid", cid);
-		params.add("tid", payment.getTid());
+		params.add("tid", kakaoPayment.getTid());
 		params.add("partner_order_id", String.valueOf(order.getId()));
 		params.add("partner_user_id", String.valueOf(order.getUser().getUserId()));
 		params.add("pg_token", pgToken);
 
 		try {
 			HttpEntity request = new HttpEntity(params, headers);
-			CreatePayment.ApprovalResponse response = restTemplate.postForObject(approvalApiAddress, request, CreatePayment.ApprovalResponse.class);
-			payment.toPaymentSuccess();
-			order.toOrderSuccess();
+			CreateKakaoPayment.ApprovalResponse response = restTemplate.postForObject(approvalApiAddress, request, CreateKakaoPayment.ApprovalResponse.class);
 
-			List<ProductStock> productStocks = orderProducts.stream().map(OrderProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
-
-			//재고 감소
-			Map<Long, Long> orderProductIdsAndQuantities = orderProducts.stream().collect(Collectors.toMap(
-					(orderProduct -> orderProduct.getProduct().getId()),
-					(orderProduct -> orderProduct.getQuantity()))
-			);
-
-			for (OrderProduct orderProduct : orderProducts) {
-				Product product = orderProduct.getProduct();
-				ProductStock productStock = product.getProductStock();
-
-				productStock.decrease(orderProductIdsAndQuantities.get(product.getId()));
-			}
-
+			payment.processPaymentSuccess();
+			order.processOrderSuccess();
+			orderProducts.stream().forEach(OrderProduct::decreaseOrderProductStocks);
 
 			return response;
 		} catch (Exception e) {
-			payment.toPaymentFailure();
-			order.toOrderFailure();
+			payment.processPaymentFailure();
+			order.processOrderFailure();
 			throw new BusinessException(ErrorCode.FAILED_KAKAOPAY_PAYMENT);
 		}
 

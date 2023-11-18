@@ -21,12 +21,14 @@ public class ReadOrder {
 
 	@Builder
 	@Getter
-	public static class ResponseAll {
+	public static class Response {
 
 		@Schema(description = "주문 고유 식별 번호", nullable = false, example = "ORD-20230101XXX")
 		private String orderId;
+
 		@Schema(description = "주문명", nullable = false, example = "개화 및 3개의 작품")
 		private String orderTitle;
+
 		@Schema(description = "주문 총 금액", nullable = false, example = "100000")
 		private Long orderTotalAmount;
 
@@ -40,14 +42,13 @@ public class ReadOrder {
 		private LocalDateTime orderCreatedAt;
 
 
-		public static ResponseAll from(Order order) {
-
+		public static Response from(Order order) {
 			List<OrderProduct> orderProducts = order.getOrderProducts();
 
-			return ResponseAll.builder()
+			return Response.builder()
 					.orderId(order.getId())
-					.orderTitle(order.getTitle())
-					.orderTotalAmount(order.getTotalAmount())
+					.orderTitle(order.generateOrderTitle())
+					.orderTotalAmount(order.generateTotalAmount())
 					.orderDetails(
 							orderProducts.stream()
 									.map(OrderDetail::from)

@@ -21,12 +21,14 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 			"LEFT JOIN FETCH o.delivery " +
 			"WHERE o.user.userId = :userId " +
 			"ORDER BY o.createdAt DESC")
-	Page<Order> findByUserIdWithOrderProductsAndDelivery(@Param("userId") UUID userId, Pageable pageable);
+	Page<Order> fetchByUserIdWithOrderProductsAndDelivery(@Param("userId") UUID userId, Pageable pageable);
 
 
-	@Query("SELECT o FROM Order o " +
-			"WHERE o.id = :orderId")
-	Optional<Order> findByUserIdWithPayment(@Param("orderId") String orderId);
+	@Query(
+			"SELECT o FROM Order o " +
+			"WHERE o.id = :orderId AND o.user.userId = :userId"
+	)
+	Optional<Order> fetchByUserIdWithPayment(@Param("userId") UUID userId, @Param("orderId") String orderId);
 
 
 	@Modifying
@@ -35,7 +37,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
 
 	@Query("SELECT o.status, count(o) FROM Order o GROUP BY o.status")
-	List<Object[]> getAllOrderStatusCounts();
+	List<Object[]> countAllOrderStatus();
 
 	@Query(
 			"SELECT MONTH (o.createdAt), count(o) FROM Order o " +
@@ -43,7 +45,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 					"GROUP BY MONTH (o.createdAt) " +
 					"ORDER BY MONTH (o.createdAt) "
 	)
-	List<Object[]> getAllMontlyOrderCounts(@Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
+	List<Object[]> countAllMontlyOrder(@Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 
 
 	@Query(
@@ -52,7 +54,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 					"GROUP BY YEAR (o.createdAt) " +
 					"ORDER BY YEAR (o.createdAt) "
 	)
-	List<Object[]> getAllYearlyOrderCounts(LocalDateTime startDateTime, LocalDateTime endDateTime);
+	List<Object[]> countAllYearlyOrder(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 
 //	@Query(

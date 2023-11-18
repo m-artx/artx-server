@@ -49,11 +49,11 @@ public class CartController {
 
 	@Operation(summary = "장바구니 상품 주문", description = "장바구니에 있는 상품들을 주문할 수 있다.")
 	@PostMapping("/{cartId}")
-	public ResponseEntity<CreatePayment.ReadyResponse> orderByCart(
+	public ResponseEntity<CreatePayment.Response> orderSellectedCartProductByCart(
 			@PathVariable Long cartId,
 			@RequestBody CreateOrder.Request request
 	) {
-		return ResponseEntity.ok(cartService.createOrder(cartId, request));
+		return ResponseEntity.ok(cartService.orderSellectedCartProducts(cartId, request));
 	}
 
 	@Operation(summary = "장바구니 전체 조회", description = "장바구니에 있는 상품들을 전체 조회할 수 있다.")

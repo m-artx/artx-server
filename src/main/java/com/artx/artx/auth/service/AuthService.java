@@ -2,6 +2,7 @@ package com.artx.artx.auth.service;
 
 import com.artx.artx.auth.model.Login;
 import com.artx.artx.auth.model.Logout;
+import com.artx.artx.auth.model.UserDetails;
 import com.artx.artx.auth.model.token.AccessToken;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -32,15 +33,15 @@ public class AuthService {
 			//검증 실패 시 예외 발생
 			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			return Login.Response.builder()
+					.accessToken(AccessToken.from(tokenProvider.createToken(userDetails.getUserId(), request.getUsername(), TokenType.ACCESS_TOKEN)))
+					.build();
 		} catch (UsernameNotFoundException e) {
 			throw new BusinessException(ErrorCode.INVALID_USERNAME);
 		} catch (BadCredentialsException e){
 			throw new BusinessException(ErrorCode.INVALID_PASSWORD);
 		}
-
-		return Login.Response.builder()
-				.accessToken(AccessToken.from(tokenProvider.createToken(request.getUsername(), TokenType.ACCESS_TOKEN)))
-				.build();
 	}
 
 	@Transactional(readOnly = true)
@@ -51,7 +52,10 @@ public class AuthService {
 	}
 
 	public String createRefreshToken(Login.Request request) {
-		String refreshToken = tokenProvider.createToken(request.getUsername(), TokenType.REFRESH_TOKEN);
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+		String refreshToken = tokenProvider.createToken(userDetails.getUserId(), request.getUsername(), TokenType.REFRESH_TOKEN);
 		redisCacheService.saveRefreshToken(request.getUsername(), refreshToken);
 		return refreshToken;
 	}

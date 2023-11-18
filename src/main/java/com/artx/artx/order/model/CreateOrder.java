@@ -32,21 +32,14 @@ public class CreateOrder {
 		@Schema(description = "주문 총 금액", nullable = false, example = "100000")
 		private Long orderTotalAmount;
 		@Schema(description = "주문 등록 시간", nullable = false, example = "2023-01-01T10:00:30")
-		private LocalDateTime createdAt;
+		private LocalDateTime orderCreatedAt;
 
 		public static Response from(Order order) {
-			String representativeProductName = order.getOrderProducts().get(0).getProduct().getTitle();
-			Integer orderProductsSize = order.getOrderProducts().size();
-
-			String orderTitle = orderProductsSize > 0 ?
-					representativeProductName + " 외 " + (orderProductsSize - 1) +"개의 작품" :
-					representativeProductName;
-
 			return Response.builder()
 					.orderId(order.getId())
-					.orderTitle(orderTitle)
-					.orderTotalAmount(order.getTotalAmount())
-					.createdAt(order.getCreatedAt())
+					.orderTitle(order.generateOrderTitle())
+					.orderTotalAmount(order.generateTotalAmount())
+					.orderCreatedAt(order.getCreatedAt())
 					.build();
 		}
 	}

@@ -33,7 +33,7 @@ public class EmailSender {
 
 			helper.setFrom(username);
 			helper.setTo(receiver);
-			helper.setSubject("예술을 사랑하는 ARTX입니다. 회원가입 완료를 위해 읽어주세요.");
+			helper.setSubject("ARTX 회원가입 완료를 위해 인증이 필요합니다.");
 			helper.setText("링크를 클릭하시면 인증이 완료됩니다.<a href=" + usersApiAddress + userId.toString() + "/email-auth" + ">인증</a>", true);
 
 			mailSender.send(mimeMessage);

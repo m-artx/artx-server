@@ -11,9 +11,12 @@ import com.artx.artx.order.model.OrderProductIdAndQuantity;
 import com.artx.artx.order.model.ReadOrder;
 import com.artx.artx.order.repository.OrderRepository;
 import com.artx.artx.order.type.OrderStatus;
+import com.artx.artx.payment.entity.KakaoPayment;
 import com.artx.artx.payment.entity.Payment;
 import com.artx.artx.payment.model.CancelPayment;
 import com.artx.artx.payment.model.CreatePayment;
+import com.artx.artx.payment.model.kakaopay.CancelKakaoPayment;
+import com.artx.artx.payment.repository.KakaoPaymentRepository;
 import com.artx.artx.payment.repository.PaymentRepository;
 import com.artx.artx.payment.service.KakaoPayService;
 import com.artx.artx.product.entity.Product;
@@ -28,9 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,37 +40,22 @@ public class OrderService {
 
 	private final OrderRepository orderRepository;
 	private final PaymentRepository paymentRepository;
+	private final KakaoPaymentRepository kakaoPaymentRepository;
 	private final UserService userService;
 	private final ProductService productService;
 	private final KakaoPayService kakaoPayService;
 
 	@Transactional
-	public CreatePayment.ReadyResponse createOrder(CreateOrder.Request request) {
+	public CreatePayment.Response createOrder(CreateOrder.Request request) {
 		User user = userService.getUserByUserId(request.getUserId());
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
-		List<Product> products = productService.getAllProductByIds(productIdsAndQuantities.keySet().stream().toList());
+		List<Product> products = productService.getAllProductByIds(new ArrayList<>(productIdsAndQuantities.keySet()));
 		List<ProductStock> productStocks = products.stream().map(Product::getProductStock).collect(Collectors.toList());
 
-		if (products.isEmpty()) {
-			throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
-		}
+		Order order = orderRepository.save(Order.from(user));
 
-		//재고 확인
-		productStocks.stream().forEach(productStock -> {
-			if (productStock.getQuantity() < productIdsAndQuantities.get(productStock.getProduct().getId())) {
-				throw new BusinessException(ErrorCode.NOT_ENOUGH_QUANTITY);
-			}
-		});
-
-		String orderTitle = extractOrderTitle(products);
-		Order order = orderRepository.save(
-				Order.builder()
-						.title(orderTitle)
-						.status(OrderStatus.ORDER_READY)
-						.user(user)
-						.totalAmount(products.stream().mapToLong(product -> product.getPrice() * productIdsAndQuantities.get(product.getId())).sum())
-						.build()
-		);
+		checkIfProductsExist(products);
+		checkIfEnoughQuantity(products, productIdsAndQuantities);
 
 		products.stream().forEach(product -> {
 			//주문 연관 관계
@@ -85,12 +71,8 @@ public class OrderService {
 		});
 
 		try {
-			//재고 수량 감소 가능 확인
-			productStocks.stream().forEach(productStock -> {
-				productStock.canDecrease(productIdsAndQuantities.get(productStock.getProduct().getId()));
-			});
-
-			CreatePayment.ReadyResponse readyResponse = kakaoPayService.readyPayment(order);
+			productStocks.stream().forEach(productStock -> productStock.canDecrease(productIdsAndQuantities.get(productStock.getProduct().getId())));
+			CreatePayment.Response readyResponse = kakaoPayService.processPayment(order);
 			order.setDelivery(Delivery.from(request));
 			return readyResponse;
 
@@ -100,14 +82,21 @@ public class OrderService {
 		}
 	}
 
-	private String extractOrderTitle(List<Product> products) {
-		String representativeProductName = products.get(0).getTitle();
-		Integer orderProductsSize = products.size();
 
-		String orderTitle = orderProductsSize > 1 ?
-				representativeProductName + " 외 " + (orderProductsSize - 1) + "개의 작품" :
-				representativeProductName;
-		return orderTitle;
+
+	private void checkIfEnoughQuantity(List<Product> products, Map<Long, Long> productIdsAndQuantities) {
+		for (Product product : products) {
+			Long quantity = productIdsAndQuantities.get(product.getId());
+			if (quantity > product.getProductStock().getQuantity()) {
+				throw new BusinessException(ErrorCode.NOT_ENOUGH_QUANTITY);
+			}
+		}
+	}
+
+	private void checkIfProductsExist(List<Product> products) {
+		if (products.isEmpty()) {
+			throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+		}
 	}
 
 	private Map<Long, Long> extractProductIdsAndQuantities(CreateOrder.Request request) {
@@ -116,16 +105,17 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReadOrder.ResponseAll> readOrder(ReadOrder.Request request, Pageable pageable) {
-		Page<Order> order = orderRepository.findByUserIdWithOrderProductsAndDelivery(request.getUserId(), pageable);
-		return order.map(ReadOrder.ResponseAll::from);
+	public Page<ReadOrder.Response> readAllOrders(UUID userId, Pageable pageable) {
+		Page<Order> order = orderRepository.fetchByUserIdWithOrderProductsAndDelivery(userId, pageable);
+		return order.map(ReadOrder.Response::from);
 	}
 
-	@Transactional
-	public CancelPayment cancelOrder(String orderId) {
-		Order order = orderRepository.findByUserIdWithPayment(orderId).orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
-		Payment payment = paymentRepository.findByOrder_Id(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
+	public CancelPayment.Response cancelOrder(String orderId) {
+		KakaoPayment kakaoPayment = kakaoPaymentRepository.fetchKakaoPaymentByOrderId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
+
+		Payment payment = kakaoPayment.getPayment();
+		Order order = payment.getOrder();
 		Delivery delivery = order.getDelivery();
 
 		delivery.isCacnelable();
@@ -133,17 +123,11 @@ public class OrderService {
 		payment.isCancelable();
 
 		try {
-			CancelPayment response = kakaoPayService.cancelPayment(payment);
+			CancelKakaoPayment.Response response = kakaoPayService.cancelPayment(order.getId());
 			List<OrderProduct> orderProducts = order.getOrderProducts();
-			List<ProductStock> productStocks = orderProducts.stream().map(OrderProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
-			Map<Long, ProductStock> productIdsAndStocks = productStocks.stream().collect(Collectors.toMap((productStock -> productStock.getProduct().getId()), (productStock -> productStock)));
+			orderProducts.stream().forEach(OrderProduct::increaseOrderProductStocks);
 
-			orderProducts.stream().forEach(orderProduct -> {
-				ProductStock productStock = productIdsAndStocks.get(orderProduct.getProduct().getId());
-				productStock.increase(orderProduct.getQuantity());
-			});
 			return response;
-
 		} catch (Exception e) {
 
 		}
@@ -153,7 +137,7 @@ public class OrderService {
 	@Transactional(readOnly = true)
 	public Map<OrderStatus, Long> readAllOrderStatusCounts() {
 
-		List<Object[]> statusCounts = orderRepository.getAllOrderStatusCounts();
+		List<Object[]> statusCounts = orderRepository.countAllOrderStatus();
 		Map<OrderStatus, Long> map = new HashMap<>();
 
 		for (Object[] statusCount : statusCounts) {
@@ -167,7 +151,7 @@ public class OrderService {
 		LocalDateTime startDateTime = LocalDateTime.now().minusMonths(1).withDayOfMonth(1);
 		LocalDateTime endDateTime = LocalDateTime.now().plusMonths(1).withDayOfMonth(1).minusDays(1);
 
-		List<Object[]> orderCounts = orderRepository.getAllMontlyOrderCounts(startDateTime, endDateTime);
+		List<Object[]> orderCounts = orderRepository.countAllMontlyOrder(startDateTime, endDateTime);
 
 		Map<String, Long> map = new HashMap<>();
 
@@ -182,7 +166,7 @@ public class OrderService {
 		LocalDateTime startDateTime = LocalDateTime.now().minusYears(1).withDayOfYear(1);
 		LocalDateTime endDateTime = LocalDateTime.now().plusYears(1).withDayOfYear(1).minusDays(1);
 
-		List<Object[]> orderCounts = orderRepository.getAllYearlyOrderCounts(startDateTime, endDateTime);
+		List<Object[]> orderCounts = orderRepository.countAllYearlyOrder(startDateTime, endDateTime);
 
 		Map<String, Long> map = new HashMap<>();
 
@@ -199,5 +183,11 @@ public class OrderService {
 
 		return map;
 
+	}
+
+	@Transactional(readOnly = true)
+	public ReadOrder.Response readOrders(UUID userId, String orderId, Pageable pageable) {
+		Order order = orderRepository.fetchByUserIdWithPayment(userId, orderId).orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+		return ReadOrder.Response.from(order);
 	}
 }

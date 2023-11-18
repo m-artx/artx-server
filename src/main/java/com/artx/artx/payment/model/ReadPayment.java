@@ -13,7 +13,7 @@ public class ReadPayment {
 
 	@Getter
 	@Builder
-	public static class Response{
+	public static class Response extends CreatePayment.Response {
 
 		private UUID paymentId;
 		private String orderId;
@@ -24,11 +24,11 @@ public class ReadPayment {
 		private PaymentStatus paymentStatus;
 		private LocalDateTime paymentCreatedAt;
 
-		public static Response from(String ordersApiAddress, Payment payment){
+		public static Response from(String ordersApiAddress, Payment payment) {
 			return Response.builder()
 					.paymentId(payment.getId())
 					.orderId(payment.getOrder().getId())
-					.orderTitle(payment.getOrder().getTitle())
+					.orderTitle(payment.getOrder().generateOrderTitle())
 					.orderLink(ordersApiAddress + payment.getOrder().getId())
 					.paymentTotalAmount(payment.getTotalAmount())
 					.paymentType(payment.getType())

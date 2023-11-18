@@ -1,6 +1,7 @@
 package com.artx.artx.order.entity;
 
 import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductStock;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class OrderProduct {
 		this.order = order;
 	}
 
-	public static OrderProduct from(OrderProductId orderProductId, Order order, Product product, Long quantity){
+	public static OrderProduct from(OrderProductId orderProductId, Order order, Product product, Long quantity) {
 		return OrderProduct.builder()
 				.orderProductId(orderProductId)
 				.quantity(quantity)
@@ -41,4 +42,16 @@ public class OrderProduct {
 				.product(product)
 				.build();
 	}
+
+	public void decreaseOrderProductStocks() {
+		Product product = getProduct();
+		product.getProductStock().decrease(getQuantity());
+	}
+
+	public void increaseOrderProductStocks() {
+		Product product = getProduct();
+		ProductStock productStock = product.getProductStock();
+		productStock.increase(getQuantity());
+	}
+
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class TokenProvider {
 	@Value("${jwt.expiration.refresh-token}")
 	private Long REFRESH_TOKEN_EXPIRATION;
 
-	public String createToken(String username, TokenType type){
+	public String createToken(UUID userId, String username, TokenType type){
 
 		Date now = new Date();
 		Date exp = null;
@@ -49,6 +50,7 @@ public class TokenProvider {
 		return Jwts.builder()
 				.setExpiration(exp)
 				.setSubject(username)
+				.claim("userId", userId)
 				.setIssuedAt(now)
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
@@ -81,6 +83,6 @@ public class TokenProvider {
 	public String reissueAccessToken(String refreshToken) {
 		Claims claim = getClaim(refreshToken);
 		String username = claim.getSubject();
-		return createToken(username, TokenType.ACCESS_TOKEN);
+		return createToken(null, username, TokenType.ACCESS_TOKEN);
 	}
 }

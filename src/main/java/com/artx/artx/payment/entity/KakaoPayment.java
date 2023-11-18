@@ -20,4 +20,5 @@ public class KakaoPayment extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "payment_id")
 	private Payment payment;
+
 }

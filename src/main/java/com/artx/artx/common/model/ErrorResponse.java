@@ -1,4 +1,4 @@
-package com.artx.artx.common.dto;
+package com.artx.artx.common.model;
 
 import lombok.Builder;
 import lombok.Getter;

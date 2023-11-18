@@ -25,7 +25,6 @@ public class Payment extends BaseEntity {
 	@Id
 	@UuidGenerator
 	private UUID id;
-	private String tid;
 
 	@Enumerated(EnumType.STRING)
 	private PaymentType type;
@@ -34,29 +33,27 @@ public class Payment extends BaseEntity {
 	private PaymentStatus status;
 
 	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id")
 	private Order order;
 
 	private long totalAmount;
 
-	public static Payment from(Order order, String tid, PaymentType paymentType, PaymentStatus paymentStatus) {
+	public static Payment from(Order order, String tid) {
 		return Payment.builder()
-				.tid(tid)
-				.totalAmount(order.getTotalAmount())
+				.totalAmount(order.generateTotalAmount())
 				.order(order)
-				.type(paymentType)
-				.status(paymentStatus)
 				.build();
 	}
 
-	public void toPaymentSuccess() {
+	public void processPaymentSuccess() {
 		this.status = PaymentStatus.PAYMENT_SUCCESS;
 	}
 
-	public void toPaymentFailure() {
+	public void processPaymentFailure() {
 		this.status = PaymentStatus.PAYMENT_FAILURE;
 	}
 
-	public void toPaymentCancel() {
+	public void processPaymentCancel() {
 		this.status = PaymentStatus.PAYMENT_CANCEL;
 	}
 
@@ -65,5 +62,8 @@ public class Payment extends BaseEntity {
 			return true;
 		}
 		throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
+	}
+	public void setPaymentType(PaymentType paymentType) {
+		this.type = paymentType;
 	}
 }
