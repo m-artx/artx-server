@@ -57,15 +57,8 @@ api:
   products: ${artx.address}/api/products/
   orders: ${artx.address}/api/orders/
   images: ${artx.address}/api/images/
-<<<<<<< Updated upstream
-  permissions: ${artx.address}/api/admin/permission-requests/
-=======
-<<<<<<< Updated upstream
-=======
   permissions: ${artx.address}/api/admin/permission-requests/
 
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 springdoc:
   swagger-ui:
     # swagger-ui 접근 경로. default 값은 /swagger-ui.html이다.
