@@ -29,7 +29,10 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: ${DDL_AUTO}
-    defer-datasource-initialization: true
+    defer-datasource-initialization: ${DATASOURCE_INIT}
+  sql:
+    init:
+      mode: ${SQL_INIT_MODE}
   config:
     activate:
       on-profile: prod

@@ -58,6 +58,10 @@ spec:
               value: "dlwodud821@gmail.com"
             - name: GMAIL_PASSWORD
               value: "eutf hszs dvsa qylp"
+            - name: DATASOURCE_INIT
+              value: "true"
+            - name: SQL_INIT_MODE
+              value: "always"
       volumes:
         - name: artx-volume
           persistentVolumeClaim:
