@@ -59,11 +59,12 @@ public class OrderController {
 	public UUID getUserId(){
 		try{
 			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return userDetails.getUserId();
+
 		} catch (ClassCastException e){
 			throw new BusinessException(ErrorCode.NEED_TO_CHECK_TOKEN);
 		}
 
-		return userDetails.getUserId();
 	}
 
 }
