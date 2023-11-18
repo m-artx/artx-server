@@ -26,12 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		if(user.getUserStatus() == UserStatus.INACTIVE){
 			throw new BusinessException(ErrorCode.NOT_AUTHENTICATED_USER);
 		}
-
-		return org.springframework.security.core.userdetails.User.builder()
-				.username(user.getUsername())
-				.password(user.getPassword())
-				.roles(user.getUserRole().name())
-				.build();
+		return new com.artx.artx.auth.model.UserDetails(user.getUserId(), user.getUsername(), user.getPassword(), user.getUserRole());
 	}
 
 }

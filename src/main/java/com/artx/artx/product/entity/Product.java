@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,14 +57,6 @@ public class Product extends BaseEntity {
 				.build();
 	}
 
-	//TODO: list 개수 제한 필요
-	public void addProductImage(ProductImage productImage){
-		if(this.productImages == null){
-			this.productImages = new ArrayList<>();
-		}
-		productImages.add(productImage);
-	}
-
 	public void setProductImages(List<MultipartFile> multipartFiles) {
 		if(multipartFiles != null && multipartFiles.size() > 0){
 
@@ -85,7 +76,6 @@ public class Product extends BaseEntity {
 	public void setViews(long views) {
 		this.views = views;
 	}
-
 
 	public void setUser(User user) {
 		this.user = user;

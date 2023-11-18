@@ -2,7 +2,7 @@ package com.artx.artx.payment.controller;
 
 
 import com.artx.artx.payment.model.ReadPayment;
-import com.artx.artx.payment.service.PaymentService;
+import com.artx.artx.payment.service.CashService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentController {
 
-	private final PaymentService paymentService;
+	private final CashService cashService;
 
 	@GetMapping
 	public ResponseEntity<Page<ReadPayment.Response>> readAllPayments(
@@ -28,7 +28,7 @@ public class PaymentController {
 			@Nullable @RequestParam LocalDate startDate,
 			@Nullable @RequestParam LocalDate endDate,
 			Pageable pageable){
-		return ResponseEntity.ok(paymentService.readAllPayments(userId, startDate, endDate, pageable));
+		return ResponseEntity.ok(cashService.readAllPayments(userId, startDate, endDate, pageable));
 	}
 
 }

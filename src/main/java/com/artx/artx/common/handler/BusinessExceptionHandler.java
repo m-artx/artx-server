@@ -1,6 +1,6 @@
 package com.artx.artx.common.handler;
 
-import com.artx.artx.common.dto.ErrorResponse;
+import com.artx.artx.common.model.ErrorResponse;
 import com.artx.artx.common.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

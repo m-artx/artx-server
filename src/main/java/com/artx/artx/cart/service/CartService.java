@@ -75,8 +75,8 @@ public class CartService {
 	}
 
 	@Transactional
-	public CreatePayment.ReadyResponse createOrder(Long cartId, CreateOrder.Request request) {
-		CreatePayment.ReadyResponse response = orderService.createOrder(request);
+	public CreatePayment.Response orderSellectedCartProducts(Long cartId, CreateOrder.Request request) {
+		CreatePayment.Response response = orderService.createOrder(request);
 		cartProductRepository.deleteAllByCartIdAndProductIds(
 				cartId,
 				request.getOrderDetails().stream()
@@ -122,4 +122,5 @@ public class CartService {
 		List<Long> productIds = request.getProductIds();
 		cartProductRepository.deleteSelectedCartProductsByCartIdAndProductIds(cartId, productIds);
 	}
+
 }

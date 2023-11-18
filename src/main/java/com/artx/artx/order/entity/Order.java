@@ -7,10 +7,7 @@ import com.artx.artx.delivery.entity.Delivery;
 import com.artx.artx.order.type.OrderStatus;
 import com.artx.artx.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.ArrayList;
@@ -20,7 +17,7 @@ import java.util.List;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Orders")
 public class Order extends BaseEntity {
 
@@ -34,7 +31,7 @@ public class Order extends BaseEntity {
 	private User user;
 
 	@Enumerated(EnumType.STRING)
-	private OrderStatus status;
+	private OrderStatus status = OrderStatus.ORDER_READY;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	List<OrderProduct> orderProducts;
@@ -43,31 +40,34 @@ public class Order extends BaseEntity {
 	@JoinColumn(name = "delivery_id")
 	private Delivery delivery;
 
-	private String title;
-	private long totalAmount;
+	public static Order from(User user) {
+		return Order.builder()
+				.user(user)
+				.build();
+	}
 
-	public void addOrderProduct(OrderProduct orderProduct){
-		if(this.orderProducts == null){
+	public void addOrderProduct(OrderProduct orderProduct) {
+		if (this.orderProducts == null) {
 			this.orderProducts = new ArrayList<>();
 		}
 		orderProduct.setOrder(this);
 		this.orderProducts.add(orderProduct);
 	}
 
-	public void toOrderSuccess() {
+	public void processOrderSuccess() {
 		this.status = OrderStatus.ORDER_SUCCESS;
 	}
 
-	public void toOrderCancel() {
+	public void processOrderCancel() {
 		this.status = OrderStatus.ORDER_SUCCESS;
 	}
 
-	public void toOrderFailure() {
+	public void processOrderFailure() {
 		this.status = OrderStatus.ORDER_FAILURE;
 	}
 
 	public boolean isCancelable() {
-		if(this.status == OrderStatus.ORDER_READY || this.status == OrderStatus.ORDER_SUCCESS){
+		if (this.status == OrderStatus.ORDER_READY || this.status == OrderStatus.ORDER_SUCCESS) {
 			return true;
 		}
 		throw new BusinessException(ErrorCode.CAN_NOT_ORDER_CANCEL);
@@ -76,4 +76,18 @@ public class Order extends BaseEntity {
 	public void setDelivery(Delivery delivery){
 		this.delivery = delivery;
 	}
+
+	public String generateOrderTitle() {
+		String representativeProductName = this.orderProducts.get(0).getProduct().getTitle();
+		Integer orderProductsSize = this.orderProducts.size();
+
+		return orderProductsSize > 1 ?
+				representativeProductName + " 외 " + (orderProductsSize - 1) + "개의 작품" :
+				representativeProductName;
+	}
+
+	public Long generateTotalAmount(){
+		return orderProducts.stream().mapToLong(orderProduct -> orderProduct.getQuantity() * orderProduct.getProduct().getPrice()).sum();
+	}
+
 }
