@@ -54,6 +54,7 @@ artx:
   address: ${ARTX_ADDRESS}
 
 api:
+  users: ${artx.address}/api/users/
   products: ${artx.address}/api/products/
   orders: ${artx.address}/api/orders/
   images: ${artx.address}/api/images/
