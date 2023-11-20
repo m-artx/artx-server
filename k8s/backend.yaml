@@ -31,7 +31,7 @@ spec:
             - name: MYSQL_URL
               value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
-              value: "create"
+              value: "none"
             - name: IMAGE_DIRECTORY
               value: "/app/images"
             - name: SPRING_PROFILES_ACTIVE
@@ -59,9 +59,9 @@ spec:
             - name: GMAIL_PASSWORD
               value: "eutf hszs dvsa qylp"
             - name: DATASOURCE_INIT
-              value: "true"
+              value: "false"
             - name: SQL_INIT_MODE
-              value: "always"
+              value: "never"
       volumes:
         - name: artx-volume
           persistentVolumeClaim:
