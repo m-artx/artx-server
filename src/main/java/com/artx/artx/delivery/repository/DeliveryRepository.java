@@ -10,4 +10,8 @@ public interface DeliveryRepository extends JpaRepository<Delivery, String> {
 
 	@Query("SELECT d.status, count(d) FROM Delivery d GROUP BY d.status")
 	List<Object[]> getAllDeliveryStatusCounts();
+
+	@Query("SELECT d FROM Delivery d WHERE d.order.id = :orderId")
+	List<Delivery> findAllByOrderIdAndArtistId(String orderId);
+
 }

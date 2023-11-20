@@ -1,5 +1,6 @@
 package com.artx.artx.order.entity;
 
+import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductStock;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderProduct {
+public class OrderProduct extends BaseEntity {
 
 	@EmbeddedId
 	private OrderProductId orderProductId;

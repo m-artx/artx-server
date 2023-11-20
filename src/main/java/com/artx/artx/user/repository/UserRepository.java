@@ -1,7 +1,7 @@
 package com.artx.artx.user.repository;
 
 import com.artx.artx.user.entity.User;
-import com.artx.artx.user.model.ReadUserDto;
+import com.artx.artx.user.model.UserReadDto;
 import com.artx.artx.user.type.UserRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +24,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c")
 	Optional<User> findByIdWithCart(UUID userId);
 
-	@Query("SELECT new com.artx.artx.user.model.ReadUserDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
-	Page<ReadUserDto> getNewArtists(@Param("userRole") UserRole userRole, Pageable pageable);
+	@Query("SELECT new com.artx.artx.user.model.UserReadDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
+	Page<UserReadDto> getNewArtists(@Param("userRole") UserRole userRole, Pageable pageable);
 
 	@Query("SELECT u.userRole, count(u) FROM User u GROUP BY u.userRole")
 	List<Object[]> readAllDailyUserAndArtistCounts();

@@ -1,8 +1,8 @@
 package com.artx.artx.user.controller;
 
 import com.artx.artx.user.model.*;
-import com.artx.artx.user.model.permission.CreateUserPermissionRequest;
-import com.artx.artx.user.model.permission.ReadUserPermissionRequest;
+import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
+import com.artx.artx.user.model.permission.UserPermissionRequestRead;
 import com.artx.artx.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,27 +26,27 @@ public class UserController {
 
 	@Operation(summary = "회원가입", description = "가입 정보와 함께 회원가입을 할 수 있다.")
 	@PostMapping
-	public ResponseEntity<CreateUser.Response> create(@RequestBody CreateUser.Request request){
-		CreateUser.Response response = userService.createUser(request);
+	public ResponseEntity<UserCreate.Response> createUser(@RequestBody UserCreate.Request request){
+		UserCreate.Response response = userService.createUser(request);
 		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "특정 유저 조회", description = "특정 유저를 조회할 수 있다.")
 	@GetMapping("/{userId}")
-	public ResponseEntity<ReadUser.Response> read(@PathVariable UUID userId){
-		ReadUser.Response response = userService.readUser(userId);
+	public ResponseEntity<UserRead.Response> readUser(@PathVariable UUID userId){
+		UserRead.Response response = userService.readUser(userId);
 		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "신규 가입 작가 조회", description = "새로 가입한 작가들을 조회할 수 있다.")
 	@GetMapping("/new-artist")
-	public ResponseEntity<Page<ReadUserDto>> readNewArtists(Pageable pageable){
+	public ResponseEntity<Page<UserReadDto>> readNewArtists(Pageable pageable){
 		return ResponseEntity.ok(userService.getNewArtists(pageable));
 	}
 
 	@Operation(summary = "프로필 이미지 등록", description = "프로필 이미지를 등록할 수 있다.")
 	@PostMapping("/{userId}/image")
-	public ResponseEntity<CreateUser.Response> profileImage(
+	public ResponseEntity<UserCreate.Response> addProfileImage(
 			@PathVariable UUID userId,
 			@RequestParam MultipartFile file){
 		userService.setProfileImage(userId, file);
@@ -55,28 +55,28 @@ public class UserController {
 
 	@Operation(summary = "비밀번호 변경", description = "패스워드를 변경할 수 있다.")
 	@PatchMapping("/{userId}/password")
-	public ResponseEntity<UpdateUser.Response> updatePassword(
+	public ResponseEntity<UserUpdate.Response> updatePassword(
 			@PathVariable UUID userId,
-			@RequestBody UpdateUser.Request request
+			@RequestBody UserUpdate.Request request
 	){
-		UpdateUser.Response response = userService.updatePassword(userId, request);
+		UserUpdate.Response response = userService.updatePassword(userId, request);
 		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "권한 변경 신청", description = "권한 변경을 신청할 수 있다.")
 	@PostMapping("/{userId}/permission-request")
-	public ResponseEntity<CreateUserPermissionRequest.Response> createRequestPermission(
+	public ResponseEntity<UserPermissionRequestCreate.Response> createRequestPermission(
 			@PathVariable UUID userId,
 			@RequestPart List<MultipartFile> files,
-			@RequestPart CreateUserPermissionRequest.Request request
+			@RequestPart UserPermissionRequestCreate.Request request
 	){
-		CreateUserPermissionRequest.Response response = userService.requestPermission(userId, request, files);
+		UserPermissionRequestCreate.Response response = userService.requestPermission(userId, request, files);
 		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "권한 변경 신청 조회", description = "권한 변경을 신청할 수 있다.")
 	@GetMapping("/{userId}/permission-request")
-	public ResponseEntity<Page<ReadUserPermissionRequest.Response>> readRequestPermission(
+	public ResponseEntity<Page<UserPermissionRequestRead.Response>> readRequestPermission(
 			@PathVariable UUID userId,
 			Pageable pageable
 	){
@@ -85,11 +85,11 @@ public class UserController {
 
 	@Operation(summary = "회원탈퇴", description = "회원 탈퇴를 할 수 있다.")
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<DeleteUser.Response> delete(
+	public ResponseEntity<UserDelete.Response> delete(
 			@PathVariable UUID userId,
-			@RequestBody DeleteUser.Request request
+			@RequestBody UserDelete.Request request
 	){
-		DeleteUser.Response response = userService.deleteUser(userId, request);
+		UserDelete.Response response = userService.deleteUser(userId, request);
 		return ResponseEntity.ok(response);
 	}
 

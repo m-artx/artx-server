@@ -3,17 +3,17 @@ package com.artx.artx.cart.service;
 import com.artx.artx.cart.entity.Cart;
 import com.artx.artx.cart.entity.CartProduct;
 import com.artx.artx.cart.entity.CartProductId;
-import com.artx.artx.cart.model.CreateCartProduct;
-import com.artx.artx.cart.model.DeleteCartProduct;
-import com.artx.artx.cart.model.ReadCartProduct;
+import com.artx.artx.cart.model.CartProductCreate;
+import com.artx.artx.cart.model.CartProductDelete;
+import com.artx.artx.cart.model.CartProductRead;
 import com.artx.artx.cart.repository.CartProductRepository;
 import com.artx.artx.cart.repository.CartRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.order.model.CreateOrder;
+import com.artx.artx.order.model.OrderCreate;
 import com.artx.artx.order.model.OrderProductIdAndQuantity;
 import com.artx.artx.order.service.OrderService;
-import com.artx.artx.payment.model.CreatePayment;
+import com.artx.artx.payment.model.PaymentCreate;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.service.ProductService;
@@ -41,7 +41,7 @@ public class CartService {
 	private String imagesApiAddress;
 
 	@Transactional
-	public CreateCartProduct.Response addProduct(Long cartId, Long productId) {
+	public CartProductCreate.Response addProduct(Long cartId, Long productId) {
 
 		Cart cart = getCartById(cartId);
 		Product product = productService.getProductById(productId);
@@ -56,7 +56,7 @@ public class CartService {
 		cartProductRepository.save(cartProduct);
 		cart.addCartProduct(cartProduct);
 
-		return CreateCartProduct.Response.from(cartProduct);
+		return CartProductCreate.Response.of(cartProduct);
 	}
 
 	@Transactional
@@ -75,11 +75,11 @@ public class CartService {
 	}
 
 	@Transactional
-	public CreatePayment.Response orderSellectedCartProducts(Long cartId, CreateOrder.Request request) {
-		CreatePayment.Response response = orderService.createOrder(request);
+	public PaymentCreate.Response orderSellectedCartProducts(Long cartId, OrderCreate.Request request) {
+		PaymentCreate.Response response = orderService.createOrder(request);
 		cartProductRepository.deleteAllByCartIdAndProductIds(
 				cartId,
-				request.getOrderDetails().stream()
+				request.getOrderProductDetails().stream()
 						.map(OrderProductIdAndQuantity::getProductId)
 						.collect(Collectors.toList()));
 
@@ -87,15 +87,15 @@ public class CartService {
 	}
 
 	@Transactional(readOnly = true)
-	public ReadCartProduct.Response readAllCarProductsByCartId(Long cartId, Pageable pageable) {
+	public CartProductRead.Response readAllCarProductsByCartId(Long cartId, Pageable pageable) {
 		Page<CartProduct> cartProducts = cartProductRepository.findAllByCart_Id(cartId, pageable);
 		List<ProductStock> productStocks = cartProducts.stream().map(CartProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
 		Map<Long, ProductStock> productIdsAndQuantities = productStocks.stream()
 				.collect(Collectors.toMap(productStock -> productStock.getProduct().getId(), productStock -> productStock));
 
-		return ReadCartProduct.Response.from(
+		return CartProductRead.Response.from(
 				cartId,
-				cartProducts.map(cartProduct -> ReadCartProduct.CartProductDetail.from(
+				cartProducts.map(cartProduct -> CartProductRead.CartProductDetail.of(
 						imagesApiAddress,
 						cartProduct,
 						productIdsAndQuantities.get(cartProduct.getProduct().getId()).getQuantity())
@@ -118,7 +118,7 @@ public class CartService {
 	}
 
 	@Transactional
-	public void deleteSelectedCartProducts(Long cartId, DeleteCartProduct.Request request) {
+	public void deleteSelectedCartProducts(Long cartId, CartProductDelete.Request request) {
 		List<Long> productIds = request.getProductIds();
 		cartProductRepository.deleteSelectedCartProductsByCartIdAndProductIds(cartId, productIds);
 	}

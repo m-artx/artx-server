@@ -2,7 +2,7 @@ package com.artx.artx.product.entity;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.product.model.ProductCreate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +26,10 @@ public class ProductStock {
 	@Version
 	private Long quantity;
 
-	public static ProductStock from(CreateProduct.Request request){
-		return ProductStock.builder().quantity(request.getProductQuantity()).build();
+	public static ProductStock from(ProductCreate.Request request){
+		return ProductStock.builder()
+				.quantity(request.getProductStockQuantity())
+				.build();
 	}
 
 	public void increase(long quantity) {
@@ -38,24 +40,15 @@ public class ProductStock {
 	}
 
 	public void decrease(long quantity) {
-		if(quantity <= 0){
-			throw new BusinessException(ErrorCode.MUST_BE_MORE_THAN_ZERO);
-		}
-
-		if(this.quantity - quantity < 0){
-			throw new BusinessException(ErrorCode.CAN_NOT_DECREASE);
-		}
-
+		isQuantityLessThan(quantity);
 		this.quantity -= quantity;
 	}
-	public boolean canDecrease(Long quantity) {
-		if(quantity <= 0){
-			throw new BusinessException(ErrorCode.MUST_BE_MORE_THAN_ZERO);
-		}
 
-		if(this.quantity - quantity < 0){
+	public boolean isQuantityLessThan(long quantity){
+		if(this.quantity < quantity){
 			throw new BusinessException(ErrorCode.CAN_NOT_DECREASE);
 		}
 		return true;
 	}
+
 }

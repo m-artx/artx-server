@@ -37,7 +37,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 					"AND (:name IS NULL OR p.title = :name) " +
 					"AND p.isDeleted = false"
 	)
-	Page<Product> findAllByTitleWithProductImages(@Param("category") Category category, @Param("name") String name, Pageable pageable);
+	Page<Product> findAllByTitleWithProductImages(Category category, String name, Pageable pageable);
 
 	/**
 	 * 카테고리(Nullable)와 유저명으로 조회
@@ -50,7 +50,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 					"AND (:name IS NULL OR p.user.nickname = :name) " +
 					"AND p.isDeleted = false"
 	)
-	Page<Product> findAllByNicknameWithProductImages(@Param("category") Category category, @Param("name") String name, Pageable pageable);
+	Page<Product> findAllByNicknameWithProductImages(Category category, String name, Pageable pageable);
 
 	/**
 	 * 메인페이지 작품 최신순 10개 조회
@@ -79,9 +79,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	@Modifying
 	@Query("UPDATE Product p SET p.isDeleted = :isDeleted WHERE p = :product")
-	void updateToDeleted(@Param("product")Product product, boolean isDeleted);
+	void updateToDeleted(Product product, boolean isDeleted);
 
 	@Modifying
 	@Query("UPDATE Product p SET p.isDeleted = :isDeleted WHERE p IN :products")
-	void updateToDeleted(@Param("products")List<Product> product, boolean isDeleted);
+	void updateToDeleted(List<Product> product, boolean isDeleted);
 }

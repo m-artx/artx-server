@@ -6,10 +6,10 @@ import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.payment.entity.KakaoPayment;
 import com.artx.artx.payment.entity.Payment;
-import com.artx.artx.payment.model.CreatePayment;
-import com.artx.artx.payment.model.ReadPayment;
-import com.artx.artx.payment.model.kakaopay.CancelKakaoPayment;
-import com.artx.artx.payment.model.kakaopay.CreateKakaoPayment;
+import com.artx.artx.payment.model.PaymentCreate;
+import com.artx.artx.payment.model.PaymentRead;
+import com.artx.artx.payment.model.kakaopay.KakaoPaymentCancel;
+import com.artx.artx.payment.model.kakaopay.KakaoPaymentCreate;
 import com.artx.artx.payment.repository.KakaoPaymentRepository;
 import com.artx.artx.payment.repository.PaymentRepository;
 import com.artx.artx.payment.type.PaymentType;
@@ -62,7 +62,7 @@ public class KakaoPayService implements PaymentService{
 
 	@Override
 	@Transactional
-	public CreatePayment.Response processPayment(Order order) {
+	public PaymentCreate.Response processPayment(Order order) {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "KakaoAK " + apiKey);
@@ -83,7 +83,7 @@ public class KakaoPayService implements PaymentService{
 		HttpEntity request = new HttpEntity(params, headers);
 
 		try {
-			CreateKakaoPayment.ReadyResponse readyResponse = restTemplate.postForObject(readyApiAddress, request, CreateKakaoPayment.ReadyResponse.class);
+			KakaoPaymentCreate.ReadyResponse readyResponse = restTemplate.postForObject(readyApiAddress, request, KakaoPaymentCreate.ReadyResponse.class);
 			Payment payment = Payment.from(
 					order,
 					readyResponse.getTid()
@@ -108,16 +108,16 @@ public class KakaoPayService implements PaymentService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<ReadPayment.Response> readAllPayments(UUID userId, LocalDate startDate, LocalDate endDate, Pageable pageable){
+	public Page<PaymentRead.Response> readAllPayments(UUID userId, LocalDate startDate, LocalDate endDate, Pageable pageable){
 		LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
 		LocalDateTime endDateTime = endDate != null ? endDate.atStartOfDay().plusDays(1L) : null;
 
 		Page<Payment> payments = paymentRepository.findAllByUserIdWithOrder(userId, startDateTime, endDateTime, pageable);
-		return payments.map(payment -> ReadPayment.Response.from(ordersApiAddress, payment));
+		return payments.map(payment -> PaymentRead.Response.of(ordersApiAddress, payment));
 	}
 
 	@Transactional
-	public CancelKakaoPayment.Response cancelPayment(String orderId) {
+	public KakaoPaymentCancel.Response cancelPayment(String orderId) {
 		KakaoPayment kakaoPayment = kakaoPaymentRepository.fetchKakaoPaymentByOrderId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 		Payment payment = kakaoPayment.getPayment();
 
@@ -135,7 +135,7 @@ public class KakaoPayService implements PaymentService{
 		HttpEntity request = new HttpEntity(params, headers);
 
 		try {
-			CancelKakaoPayment.Response response = restTemplate.postForObject(cancelApiAddress, request, CancelKakaoPayment.Response.class);
+			KakaoPaymentCancel.Response response = restTemplate.postForObject(cancelApiAddress, request, KakaoPaymentCancel.Response.class);
 			payment.processPaymentCancel();
 			return response;
 		} catch (Exception e) {
@@ -144,7 +144,7 @@ public class KakaoPayService implements PaymentService{
 		}
 	}
 
-	public CreateKakaoPayment.ApprovalResponse approvalPayment(String orderId, String pgToken) {
+	public KakaoPaymentCreate.ApprovalResponse approvalPayment(String orderId, String pgToken) {
 		KakaoPayment kakaoPayment = kakaoPaymentRepository.fetchKakaoPaymentByOrderId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 		Payment payment = kakaoPayment.getPayment();
 		Order order = payment.getOrder();
@@ -164,7 +164,7 @@ public class KakaoPayService implements PaymentService{
 
 		try {
 			HttpEntity request = new HttpEntity(params, headers);
-			CreateKakaoPayment.ApprovalResponse response = restTemplate.postForObject(approvalApiAddress, request, CreateKakaoPayment.ApprovalResponse.class);
+			KakaoPaymentCreate.ApprovalResponse response = restTemplate.postForObject(approvalApiAddress, request, KakaoPaymentCreate.ApprovalResponse.class);
 
 			payment.processPaymentSuccess();
 			order.processOrderSuccess();

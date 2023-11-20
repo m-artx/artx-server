@@ -3,7 +3,7 @@ package com.artx.artx.admin.entity;
 import com.artx.artx.admin.type.PermissionRequestStatus;
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.user.entity.User;
-import com.artx.artx.user.model.permission.CreateUserPermissionRequest;
+import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
 import com.artx.artx.user.type.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ public class PermissionRequest extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private PermissionRequestStatus status;
 
-	public static PermissionRequest from(CreateUserPermissionRequest.Request request) {
+	public static PermissionRequest from(UserPermissionRequestCreate.Request request) {
 		return PermissionRequest.builder()
 				.title(request.getTitle())
 				.content(request.getContent())

@@ -1,7 +1,7 @@
 package com.artx.artx.payment.controller;
 
 
-import com.artx.artx.payment.model.ReadPayment;
+import com.artx.artx.payment.model.PaymentRead;
 import com.artx.artx.payment.service.CashService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
@@ -23,7 +23,7 @@ public class PaymentController {
 	private final CashService cashService;
 
 	@GetMapping
-	public ResponseEntity<Page<ReadPayment.Response>> readAllPayments(
+	public ResponseEntity<Page<PaymentRead.Response>> readAllPayments(
 			@PathVariable UUID userId,
 			@Nullable @RequestParam LocalDate startDate,
 			@Nullable @RequestParam LocalDate endDate,

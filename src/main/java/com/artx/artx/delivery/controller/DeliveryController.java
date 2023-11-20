@@ -9,12 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/delivery")
 public class DeliveryController {
 
-
-//	@GetMapping
-//	public ResponseEntity<Page<ReadDelivery.Response>> readAll(){
-//
-//
-//	}
-
+	//배송 조회
 
 }

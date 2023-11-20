@@ -4,8 +4,9 @@ import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.Address;
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.order.model.CreateOrder;
 import com.artx.artx.delivery.type.DeliveryStatus;
+import com.artx.artx.order.entity.Order;
+import com.artx.artx.order.model.OrderCreate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,10 @@ public class Delivery extends BaseEntity {
 	@GenericGenerator(name = "delivery-id-generator", strategy = "com.artx.artx.common.util.DeliveryGenerator")
 	private String id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "")
+	private Order order;
+
 	@Embedded
 	private Address address;
 
@@ -39,14 +44,14 @@ public class Delivery extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
 
-	public static Delivery from(CreateOrder.Request request) {
+	public static Delivery from(OrderCreate.Request request) {
 		return Delivery.builder()
-				.receiver(request.getDeliveryDetail().getDeliveryReceiver())
-				.receiverPhoneNumber(request.getDeliveryDetail().getDeliveryReceiverPhoneNumber())
+				.receiver(request.getOrderDeliveryDetail().getDeliveryReceiver())
+				.receiverPhoneNumber(request.getOrderDeliveryDetail().getDeliveryReceiverPhoneNumber())
 				.address(
 						Address.builder()
-								.address(request.getDeliveryDetail().getDeliveryReceiverAddress())
-								.addressDetail(request.getDeliveryDetail().getDeliveryReceiverAddressDetail())
+								.address(request.getOrderDeliveryDetail().getDeliveryReceiverAddress())
+								.addressDetail(request.getOrderDeliveryDetail().getDeliveryReceiverAddressDetail())
 								.build()
 				)
 				.status(DeliveryStatus.DELIVERY_READY)

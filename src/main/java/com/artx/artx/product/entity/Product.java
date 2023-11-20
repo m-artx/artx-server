@@ -1,7 +1,7 @@
 package com.artx.artx.product.entity;
 
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.product.model.CreateProduct;
+import com.artx.artx.product.model.ProductCreate;
 import com.artx.artx.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -48,7 +48,7 @@ public class Product extends BaseEntity {
 	@JoinColumn(name = "product_stock_id")
 	private ProductStock productStock;
 
-	public static Product from(CreateProduct.Request request){
+	public static Product from(ProductCreate.Request request, User user, ProductCategory productCategory, ProductStock productStock){
 		return Product.builder()
 				.title(request.getProductTitle())
 				.description(request.getProductDescription())

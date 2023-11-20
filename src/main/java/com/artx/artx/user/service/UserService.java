@@ -1,14 +1,14 @@
 package com.artx.artx.user.service;
 
-import com.artx.artx.admin.service.PermissionService;
+import com.artx.artx.admin.service.AdminPermissionService;
 import com.artx.artx.common.email.EmailSender;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.image.service.ImageService;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.model.*;
-import com.artx.artx.user.model.permission.CreateUserPermissionRequest;
-import com.artx.artx.user.model.permission.ReadUserPermissionRequest;
+import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
+import com.artx.artx.user.model.permission.UserPermissionRequestRead;
 import com.artx.artx.user.repository.UserRepository;
 import com.artx.artx.user.type.UserRole;
 import com.artx.artx.user.type.UserStatus;
@@ -21,9 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -33,28 +31,29 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final ImageService imageService;
-	private final PermissionService permissionService;
+	private final AdminPermissionService permissionService;
 	private final EmailSender emailSender;
 
-
 	@Transactional
-	public CreateUser.Response createUser(CreateUser.Request request) {
-		if (userRepository.existsByUsername(request.getUsername())) {
-			throw new BusinessException(ErrorCode.DUPLICATED_USERNAME);
-		}
-
-		User user = userRepository.save(User.from(request));
-		user.setPassword(passwordEncoder.encode(request.getPassword()));
+	public UserCreate.Response createUser(UserCreate.Request request) {
+		existUserByUsername(request.getUsername());
+		User user = userRepository.save(User.from(request, passwordEncoder.encode(request.getPassword())));
 
 		emailSender.send(user.getEmail(), user.getUserId());
+		return UserCreate.Response.of(user);
+	}
 
-		return CreateUser.Response.from(user);
+	private boolean existUserByUsername(String username) {
+		if (userRepository.existsByUsername(username)) {
+			throw new BusinessException(ErrorCode.DUPLICATED_USERNAME);
+		}
+		return true;
 	}
 
 	@Transactional(readOnly = true)
-	public ReadUser.Response readUser(UUID userId) {
+	public UserRead.Response readUser(UUID userId) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-		return ReadUser.Response.from(user);
+		return UserRead.Response.of(user);
 	}
 
 	@Transactional(readOnly = true)
@@ -62,20 +61,9 @@ public class UserService {
 		return userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 	}
 
-
 	@Transactional(readOnly = true)
-	public User getUserByUserIdWithCart(UUID userId) {
-		return userRepository.findByIdWithCart(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-	}
-
-	@Transactional(readOnly = true)
-	public Page<ReadUserDto> getNewArtists(Pageable pageable) {
+	public Page<UserReadDto> getNewArtists(Pageable pageable) {
 		return userRepository.getNewArtists(UserRole.ARTIST, pageable);
-	}
-
-	@Transactional(readOnly = true)
-	public User getUserByUsername(String username) {
-		return userRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USERNAME));
 	}
 
 	@Transactional
@@ -87,75 +75,63 @@ public class UserService {
 	}
 
 	@Transactional
-	public UpdateUser.Response updatePassword(UUID userId, UpdateUser.Request request) {
+	public UserUpdate.Response updatePassword(UUID userId, UserUpdate.Request request) {
 		User user = getUserByUserId(userId);
-		if (!passwordEncoder.matches(request.getPreviousPassword(), user.getPassword())) {
-			throw new BusinessException(ErrorCode.INVALID_PASSWORD);
-		}
-		;
+		isValidPassword(request.getPreviousPassword(), user.getPassword());
 		user.setPassword(passwordEncoder.encode(request.getPresentPassword()));
-		return UpdateUser.Response.builder().updatedAt(LocalDateTime.now()).build();
+		return UserUpdate.Response.builder().updatedAt(LocalDateTime.now()).build();
 	}
 
-	@Transactional
-	public DeleteUser.Response deleteUser(UUID userId, DeleteUser.Request request) {
-		User user = getUserByUserId(userId);
-		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+	private boolean isValidPassword(String previousPassword, String password) {
+		if (!passwordEncoder.matches(previousPassword, password)) {
 			throw new BusinessException(ErrorCode.INVALID_PASSWORD);
 		}
-		;
-		user.setDeleted(true);
-		return DeleteUser.Response.builder().deletedAt(LocalDateTime.now()).build();
+		return true;
 	}
 
 	@Transactional
-	public CreateUserPermissionRequest.Response requestPermission(UUID userId, CreateUserPermissionRequest.Request request, List<MultipartFile> files) {
-
-		if (files.size() != 2) {
-			throw new BusinessException(ErrorCode.NEED_AT_TWO_FILES);
-		}
-
+	public UserDelete.Response deleteUser(UUID userId, UserDelete.Request request) {
 		User user = getUserByUserId(userId);
+		isValidPassword(request.getPassword(), user.getPassword());
+		user.setDeleted(true);
+		return UserDelete.Response.builder().userDeletedAt(LocalDateTime.now()).build();
+	}
 
-		if (user.getUserRole() == request.getRole()) {
-			throw new BusinessException(ErrorCode.ALREADY_SAME_PERMISSION);
-		}
+	@Transactional
+	public UserPermissionRequestCreate.Response requestPermission(UUID userId, UserPermissionRequestCreate.Request request, List<MultipartFile> files) {
+		isValidFileSize(2, files);
+		User user = getUserByUserId(userId);
+		isAlreadySamePermission(request, user);
 
 		List<MultipartFile> images = imageService.saveImages(files);
 		permissionService.createPermissionRequest(user, request, images);
-		return CreateUserPermissionRequest.Response.builder().createdAt(LocalDateTime.now()).build();
+		return UserPermissionRequestCreate.Response.of(LocalDateTime.now());
 	}
 
-	public Page<ReadUserPermissionRequest.Response> readRequestPermission(UUID userId, Pageable pageable) {
-		return permissionService.getPermissionRequestPagesByUserId(userId, pageable)
-				.map(ReadUserPermissionRequest.Response::from);
-	}
-
-	public Map<UserRole, Long> readAllDailyUserAndArtistCounts() {
-		List<Object[]> objects = userRepository.readAllDailyUserAndArtistCounts();
-
-		Map<UserRole, Long> map = new HashMap<>();
-		for (Object[] object : objects) {
-			UserRole role = (UserRole) object[0];
-			Long count = (Long) object[1];
-			map.put(role, count);
+	private boolean isAlreadySamePermission(UserPermissionRequestCreate.Request request, User user) {
+		if (user.getUserRole() == request.getRole()) {
+			throw new BusinessException(ErrorCode.ALREADY_SAME_PERMISSION);
 		}
-		return map;
+		return true;
+	}
+
+	private void isValidFileSize(int size, List<MultipartFile> files) {
+		if (files.size() != size) {
+			throw new BusinessException(ErrorCode.NEED_AT_TWO_FILES);
+		}
+	}
+
+	public Page<UserPermissionRequestRead.Response> readRequestPermission(UUID userId, Pageable pageable) {
+		return permissionService.getPermissionRequestPagesByUserId(userId, pageable).map(UserPermissionRequestRead.Response::from);
 	}
 
 	@Transactional
 	public void emailAuth(UUID userId) {
 		User user = getUserByUserId(userId);
-		if(user.getUserStatus() == UserStatus.ACTIVE){
+		if (user.getUserStatus() == UserStatus.ACTIVE) {
 			throw new BusinessException(ErrorCode.ALREADY_AUTHENTICATED_USER);
 		}
 		user.setUserStatus(UserStatus.ACTIVE);
 	}
 
-
-//	@Transactional
-//	public CreateUser.Response createInquiry(CreateInquiry.Request request) {
-//		request
-
-//	}
 }

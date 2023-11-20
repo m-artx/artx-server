@@ -20,7 +20,7 @@
 //	public static class Response {
 //		private LocalDateTime createdAt;
 //
-//		public static Response from(Commission commission) {
+//		public static Response of(Commission commission) {
 //			return Response.builder()
 //					.createdAt(commission.getCreatedAt())
 //					.build();

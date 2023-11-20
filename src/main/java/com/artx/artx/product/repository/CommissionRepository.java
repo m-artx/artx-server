@@ -19,5 +19,5 @@
 //					"LEFT JOIN FETCH c.product cp " +
 //					"WHERE c.user.userId = :userId"
 //	)
-//	Page<Commission> findAllCommissionsByUserIdWithUserAndProduct(@Param("userId") UUID userId, Pageable pageable);
+//	Page<Commission> findAllCommissionsByUserIdWithUserAndProduct(UUID userId, Pageable pageable);
 //}

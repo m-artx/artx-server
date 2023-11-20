@@ -1,6 +1,6 @@
 package com.artx.artx.admin.entity;
 
-import com.artx.artx.admin.model.notice.CreateNotice;
+import com.artx.artx.admin.model.notice.NoticeCreate;
 import com.artx.artx.common.model.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +25,7 @@ public class Notice extends BaseEntity {
 	private String title;
 	private String content;
 
-	public static Notice from(CreateNotice.Request request) {
+	public static Notice from(NoticeCreate.Request request) {
 		return Notice.builder()
 				.title(request.getTitle())
 				.content(request.getContent())

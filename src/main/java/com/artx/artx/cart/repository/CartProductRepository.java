@@ -16,7 +16,7 @@ public interface CartProductRepository extends JpaRepository<CartProduct, CartPr
 
 	@Modifying
 	@Query("DELETE FROM CartProduct c WHERE c.cart.id = :cartId AND c.product.id IN :productIds")
-	void deleteAllByCartIdAndProductIds(@Param("cartId") Long cartId, @Param("productIds") List<Long> productIds);
+	void deleteAllByCartIdAndProductIds(Long cartId, List<Long> productIds);
 
 	@Modifying
 	@Query("DELETE FROM CartProduct c WHERE c.createdAt < :thirtyDaysAgo")
@@ -24,8 +24,8 @@ public interface CartProductRepository extends JpaRepository<CartProduct, CartPr
 
 	@Modifying
 	@Query("DELETE FROM CartProduct ci WHERE ci.cart.id = :cartId AND ci.product.id IN :productIds")
-	void deleteSelectedCartProductsByCartIdAndProductIds(@Param("cartId")Long cartId, @Param("productIds")List<Long> productIds);
+	void deleteSelectedCartProductsByCartIdAndProductIds(Long cartId, List<Long> productIds);
 
 	@Query("SELECT cp FROM CartProduct cp WHERE cp.cart.id = :cartId")
-	Page<CartProduct> findAllByCart_Id(@Param("cartId") Long cartId, Pageable pageable);
+	Page<CartProduct> findAllByCart_Id(Long cartId, Pageable pageable);
 }

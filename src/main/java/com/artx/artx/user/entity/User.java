@@ -5,7 +5,7 @@ import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.model.Address;
 import com.artx.artx.common.model.BaseEntity;
-import com.artx.artx.user.model.CreateUser;
+import com.artx.artx.user.model.UserCreate;
 import com.artx.artx.user.type.UserRole;
 import com.artx.artx.user.type.UserStatus;
 import jakarta.persistence.*;
@@ -52,7 +52,7 @@ public class User extends BaseEntity {
 	@Embedded
 	private Address address;
 
-	public boolean canCreateProduct(){
+	public boolean isArtist(){
 		if(this.userRole != UserRole.ARTIST){
 			throw new BusinessException(ErrorCode.CREATE_PRODUCT_ONLY_ARTIST);
 		}
@@ -60,11 +60,12 @@ public class User extends BaseEntity {
 		return true;
 	}
 
-	public static User from(CreateUser.Request request){
+	public static User from(UserCreate.Request request, String password){
 		return User.builder()
 				.userStatus(UserStatus.INACTIVE)
 				.userRole(request.getUserRole())
 				.username(request.getUsername())
+				.password(password)
 				.email(request.getEmail())
 				.nickname(request.getNickname())
 				.phoneNumber(request.getPhoneNumber())
