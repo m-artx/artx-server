@@ -66,7 +66,7 @@ public class OrderService {
 		try {
 			productStocks.stream().forEach(productStock -> productStock.isQuantityLessThan(productIdsAndQuantities.get(productStock.getProduct().getId())));
 			PaymentCreate.Response readyResponse = kakaoPayService.processPayment(order);
-
+			orderRepository.save(order);
 			return readyResponse;
 
 		} catch (Exception e) {
