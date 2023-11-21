@@ -77,10 +77,6 @@ spec:
               value: "false"
             - name: SQL_INIT_MODE
               value: "never"
-      volumes:
-        - name: artx-volume
-          persistentVolumeClaim:
-            claimName: artx-pvc
 ---
 
 apiVersion: v1
