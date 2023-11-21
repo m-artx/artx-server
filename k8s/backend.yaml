@@ -17,15 +17,15 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: artx-images-volume
+            - name: artx-profile-images
               mountPath: /app/images
-            - name: artx-temp-images-volume
+            - name: artx-temp-images
               mountPath: /app/temp-images
-            - name: artx-profile-images-volume
+            - name: artx-profile-images
               mountPath: /app/profile-images
-            - name: artx-thumbnail-images-volume
+            - name: artx-thumbnail-images
               mountPath: /app/thumbnail-images
-            - name: artx-permission-images-volume
+            - name: artx-permission-images
               mountPath: /app/permission-images
 
           env:
