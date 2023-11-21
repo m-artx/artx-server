@@ -25,15 +25,32 @@ public class EmailSender {
 	@Value("${api.users}")
 	private String usersApiAddress;
 
-	public void send(String receiver, UUID userId) {
+	public void sendAuthenticationEmail(String receiver, UUID userId) {
 		try {
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
 			helper.setFrom(username);
 			helper.setTo(receiver);
-			helper.setSubject("ARTX 회원가입 완료를 위해 인증이 필요합니다.");
+			helper.setSubject("[ARTX] 회원가입 완료를 위해 인증이 필요합니다.");
 			helper.setText("링크를 클릭하시면 인증이 완료됩니다.<a href=" + usersApiAddress + userId.toString() + "/email-auth" + ">인증</a>", true);
+
+			mailSender.send(mimeMessage);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void sendPasswordInitEmail(String receiver, String password) {
+		try {
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+			helper.setFrom(username);
+			helper.setTo(receiver);
+			helper.setSubject("[ARTX] 임시 패스워드를 확인해주세요.");
+			helper.setText("임시 패스워드: " + password, true);
 
 			mailSender.send(mimeMessage);
 		} catch (MessagingException e) {
