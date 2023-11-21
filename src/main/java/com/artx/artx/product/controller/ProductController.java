@@ -1,5 +1,6 @@
 package com.artx.artx.product.controller;
 
+import com.artx.artx.auth.model.UserDetails;
 import com.artx.artx.product.model.ProductCategoryRead;
 import com.artx.artx.product.model.ProductRead;
 import com.artx.artx.product.service.ProductService;
@@ -13,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "작품")
 @RestController
@@ -51,6 +54,11 @@ public class ProductController {
 	@GetMapping("/categories")
 	public ResponseEntity<List<ProductCategoryRead.SummaryResponse>> readCategories(){
 		return ResponseEntity.ok(productService.readCategories());
+	}
+
+	public UUID getUserId(){
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userDetails.getUserId();
 	}
 
 }

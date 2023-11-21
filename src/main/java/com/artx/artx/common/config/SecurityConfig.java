@@ -29,6 +29,7 @@ public class SecurityConfig {
 			"/v3/api-docs/**",
 			"/api/auth/login",
 			"/api/users",
+			"/api/users/**",
 			"/api/users/find-username",
 			"/api/users/init-password",
 	};
@@ -54,9 +55,9 @@ public class SecurityConfig {
 					 * JwtAuthenticationEntryPoint가sms 주로 인증이 필요한 요청에서 인증이 실패한 경우에 호출된다.
 					 * 즉, authenticated.permitAll() 상태에서는 인증이 필요하지 않기에 JwtAuthenticationEntryPoint가 동작하지 않을 수 있다.
 					 */
-					it.requestMatchers(permittedPath).permitAll();
+//					it.requestMatchers(permittedPath).permitAll();
 //					it.requestMatchers("/api/payments/**").permitAll();
-					it.anyRequest().authenticated();
+					it.anyRequest().permitAll();
 				})
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
