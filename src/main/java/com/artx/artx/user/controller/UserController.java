@@ -48,7 +48,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "회원탈퇴", description = "회원 탈퇴를 할 수 있다.")
-	@DeleteMapping("/delete")
+	@DeleteMapping("/{userId}")
 	public ResponseEntity<UserDelete.Response> delete(
 			@PathVariable UUID userId,
 			@RequestBody UserDelete.Request request

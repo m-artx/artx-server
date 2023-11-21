@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -31,7 +28,7 @@ public class UserEmailController {
 	}
 
 	@Operation(summary = "아이디 찾기", description = "이메일 계정을 통해 등록된 아이디를 찾는다.")
-	@GetMapping("/find-username")
+	@PostMapping("/find-username")
 	public ResponseEntity<UserHandle.Username> findUsernameByEmail(
 			@PathVariable String email
 	){
@@ -39,7 +36,7 @@ public class UserEmailController {
 	}
 
 	@Operation(summary = "패스워드 초기화", description = "이메일 계정을 통해 등록된 아이디를 찾는다.")
-	@GetMapping("/init-username")
+	@PostMapping("/init-username")
 	public ResponseEntity<String> InitPasswordByEmail(
 			@PathVariable UUID userId
 	){
