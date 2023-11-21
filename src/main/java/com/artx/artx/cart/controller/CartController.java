@@ -7,8 +7,6 @@ import com.artx.artx.cart.model.CartProductRead;
 import com.artx.artx.cart.service.CartService;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.order.model.OrderCreate;
-import com.artx.artx.payment.model.PaymentCreate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +31,6 @@ public class CartController {
 			@RequestBody CartProductCreate.Request request
 	) {
 		return ResponseEntity.ok(cartService.addProduct(getUserId(), request.getProductId()));
-	}
-
-	@Operation(summary = "장바구니 상품 주문", description = "장바구니에 있는 상품들을 주문할 수 있다.")
-	@PostMapping("/order")
-	public ResponseEntity<PaymentCreate.Response> orderSellectedCartProductByCart(
-			@RequestBody OrderCreate.Request request
-	) {
-		return ResponseEntity.ok(cartService.orderSellectedCartProducts(getUserId(), request));
 	}
 
 	@Operation(summary = "장바구니 전체 조회", description = "장바구니에 있는 상품들을 전체 조회할 수 있다.")
