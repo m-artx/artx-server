@@ -2,13 +2,13 @@ package com.artx.artx.product.entity;
 
 import com.artx.artx.common.model.BaseEntity;
 import com.artx.artx.product.model.ProductCreate;
+import com.artx.artx.product.model.ProductUpdate;
 import com.artx.artx.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,14 +25,14 @@ public class Product extends BaseEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_category_id")
+	@JoinColumn(name = "product_category_id", nullable = false)
 	private ProductCategory productCategory;
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
 	private List<ProductImage> productImages;
 
 	private String representativeImage;
@@ -48,28 +48,34 @@ public class Product extends BaseEntity {
 	@JoinColumn(name = "product_stock_id")
 	private ProductStock productStock;
 
-	public static Product from(ProductCreate.Request request, User user, ProductCategory productCategory, ProductStock productStock){
+	public static Product from(ProductCreate.Request request, User user, ProductCategory productCategory, ProductStock productStock) {
 		return Product.builder()
 				.title(request.getProductTitle())
 				.description(request.getProductDescription())
 				.price(request.getProductPrice())
+				.user(user)
+				.productCategory(productCategory)
+				.productStock(productStock)
 				.isDeleted(false)
 				.build();
 	}
 
-	public void setProductImages(List<MultipartFile> multipartFiles) {
-		if(multipartFiles != null && multipartFiles.size() > 0){
+	public void update(ProductUpdate.Request request) {
+		this.title = request.getProductTitle();
+		this.description = request.getProductDescription();
+		this.price =  request.getProductPrice();
+		this.productStock.setQuantity(request.getProductStockQuantity());
+	}
 
-			List<ProductImage> productImages = multipartFiles.stream()
+	public void setProductImages(List<String> productImages) {
+		if (productImages != null && productImages.size() > 0) {
+			this.representativeImage = productImages.get(0);
+			List<ProductImage> images = productImages.stream()
 					.map(ProductImage::from)
-					.peek(productImage -> productImage.setProduct(this))
 					.collect(Collectors.toList());
 
-			if(productImages != null && productImages.size() > 0){
-				this.representativeImage = productImages.get(0).getName();
-			}
-
-			this.productImages = productImages;
+			images.stream().forEach(productImage -> productImage.setProduct(this));
+			this.productImages = images;
 		}
 	}
 

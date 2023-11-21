@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PermissionRequestRepository extends JpaRepository<PermissionRequest, Long> {
@@ -16,4 +17,7 @@ public interface PermissionRequestRepository extends JpaRepository<PermissionReq
 
 	@Query("SELECT p FROM PermissionRequest p WHERE p.status = :permissionRequestStatus")
 	Page<PermissionRequest> findAllPermissionRequestPageByStatus(PermissionRequestStatus permissionRequestStatus, Pageable pageable);
+
+	Optional<PermissionRequest> findByUser_UserId(UUID userId);
+	boolean existsByUser_UserId(UUID userId);
 }

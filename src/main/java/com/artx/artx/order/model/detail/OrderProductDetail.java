@@ -2,6 +2,8 @@ package com.artx.artx.order.model.detail;
 
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.product.entity.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,10 +12,20 @@ import lombok.Getter;
 public class OrderProductDetail {
 
 	private Long productId;
+
+	@NotBlank
 	private String productTitle;
+
+	@NotBlank
 	private String productRepresentativeImage;
+
+	@NotNull
 	private Long productPrice;
+
+	@NotNull
 	private Long productQuantity;
+
+	@NotNull
 	private Long productTotalAmount;
 
 	public static OrderProductDetail of(OrderProduct orderProduct){

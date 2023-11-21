@@ -3,6 +3,8 @@ package com.artx.artx.order.model;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.model.detail.OrderDeliveryDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,8 +16,13 @@ public class OrderCreate {
 	@Getter
 	public static class Request {
 		@Schema(description = "주문 상세 정보", example = "")
+		@NotNull
+		@Valid
 		private List<OrderProductIdAndQuantity> orderProductDetails;
+
 		@Schema(description = "배송 상세 정보", example = "")
+		@NotNull
+		@Valid
 		private OrderDeliveryDetail orderDeliveryDetail;
 	}
 
@@ -24,10 +31,13 @@ public class OrderCreate {
 	public static class Response {
 		@Schema(description = "주문 고유 식별 번호", example = "1")
 		private String orderId;
+
 		@Schema(description = "주문명", example = "개화 및 3개의 작품")
 		private String orderTitle;
+
 		@Schema(description = "주문 총 금액", example = "100000")
 		private Long orderTotalAmount;
+
 		@Schema(description = "주문 등록 시간", example = "2023-01-01T10:00:30")
 		private LocalDateTime orderCreatedAt;
 

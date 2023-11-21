@@ -23,11 +23,41 @@ import java.util.UUID;
 @Service
 public class ImageService {
 
-	@Value("${directory.images}")
-	private String imagesUploadDirectory;
+	@Value("${directory.product-images}")
+	private String productImagesUploadDirectory;
+
+	@Value("${directory.temp-images}")
+	private String tempImagesUploadDirectory;
+
+	@Value("${directory.thumbnail-images}")
+	private String thumbnailImagesUploadDirectory;
+
+	@Value("${directory.profile-images}")
+	private String profileImagesUploadDirectory;
+
+	@Value("${directory.permission-images}")
+	private String permissionImagesUploadDirectory;
+
+	@Value("${prefix.permission-images}")
+	private String permissionImagesPrefix;
+
+	@Value("${prefix.product-images}")
+	private String productImagesPrefix;
+
+	@Value("${prefix.temp-images}")
+	private String tempImagesPrefix;
+
+	@Value("${prefix.thumbnail-images}")
+	private String thumbnailImagesPrefix;
+
+	@Value("${prefix.profile-images}")
+	private String profileImagesPrefix;
+
+	@Value(value = "${api.images}")
+	private String imagesApiAddress;
 
 	public ResponseEntity<byte[]> getImage(String filename) {
-		Path path = Path.of(imagesUploadDirectory, filename);
+		Path path = getPathByFilename(filename);
 
 		try {
 			File file = path.toFile();
@@ -41,7 +71,26 @@ public class ImageService {
 		}
 	}
 
-	public List<MultipartFile> saveImages(List<MultipartFile> files) {
+	private Path getPathByFilename(String filename) {
+		Path path;
+		//PREFIX별 다른 Path로 지정
+		if (filename.contains(productImagesPrefix)) {
+			path = Path.of(productImagesUploadDirectory, filename);
+		} else if (filename.contains(tempImagesPrefix)) {
+			path = Path.of(tempImagesUploadDirectory, filename);
+		} else if (filename.contains(thumbnailImagesPrefix)){
+			path = Path.of(thumbnailImagesUploadDirectory, filename);
+		} else if (filename.contains(profileImagesPrefix)) {
+			path = Path.of(profileImagesUploadDirectory, filename);
+		} else if (filename.contains(permissionImagesPrefix)) {
+			path = Path.of(permissionImagesUploadDirectory, filename);
+		} else {
+			throw new BusinessException(ErrorCode.FILE_NOT_FOUND);
+		}
+		return path;
+	}
+
+	public List<MultipartFile> savePermissionImages(List<MultipartFile> files) {
 		if (files == null || files.size() <= 0) {
 			throw new BusinessException(ErrorCode.NO_FILE);
 		}
@@ -55,7 +104,7 @@ public class ImageService {
 			}
 			try {
 				String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
-				Path path = Paths.get(imagesUploadDirectory, filename);
+				Path path = Paths.get(permissionImagesUploadDirectory, permissionImagesPrefix + filename);
 				Files.write(path, file.getBytes());
 
 				MultipartFile multipartFile = CustomMultipartFile.builder()
@@ -74,9 +123,9 @@ public class ImageService {
 		return modifiedMultipartFile;
 	}
 
-	public void deleteImages(List<String> images) {
+	public void removeImagesByNames(List<String> images) {
 		for (String filename : images) {
-			Path path = Paths.get(imagesUploadDirectory, filename);
+			Path path = getPathByFilename(filename);
 
 			File file = path.toFile();
 			if (file.exists()) {
@@ -88,11 +137,44 @@ public class ImageService {
 		}
 	}
 
-	public void deleteImage(String image) {
-		if(Objects.isNull(image)){
+	public String saveProfileImage(MultipartFile file) {
+		if (file.getOriginalFilename() == null || file.getOriginalFilename().equals("")) {
+			throw new BusinessException(ErrorCode.NO_FILE);
+		}
+		try {
+			String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
+			Path path = Paths.get(profileImagesUploadDirectory, profileImagesPrefix + filename);
+			Files.write(path, file.getBytes());
+
+			return profileImagesPrefix + filename;
+
+		} catch (IOException e) {
+			throw new BusinessException(ErrorCode.FAILED_TO_SAVE_IMAGE);
+		}
+	}
+
+	public String savePermissionImage(MultipartFile file) {
+		if (file.getOriginalFilename() == null || file.getOriginalFilename().equals("")) {
+			throw new BusinessException(ErrorCode.NO_FILE);
+		}
+		try {
+			String filename = permissionImagesPrefix + UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
+			Path path = getPathByFilename(filename);
+			Files.write(path, file.getBytes());
+
+			return filename;
+
+		} catch (IOException e) {
+			throw new BusinessException(ErrorCode.FAILED_TO_SAVE_IMAGE);
+		}
+	}
+
+	public void removeImage(String filename) {
+		if (Objects.isNull(filename)) {
 			return;
 		}
-		Path path = Paths.get(imagesUploadDirectory, image);
+		Path path = getPathByFilename(filename);
+
 
 		File file = path.toFile();
 		if (file.exists()) {
@@ -100,28 +182,6 @@ public class ImageService {
 			if (!isDeleted) {
 				throw new BusinessException(ErrorCode.FILE_NOT_DELETED);
 			}
-		}
-	}
-
-	public MultipartFile saveImage(MultipartFile file) {
-		if (file.getOriginalFilename() == null || file.getOriginalFilename().equals("")) {
-			throw new BusinessException(ErrorCode.NO_FILE);
-		}
-		try {
-			String filename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
-			Path path = Paths.get(imagesUploadDirectory, filename);
-			Files.write(path, file.getBytes());
-
-			MultipartFile multipartFile = CustomMultipartFile.builder()
-					.filename(filename)
-					.contentType(file.getContentType())
-					.bytes(file.getBytes())
-					.build();
-
-			return multipartFile;
-
-		} catch (IOException e) {
-			throw new BusinessException(ErrorCode.FAILED_TO_SAVE_IMAGE);
 		}
 	}
 }

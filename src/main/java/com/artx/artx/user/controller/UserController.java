@@ -8,6 +8,7 @@ import com.artx.artx.user.service.UserService;
 import com.artx.artx.user.type.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,9 @@ public class UserController {
 
 	@Operation(summary = "회원가입", description = "가입 정보와 함께 회원가입을 할 수 있다.")
 	@PostMapping
-	public ResponseEntity<UserCreate.Response> createUser(@RequestBody UserCreate.Request request){
+	public ResponseEntity<UserCreate.Response> createUser(
+			@Valid @RequestBody UserCreate.Request request
+	){
 		UserCreate.Response response = userService.createUser(request);
 		return ResponseEntity.ok(response);
 	}
@@ -51,7 +54,7 @@ public class UserController {
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<UserDelete.Response> delete(
 			@PathVariable UUID userId,
-			@RequestBody UserDelete.Request request
+			@Valid @RequestBody UserDelete.Request request
 	){
 		UserDelete.Response response = userService.deleteUser(userId, request);
 		return ResponseEntity.ok(response);

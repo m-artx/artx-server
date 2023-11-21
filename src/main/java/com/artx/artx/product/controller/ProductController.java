@@ -36,13 +36,17 @@ public class ProductController {
 
 	@Operation(summary = "작품 상세 페이지 조회", description = "특정 작품의 상세 페이지를 조회할 수 있다.")
 	@GetMapping("/{productId}")
-	public ResponseEntity<ProductRead.DetailResponse> readProductDetail(@PathVariable Long productId) {
+	public ResponseEntity<ProductRead.DetailResponse> readProductDetail(
+			@PathVariable Long productId
+	) {
 		return ResponseEntity.ok(productService.readProductDetail(productId));
 	}
 
 	@Operation(summary = "메인 페이지 조회", description = "등록순 및 인기순으로 작품 10개를 조회할 수 있다.")
 	@GetMapping("/main")
-	public ResponseEntity<List<ProductRead.SummaryResponse>> mainPageProducts(@RequestParam Filter type) {
+	public ResponseEntity<List<ProductRead.SummaryResponse>> mainPageProducts(
+			@RequestParam Filter type
+	) {
 		return ResponseEntity.ok(productService.readMainPageProducts(type));
 	}
 

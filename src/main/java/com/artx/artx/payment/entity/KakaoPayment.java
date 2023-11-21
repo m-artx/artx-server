@@ -15,10 +15,11 @@ import lombok.NoArgsConstructor;
 public class KakaoPayment extends BaseEntity {
 
 	@Id
+	@Column(nullable = false)
 	private String tid;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "payment_id")
+	@JoinColumn(name = "payment_id", nullable = false, unique = true)
 	private Payment payment;
 
 }

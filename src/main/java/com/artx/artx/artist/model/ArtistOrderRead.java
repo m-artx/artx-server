@@ -20,10 +20,13 @@ public class ArtistOrderRead {
 
 		@Schema(description = "유저 고유 식별 번호", example = "fafe2100-e770-4cfc-aef7-960837b777df")
 		private UUID userId;
+
 		@Schema(description = "아이디", example = "artxlover")
 		private String username;
+
 		@Schema(description = "닉네임", example = "김작가")
 		private String userNickname;
+
 		@Schema(description = "휴대폰 번호", example = "010-1234-5678")
 		private String userPhoneNumber;
 

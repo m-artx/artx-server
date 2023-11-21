@@ -17,8 +17,17 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: artx-volume
+            - name: artx-images-volume
               mountPath: /app/images
+            - name: artx-temp-images-volume
+              mountPath: /app/temp-images
+            - name: artx-profile-images-volume
+              mountPath: /app/profile-images
+            - name: artx-thumbnail-images-volume
+              mountPath: /app/thumbnail-images
+            - name: artx-permission-images-volume
+              mountPath: /app/permission-images
+
           env:
             - name: REDIS_HOST
               value: "redis"
@@ -32,8 +41,14 @@ spec:
               value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
               value: "none"
-            - name: IMAGE_DIRECTORY
-              value: "/app/images"
+            - name: PRODUCT_IMAGES_DIRECTORY
+              value: "/app/images/product-images"
+            - name: TEMP_IMAGES_DIRECTORY
+              value: "/app/images/temp-images"
+            - name: THUMBNAIL_IMAGES_DIRECTORY
+              value: "/app/images/thumbnail-images"
+            - name: PROFILE_IMAGES_DIRECTORY
+              value: "/app/images/profile-images"
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
             - name: LOG_LEVEL

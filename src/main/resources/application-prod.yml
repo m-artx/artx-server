@@ -45,7 +45,12 @@ logging:
     org.springframework.transaction.interceptor: ${LOG_LEVEL}
 
 directory:
-  images: ${IMAGE_DIRECTORY}
+  product-images: ${PRODUCT_IMAGES_DIRECTORY}
+  temp-images: ${TEMP_IMAGES_DIRECTORY}
+  thumbnail-images: ${THUMBNAIL_IMAGES_DIRECTORY}
+  profile-images: ${PROFILE_IMAGES_DIRECTORY}
+  permission-images: ${PERMISSION_IMAGES_DIRECTORY}
+
 
 
 artx:

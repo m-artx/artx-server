@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class UserPermissionRequestCreate {
 
@@ -13,6 +14,7 @@ public class UserPermissionRequestCreate {
 			public UserRole role;
 			public String title;
 			public String content;
+			public List<String> permissionImages;
 		}
 
 		@Getter

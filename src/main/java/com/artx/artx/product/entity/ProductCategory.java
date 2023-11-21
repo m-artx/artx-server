@@ -19,9 +19,11 @@ public class ProductCategory extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true)
 	@Enumerated(EnumType.STRING)
+	@Column(unique = true, nullable = false)
 	private Category type;
+
+	@Column(nullable = false)
 	private String description;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

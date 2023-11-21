@@ -19,18 +19,22 @@ public class Commission extends BaseEntity {
 
 	@MapsId("userId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_Id")
+	@JoinColumn(name = "user_Id", nullable = false)
 	private User user;
 
 	@MapsId("productId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_Id")
+	@JoinColumn(name = "product_Id", nullable = false)
 	private Product product;
 
+	@Column(nullable = false)
 	private String content;
+
+	@Column(nullable = false)
 	private String comment;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private CommissionStatus status;
 
 }

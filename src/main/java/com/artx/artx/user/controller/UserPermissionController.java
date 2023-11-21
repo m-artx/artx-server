@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -28,13 +27,19 @@ public class UserPermissionController {
 
 	private final UserService userService;
 
+	@Operation(summary = "권한 신청 이미지 등록", description = "권한 신청 시 이미지를 등록할 수 있다.")
+	@PostMapping("/image")
+	public ResponseEntity<String> addProfileImage(
+			@RequestParam MultipartFile file){
+		return ResponseEntity.ok(userService.setPermissionImage(file));
+	}
+
 	@Operation(summary = "권한 변경 신청", description = "권한 변경을 신청할 수 있다.")
 	@PostMapping
 	public ResponseEntity<UserPermissionRequestCreate.Response> createRequestPermission(
-			@RequestPart List<MultipartFile> files,
-			@RequestPart UserPermissionRequestCreate.Request request
+			@RequestBody UserPermissionRequestCreate.Request request
 	){
-		UserPermissionRequestCreate.Response response = userService.requestPermission(getUserId(), request, files);
+		UserPermissionRequestCreate.Response response = userService.requestPermission(getUserId(), request);
 		return ResponseEntity.ok(response);
 	}
 
