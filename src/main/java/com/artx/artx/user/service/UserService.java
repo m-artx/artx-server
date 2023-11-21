@@ -134,4 +134,9 @@ public class UserService {
 		user.setUserStatus(UserStatus.ACTIVE);
 	}
 
+	@Transactional
+	public UserHandle.Username findUsernameByEmail(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(ErrorCode.INVALID_EMAIL));
+		return UserHandle.Username.builder().username(user.getUsername()).build();
+	}
 }

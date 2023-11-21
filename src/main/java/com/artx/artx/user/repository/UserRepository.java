@@ -19,6 +19,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	boolean existsByEmail(String email);
 
 	Optional<User> findByUsername(String username);
+	Optional<User> findByEmail(String email);
 
 	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c")
 	Optional<User> findByIdWithCart(UUID userId);
