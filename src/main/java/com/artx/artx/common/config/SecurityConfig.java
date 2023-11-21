@@ -5,6 +5,7 @@ import com.artx.artx.common.jwt.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -39,10 +40,15 @@ public class SecurityConfig {
 		http.csrf(it -> it.disable());
 		http.sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(it -> {
-//					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
-//					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+
+					/**
+					 * JwtAuthenticationEntryPoint가sms 주로 인증이 필요한 요청에서 인증이 실패한 경우에 호출된다.
+					 * 즉, authenticated.permitAll() 상태에서는 인증이 필요하지 않기에 JwtAuthenticationEntryPoint가 동작하지 않을 수 있다.
+					 */
+					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
+					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
 //					it.requestMatchers("/api/payments/**").permitAll();
-					it.anyRequest().permitAll();
+					it.anyRequest().authenticated();
 				})
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -36,6 +36,8 @@ public class AuthService {
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 			return Login.Response.builder()
 					.accessToken(AccessToken.from(tokenProvider.createToken(userDetails.getUserId(), request.getUsername(), TokenType.ACCESS_TOKEN)))
+					.userId(userDetails.getUserId())
+					.userRole(userDetails.getUserRole())
 					.build();
 		} catch (UsernameNotFoundException e) {
 			throw new BusinessException(ErrorCode.INVALID_USERNAME);

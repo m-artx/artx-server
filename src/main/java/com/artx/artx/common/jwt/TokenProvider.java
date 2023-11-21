@@ -69,6 +69,7 @@ public class TokenProvider {
 			getClaim(token);
 			return true;
 		} catch (Exception e){
+
 		}
 		return false;
 	}

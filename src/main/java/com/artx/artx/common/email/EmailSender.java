@@ -27,7 +27,6 @@ public class EmailSender {
 
 	public void send(String receiver, UUID userId) {
 		try {
-
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 

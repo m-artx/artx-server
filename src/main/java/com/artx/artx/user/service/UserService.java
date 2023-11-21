@@ -62,8 +62,8 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<UserReadDto> getNewArtists(Pageable pageable) {
-		return userRepository.getNewArtists(UserRole.ARTIST, pageable);
+	public Page<UserReadDto> readNewUsers(UserRole userRole, Pageable pageable) {
+		return userRepository.findNewUsersByUserRole(userRole, pageable);
 	}
 
 	@Transactional

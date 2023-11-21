@@ -88,7 +88,7 @@ public class AdminStatisticsService {
 	}
 
 	public UserStatisticsRead.Response readAllDailyUserAndArtistCounts() {
-		List<Object[]> objects = userRepository.readAllDailyUserAndArtistCounts();
+		List<Object[]> objects = userRepository.findAllDailyUserAndArtistCounts();
 
 		Map<UserRole, Long> map = new HashMap<>();
 		for (Object[] object : objects) {
