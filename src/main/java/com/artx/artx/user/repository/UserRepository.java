@@ -18,8 +18,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	boolean existsByNickname(String nickname);
 	boolean existsByEmail(String email);
 
-	Optional<User> findByUsername(String username);
+	Optional<User> findByEmailAndUsername(String email, String username);
 	Optional<User> findByEmail(String email);
+	Optional<User> findByUsername(String username);
 
 	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c")
 	Optional<User> findByIdWithCart(UUID userId);

@@ -5,14 +5,21 @@ import lombok.Getter;
 
 public class UserHandle {
 
+
 	@Getter
-	@Builder
-	public static class Username{
+	public static class Request {
+		private String email;
 		private String username;
 	}
 
 	@Getter
 	@Builder
-	public static class Password{
+	public static class UsernameResponse {
+		private String username;
+	}
+
+	@Getter
+	@Builder
+	public static class PasswordResponse{
 	}
 }

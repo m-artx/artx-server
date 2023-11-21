@@ -39,7 +39,7 @@ public class UserService {
 		existUserByUsername(request.getUsername());
 		User user = userRepository.save(User.from(request, passwordEncoder.encode(request.getPassword())));
 
-		emailSender.send(user.getEmail(), user.getUserId());
+		emailSender.sendAuthenticationEmail(user.getEmail(), user.getUserId());
 		return UserCreate.Response.of(user);
 	}
 
@@ -135,8 +135,18 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserHandle.Username findUsernameByEmail(String email) {
+	public UserHandle.UsernameResponse findUsernameByEmail(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(ErrorCode.INVALID_EMAIL));
-		return UserHandle.Username.builder().username(user.getUsername()).build();
+		return UserHandle.UsernameResponse.builder().username(user.getUsername()).build();
 	}
+
+	@Transactional
+	public void passwordInitByEmail(UserHandle.Request request) {
+		User user = userRepository.findByEmailAndUsername(request.getEmail(), request.getUsername()).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+		user.setPassword(passwordEncoder.encode(newPassword));
+
+		emailSender.sendPasswordInitEmail(request.getEmail(), newPassword);
+	}
+
 }

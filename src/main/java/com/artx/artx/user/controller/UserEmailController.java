@@ -29,19 +29,19 @@ public class UserEmailController {
 
 	@Operation(summary = "아이디 찾기", description = "이메일 계정을 통해 등록된 아이디를 찾는다.")
 	@PostMapping("/find-username")
-	public ResponseEntity<UserHandle.Username> findUsernameByEmail(
-			@PathVariable String email
+	public ResponseEntity<UserHandle.UsernameResponse> findUsernameByEmail(
+			@RequestBody UserHandle.Request request
 	){
-		return ResponseEntity.ok(userService.findUsernameByEmail(email));
+		return ResponseEntity.ok(userService.findUsernameByEmail(request.getEmail()));
 	}
 
 	@Operation(summary = "패스워드 초기화", description = "이메일 계정을 통해 등록된 아이디를 찾는다.")
-	@PostMapping("/init-username")
-	public ResponseEntity<String> InitPasswordByEmail(
-			@PathVariable UUID userId
+	@PostMapping("/init-password")
+	public ResponseEntity<Void> InitPasswordByEmail(
+			@RequestBody UserHandle.Request request
 	){
-		userService.emailAuth(userId);
-		return ResponseEntity.ok("인증 완료");
+		userService.passwordInitByEmail(request);
+		return ResponseEntity.ok().build();
 	}
 
 }
