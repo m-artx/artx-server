@@ -46,7 +46,8 @@ public class SecurityConfig {
 					 * 즉, authenticated.permitAll() 상태에서는 인증이 필요하지 않기에 JwtAuthenticationEntryPoint가 동작하지 않을 수 있다.
 					 */
 					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
-					it.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+					it.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
+					it.requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**").permitAll();
 //					it.requestMatchers("/api/payments/**").permitAll();
 					it.anyRequest().authenticated();
 				})

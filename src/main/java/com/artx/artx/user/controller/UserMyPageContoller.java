@@ -2,7 +2,6 @@ package com.artx.artx.user.controller;
 
 import com.artx.artx.auth.model.UserDetails;
 import com.artx.artx.user.model.UserCreate;
-import com.artx.artx.user.model.UserDelete;
 import com.artx.artx.user.model.UserRead;
 import com.artx.artx.user.model.UserUpdate;
 import com.artx.artx.user.service.UserService;
@@ -47,8 +46,6 @@ public class UserMyPageContoller {
 		UserUpdate.Response response = userService.updatePassword(getUserId(), request);
 		return ResponseEntity.ok(response);
 	}
-
-
 
 	public UUID getUserId(){
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
