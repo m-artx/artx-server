@@ -64,13 +64,10 @@ public class SecurityConfig {
 		http.exceptionHandling(it -> {
 			it.authenticationEntryPoint(jwtAuthenticationEntryPoint);
 		});
-
-
 		/**
 		 JwtAuthenticationFilter에서 검증되어 SecurityContextHolder의 Context에 인증 정보가 저장되면
 		 UsernamePasswordAuthenticationFilter를 통과할 수 있음
 		 **/
-
 		return http.build();
 	}
 

@@ -7,7 +7,6 @@ import com.artx.artx.cart.model.CartProductCreate;
 import com.artx.artx.cart.model.CartProductDelete;
 import com.artx.artx.cart.model.CartProductRead;
 import com.artx.artx.cart.repository.CartProductRepository;
-import com.artx.artx.cart.repository.CartRepository;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.order.model.OrderCreate;
@@ -17,6 +16,7 @@ import com.artx.artx.payment.model.PaymentCreate;
 import com.artx.artx.product.entity.Product;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.service.ProductService;
+import com.artx.artx.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,17 +34,16 @@ import java.util.stream.Collectors;
 public class CartService {
 
 	private final CartProductRepository cartProductRepository;
-	private final CartRepository cartRepository;
 	private final OrderService orderService;
 	private final ProductService productService;
+	private final UserService userService;
 
 	@Value(value = "${api.images}")
 	private String imagesApiAddress;
 
 	@Transactional
-	public CartProductCreate.Response addProduct(Long cartId, Long productId) {
-
-		Cart cart = getCartById(cartId);
+	public CartProductCreate.Response addProduct(UUID userId, Long productId) {
+		Cart cart = getUserWithCartById(userId);
 		Product product = productService.getProductById(productId);
 
 		CartProduct cartProduct = CartProduct.from(cart, product);
@@ -60,14 +60,16 @@ public class CartService {
 	}
 
 	@Transactional
-	public void increaseProductQuantity(Long cartId, Long productId) {
-		CartProduct cartProduct = getCartProductByCartIdAndProductId(cartId, productId);
+	public void increaseProductQuantity(UUID userId, Long productId) {
+		Cart cart = getUserWithCartById(userId);
+		CartProduct cartProduct = getCartProductByCartIdAndProductId(cart.getId(), productId);
 		cartProduct.increase();
 	}
 
 	@Transactional
-	public void decreaseProductQuantity(Long cartId, Long productId) {
-		CartProduct cartProduct = getCartProductByCartIdAndProductId(cartId, productId);
+	public void decreaseProductQuantity(UUID userId, Long productId) {
+		Cart cart = getUserWithCartById(userId);
+		CartProduct cartProduct = getCartProductByCartIdAndProductId(cart.getId(), productId);
 		cartProduct.decrease();
 		if (cartProduct.isEmpty()) {
 			cartProductRepository.delete(cartProduct);
@@ -75,10 +77,12 @@ public class CartService {
 	}
 
 	@Transactional
-	public PaymentCreate.Response orderSellectedCartProducts(Long cartId, OrderCreate.Request request) {
-		PaymentCreate.Response response = orderService.createOrder(request);
+	public PaymentCreate.Response orderSellectedCartProducts(UUID userId, OrderCreate.Request request) {
+		PaymentCreate.Response response = orderService.createOrder(userId, request);
+		Cart cart = getUserWithCartById(userId);
+
 		cartProductRepository.deleteAllByCartIdAndProductIds(
-				cartId,
+				cart.getId(),
 				request.getOrderProductDetails().stream()
 						.map(OrderProductIdAndQuantity::getProductId)
 						.collect(Collectors.toList()));
@@ -87,14 +91,16 @@ public class CartService {
 	}
 
 	@Transactional(readOnly = true)
-	public CartProductRead.Response readAllCarProductsByCartId(Long cartId, Pageable pageable) {
-		Page<CartProduct> cartProducts = cartProductRepository.findAllByCart_Id(cartId, pageable);
+	public CartProductRead.Response readAllCarProductsByCartId(UUID userId, Pageable pageable) {
+		Cart cart = getUserWithCartById(userId);
+
+		Page<CartProduct> cartProducts = cartProductRepository.findAllByCart_Id(cart.getId(), pageable);
 		List<ProductStock> productStocks = cartProducts.stream().map(CartProduct::getProduct).map(Product::getProductStock).collect(Collectors.toList());
 		Map<Long, ProductStock> productIdsAndQuantities = productStocks.stream()
 				.collect(Collectors.toMap(productStock -> productStock.getProduct().getId(), productStock -> productStock));
 
 		return CartProductRead.Response.from(
-				cartId,
+				cart.getId(),
 				cartProducts.map(cartProduct -> CartProductRead.CartProductDetail.of(
 						imagesApiAddress,
 						cartProduct,
@@ -103,8 +109,8 @@ public class CartService {
 		);
 	}
 
-	private Cart getCartById(Long cartId) {
-		return cartRepository.readCartWithCartProductAndProductByCartId(cartId).orElseThrow(() -> new BusinessException(ErrorCode.CART_NOT_FOUND));
+	private Cart getUserWithCartById(UUID userId) {
+		return userService.getUserWithCartById(userId).getCart();
 	}
 
 	private CartProduct getCartProductByCartIdAndProductId(Long cartId, Long productId) {
@@ -112,15 +118,17 @@ public class CartService {
 	}
 
 	@Transactional
-	public void deleteAllCarProducts(Long cartId) {
-		Cart cart = getCartById(cartId);
+	public void deleteAllCartProducts(UUID userId) {
+		Cart cart = getUserWithCartById(userId);
 		cartProductRepository.deleteAllInBatch(cart.getCartProducts());
 	}
 
 	@Transactional
-	public void deleteSelectedCartProducts(Long cartId, CartProductDelete.Request request) {
+	public void deleteSelectedCartProducts(UUID userId, CartProductDelete.Request request) {
+		Cart cart = getUserWithCartById(userId);
+
 		List<Long> productIds = request.getProductIds();
-		cartProductRepository.deleteSelectedCartProductsByCartIdAndProductIds(cartId, productIds);
+		cartProductRepository.deleteSelectedCartProductsByCartIdAndProductIds(cart.getId(), productIds);
 	}
 
 }

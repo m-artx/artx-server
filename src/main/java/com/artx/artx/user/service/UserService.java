@@ -62,6 +62,11 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
+	public User getUserWithCartById(UUID userId) {
+		return userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	@Transactional(readOnly = true)
 	public Page<UserReadDto> readNewUsers(UserRole userRole, Pageable pageable) {
 		return userRepository.findNewUsersByUserRole(userRole, pageable);
 	}

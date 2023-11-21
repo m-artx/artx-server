@@ -1,10 +1,10 @@
 package com.artx.artx.artist.service;
 
+import com.artx.artx.artist.model.ArtistProductDelete;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
-import com.artx.artx.artist.model.ArtistProductDelete;
 import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.model.ProductCreate;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +41,7 @@ public class ArtistProductService {
 	}
 
 	@Transactional
-	public void deleteAllProducts(ArtistProductDelete.Request request) {
+	public void deleteSelectedProducts(ArtistProductDelete.Request request) {
 		List<Product> products = getAllProductByIds(request.getProductIds());
 		productRepository.updateToDeleted(products, true);
 	}
@@ -50,8 +51,8 @@ public class ArtistProductService {
 	}
 
 	@Transactional
-	public ProductCreate.Response createProduct(ProductCreate.Request request, List<MultipartFile> files) {
-		User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	public ProductCreate.Response createProduct(UUID userId, ProductCreate.Request request, List<MultipartFile> files) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 		ProductCategory productCategory = getProductCategoryByCategory(request.getProductCategory());
 		ProductStock productStock = ProductStock.from(request);
 

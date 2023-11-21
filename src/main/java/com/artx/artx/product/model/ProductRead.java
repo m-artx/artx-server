@@ -10,6 +10,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,13 +38,15 @@ public class ProductRead {
 
 
 		public static DetailResponse of(String imagesApiAddress, String productsApiAddress, Product product, User user) {
-			List<String> fileImageNames = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
 			List<String> fileImageUrls = new ArrayList<>();
 
-			for (int i = 0; i < fileImageNames.size(); i++) {
-				fileImageUrls.add(imagesApiAddress + fileImageNames.get(i));
-			}
+			if(product.getProductImages() != null && product.getProductImages().size() > 0) {
+				List<String> fileImageNames = product.getProductImages().stream().map(ProductImage::getName).collect(Collectors.toList());
 
+				for (int i = 0; i < fileImageNames.size(); i++) {
+					fileImageUrls.add(imagesApiAddress + fileImageNames.get(i));
+				}
+			}
 			return DetailResponse.builder()
 					.userId(user.getUserId())
 					.userIntroduction(user.getIntroduction())
@@ -86,7 +89,7 @@ public class ProductRead {
 					.productRepresentativeImage(imageApiAddress + product.getRepresentativeImage())
 					.productTitle(product.getTitle())
 					.productPrice(product.getPrice())
-					.productStockQuantity(product.getProductStock().getQuantity())
+					.productStockQuantity(!Objects.isNull(product.getProductStock()) ? product.getProductStock().getQuantity() : 0)
 					.productCreatedAt(product.getCreatedAt())
 					.build();
 		}

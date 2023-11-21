@@ -1,6 +1,8 @@
 package com.artx.artx.user.controller;
 
 import com.artx.artx.auth.model.UserDetails;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.user.model.UserCreate;
 import com.artx.artx.user.model.UserRead;
 import com.artx.artx.user.model.UserUpdate;
@@ -47,9 +49,14 @@ public class UserMyPageContoller {
 		return ResponseEntity.ok(response);
 	}
 
-	public UUID getUserId(){
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return userDetails.getUserId();
+	public UUID getUserId() {
+		try {
+			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return userDetails.getUserId();
+
+		} catch (ClassCastException e) {
+			throw new BusinessException(ErrorCode.NEED_TO_CHECK_TOKEN);
+		}
 	}
 	
 }
