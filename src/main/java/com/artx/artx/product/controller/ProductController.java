@@ -1,6 +1,5 @@
 package com.artx.artx.product.controller;
 
-import com.artx.artx.product.model.ProductCategoryRead;
 import com.artx.artx.product.model.ProductRead;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.Category;
@@ -45,12 +44,6 @@ public class ProductController {
 	@GetMapping("/main")
 	public ResponseEntity<List<ProductRead.SummaryResponse>> mainPageProducts(@RequestParam Filter type){
 		return ResponseEntity.ok(productService.readMainPageProducts(type));
-	}
-
-	@Operation(summary = "전체 카테고리 조회", description = "모든 카테고리의 이름, 상세 설명, 대표 이미지를 조회할 수 있다.")
-	@GetMapping("/categories")
-	public ResponseEntity<List<ProductCategoryRead.SummaryResponse>> readCategories(){
-		return ResponseEntity.ok(productService.readCategories());
 	}
 
 }

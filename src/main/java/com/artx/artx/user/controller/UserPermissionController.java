@@ -1,6 +1,8 @@
 package com.artx.artx.user.controller;
 
 import com.artx.artx.auth.model.UserDetails;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
 import com.artx.artx.user.model.permission.UserPermissionRequestRead;
 import com.artx.artx.user.service.UserService;
@@ -44,9 +46,14 @@ public class UserPermissionController {
 		return ResponseEntity.ok(userService.readRequestPermission(getUserId(), pageable));
 	}
 
-	public UUID getUserId(){
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return userDetails.getUserId();
+	public UUID getUserId() {
+		try {
+			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return userDetails.getUserId();
+
+		} catch (ClassCastException e) {
+			throw new BusinessException(ErrorCode.NEED_TO_CHECK_TOKEN);
+		}
 	}
 
 }

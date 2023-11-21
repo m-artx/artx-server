@@ -22,13 +22,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsername(String username);
 
-	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c")
-	Optional<User> findByIdWithCart(UUID userId);
+	@Query("SELECT u FROM User u LEFT JOIN FETCH u.cart c WHERE u.userId = :userId")
+	Optional<User> findWithCartById(UUID userId);
 
 	@Query("SELECT new com.artx.artx.user.model.UserReadDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
 	Page<UserReadDto> findNewUsersByUserRole(UserRole userRole, Pageable pageable);
 
 	@Query("SELECT u.userRole, count(u) FROM User u GROUP BY u.userRole")
 	List<Object[]> findAllDailyUserAndArtistCounts();
+
 
 }

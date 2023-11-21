@@ -7,15 +7,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class ProductCreate {
 
 	@Getter
 	public static class Request{
-		@Schema(description = "유저 고유 식별 번호", example = "fafe2100-e770-4cfc-aef7-960837b777df")
-		private UUID userId;
-
 		@Schema(description = "작품 카테고리 고유 식별 번호", example = "1")
 		private Category productCategory;
 

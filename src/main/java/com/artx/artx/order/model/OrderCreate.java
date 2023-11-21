@@ -8,14 +8,11 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public class OrderCreate {
 
 	@Getter
 	public static class Request {
-		@Schema(description = "유저 고유 식별 번호", example = "fafe2100-e770-4cfc-aef7-960837b777df")
-		private UUID userId;
 		@Schema(description = "주문 상세 정보", example = "")
 		private List<OrderProductIdAndQuantity> orderProductDetails;
 		@Schema(description = "배송 상세 정보", example = "")

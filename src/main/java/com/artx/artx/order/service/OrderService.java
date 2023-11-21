@@ -42,8 +42,8 @@ public class OrderService {
 	private final KakaoPayService kakaoPayService;
 
 	@Transactional
-	public PaymentCreate.Response createOrder(OrderCreate.Request request) {
-		User user = userService.getUserByUserId(request.getUserId());
+	public PaymentCreate.Response createOrder(UUID userId, OrderCreate.Request request) {
+		User user = userService.getUserByUserId(userId);
 		Map<Long, Long> productIdsAndQuantities = extractProductIdsAndQuantities(request);
 		List<Product> products = productService.getAllProductByIds(new ArrayList<>(productIdsAndQuantities.keySet()));
 		List<ProductStock> productStocks = products.stream().map(Product::getProductStock).collect(Collectors.toList());
