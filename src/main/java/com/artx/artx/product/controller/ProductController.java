@@ -1,10 +1,5 @@
 package com.artx.artx.product.controller;
 
-<<<<<<< HEAD
-import com.artx.artx.auth.model.UserDetails;
-import com.artx.artx.product.model.ProductCategoryRead;
-=======
->>>>>>> Feature/ARTX-116
 import com.artx.artx.product.model.ProductRead;
 import com.artx.artx.product.service.ProductService;
 import com.artx.artx.product.type.Category;
@@ -17,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Tag(name = "작품")
 @RestController
