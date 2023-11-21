@@ -47,7 +47,7 @@ public class ArtistProductController {
 	}
 
 	@Operation(summary = "작품 선택 삭제", description = "작품을 선택 삭제할 수 있다.")
-	@DeleteMapping("/select")
+	@DeleteMapping
 	public ResponseEntity<Page<ProductRead.SummaryResponse>> deleteAllProducts(@RequestBody ArtistProductDelete.Request request){
 		artistProductService.deleteSelectedProducts(request);
 		return ResponseEntity.ok().build();
