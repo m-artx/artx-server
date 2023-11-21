@@ -41,7 +41,12 @@ application.yml
 *.properties
 
 !gradle-wrapper.properties
-images
+profile-images
+permission-images
+product-images
+temp-images
+thumbnail_images
+
 build
 
 deploy.yml

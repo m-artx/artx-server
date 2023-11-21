@@ -11,10 +11,10 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ProductCreate {
+public class ProductUpdate {
 
 	@Getter
-	public static class Request{
+	public static class Request {
 		@Schema(description = "작품 카테고리 고유 식별 번호", example = "1")
 		@NotNull
 		private Category productCategory;
@@ -45,13 +45,13 @@ public class ProductCreate {
 	public static class Response {
 		@Schema(description = "작품 고유 식별 번호", example = "1")
 		private Long productId;
-		@Schema(description = "작품 등록 시간", example = "2023-01-01T10:00:30")
-		private LocalDateTime productCreatedAt;
+		@Schema(description = "작품 수정 시간", example = "2023-01-01T10:00:30")
+		private LocalDateTime productUpdatedAt;
 
-		public static Response of(Product product) {
+		public static ProductUpdate.Response of(Product product) {
 			return Response.builder()
 					.productId(product.getId())
-					.productCreatedAt(product.getCreatedAt())
+					.productUpdatedAt(product.getCreatedAt())
 					.build();
 		}
 	}

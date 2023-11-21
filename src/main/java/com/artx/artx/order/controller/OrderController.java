@@ -10,6 +10,7 @@ import com.artx.artx.payment.model.PaymentCancel;
 import com.artx.artx.payment.model.PaymentCreate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,9 @@ public class OrderController {
 
 	@Operation(summary = "주문 생성", description = "주문 정보와 함께 주문할 수 있다.")
 	@PostMapping
-	public ResponseEntity<PaymentCreate.Response> createOrder(@RequestBody OrderCreate.Request request) {
+	public ResponseEntity<PaymentCreate.Response> createOrder(
+			@Valid @RequestBody OrderCreate.Request request
+	) {
 		return ResponseEntity.ok(orderService.createOrder(getUserId(), request));
 	}
 

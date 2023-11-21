@@ -10,6 +10,7 @@ public class UserReadDto {
 
 	@Schema(description = "유저 고유 식별 번호", example = "fafe2100-e770-4cfc-aef7-960837b777df")
 	private UUID userId;
+
 	@Schema(description = "아이디", example = "artxlover")
 	private String username;
 

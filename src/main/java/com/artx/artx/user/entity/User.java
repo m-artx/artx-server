@@ -14,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -32,13 +31,28 @@ public class User extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole;
+
+	@Column(nullable = false)
 	private String username;
+
+	@Column(nullable = false)
 	private String password;
+
+	@Column(nullable = false)
 	private String email;
+
+	@Column(nullable = false)
 	private boolean isEmailYn;
+
+	@Column(nullable = false)
 	private boolean isDeleted;
+
+	@Column(nullable = false)
 	private String nickname;
+
+	@Column(nullable = false)
 	private String phoneNumber;
+
 	private String profileImage;
 	private String introduction;
 
@@ -46,10 +60,11 @@ public class User extends BaseEntity {
 	private UserStatus userStatus;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "cart_id")
+	@JoinColumn(name = "cart_id", unique = true)
 	private Cart cart;
 
 	@Embedded
+	@Column(nullable = false)
 	private Address address;
 
 	public boolean isArtist(){
@@ -63,7 +78,7 @@ public class User extends BaseEntity {
 	public static User from(UserCreate.Request request, String password){
 		return User.builder()
 				.userStatus(UserStatus.INACTIVE)
-				.userRole(request.getUserRole())
+				.userRole(UserRole.USER)
 				.username(request.getUsername())
 				.password(password)
 				.email(request.getEmail())
@@ -86,8 +101,8 @@ public class User extends BaseEntity {
 		this.password = password;
 	}
 
-	public void setProfileImage(MultipartFile file){
-		this.profileImage = file.getName();
+	public void setProfileImage(String image){
+		this.profileImage = image;
 	}
 
 	public void setDeleted(boolean deleted) {

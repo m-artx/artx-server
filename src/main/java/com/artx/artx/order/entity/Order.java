@@ -27,21 +27,27 @@ public class Order extends BaseEntity {
 	@GenericGenerator(name = "order-id-generator", strategy = "com.artx.artx.common.util.OrderGenerator")
 	private String id;
 
+	@Column(nullable = false)
 	private String receiver;
+
+	@Column(nullable = false)
 	private String phoneNumber;
 
 	@Embedded
+	@Column(nullable = false)
 	private Address address;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private OrderStatus status;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	List<OrderProduct> orderProducts;
+	@Column(nullable = false)
+	List<OrderProduct> orderProducts = new ArrayList<>();
 
 	public static Order from(User user, OrderCreate.Request request) {
 		return Order.builder()

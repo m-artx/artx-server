@@ -70,4 +70,10 @@ public class PermissionRequest extends BaseEntity {
 	public void setRequestedRole(UserRole userRole) {
 		this.requestedRole = userRole;
 	}
+
+	public void update(UserPermissionRequestCreate.Request request) {
+		this.title = request.getTitle();
+		this.content = request.getContent();
+		this.status = PermissionRequestStatus.PROPOSAL;
+	}
 }

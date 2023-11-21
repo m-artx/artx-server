@@ -24,7 +24,7 @@ public class AdminProductCategoryService {
 
 	private final ProductCategoryRepository productCategoryRepository;
 
-	@Value(value = "${directory.images}")
+	@Value(value = "${directory.product-images}")
 	private String imagesUploadDirectory;
 
 	@Transactional

@@ -1,6 +1,7 @@
 package com.artx.artx.admin.model.notice;
 
 import com.artx.artx.admin.entity.Notice;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,7 +11,10 @@ public class NoticeCreate {
 
 	@Getter
 	public static class Request {
+		@NotNull
 		private String title;
+
+		@NotNull
 		private String content;
 	}
 

@@ -13,7 +13,6 @@ public class OrderStatisticsRead {
 	@Getter
 	@Builder
 	public static class StatusResponse {
-
 		private long orderSuccessCounts;
 		private long orderApprovalCounts;
 		private long deliveryInProgressCounts;

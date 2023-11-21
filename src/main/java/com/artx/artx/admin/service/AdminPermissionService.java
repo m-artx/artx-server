@@ -16,10 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,10 +34,17 @@ public class AdminPermissionService {
 	private final ImageService imageService;
 
 	@Transactional
-	public void createPermissionRequest(User user, UserPermissionRequestCreate.Request request, List<MultipartFile> images){
-		PermissionRequest permissionRequest = PermissionRequest.from(request);
-		permissionRequest.setFirstImage(images.get(0).getName());
-		permissionRequest.setSecondImage(images.get(1).getName());
+	public void createPermissionRequest(User user, UserPermissionRequestCreate.Request request){
+		PermissionRequest permissionRequest;
+		if(permissionRequestRepository.existsByUser_UserId(user.getUserId())){
+			permissionRequest = permissionRequestRepository.findByUser_UserId(user.getUserId()).orElseThrow(() -> new BusinessException(ErrorCode.PERMISSION_REQUEST_NOT_FOUND));
+			permissionRequest.update(request);
+		} else {
+			permissionRequest = PermissionRequest.from(request);
+		}
+
+		permissionRequest.setFirstImage(request.getPermissionImages().get(0));
+		permissionRequest.setSecondImage(request.getPermissionImages().get(0));
 		permissionRequest.setUser(user);
 		permissionRequest.setPreviousRole(user.getUserRole());
 		permissionRequest.setRequestedRole(request.getRole());
@@ -57,6 +62,9 @@ public class AdminPermissionService {
 		if(permissionRequestStatus == PermissionRequestStatus.APPROVAL){
 			User user = permissionRequest.getUser();
 			user.setUserRole(permissionRequest.requestedRole);
+
+			imageService.removeImage(permissionRequest.getFirstImage());
+			imageService.removeImage(permissionRequest.getSecondImage());
 		}
 
 		return PermissionRequestUpdate.Response.builder().updatedAt(LocalDateTime.now()).build();

@@ -84,4 +84,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Modifying
 	@Query("UPDATE Product p SET p.isDeleted = :isDeleted WHERE p IN :products")
 	void updateToDeleted(List<Product> product, boolean isDeleted);
+
+
+	@Query(
+			"SELECT p FROM Product p " +
+					"LEFT JOIN FETCH p.productImages img " +
+					"LEFT JOIN FETCH p.productStock ps " +
+					"LEFT JOIN FETCH p.productCategory pc " +
+					"WHERE p.id = :productId"
+	)
+	Optional<Product> fetchProductProductStockAndProductImagesWithById(Long productId);
+
 }

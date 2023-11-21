@@ -13,6 +13,7 @@ import com.artx.artx.user.repository.UserRepository;
 import com.artx.artx.user.type.UserRole;
 import com.artx.artx.user.type.UserStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +34,9 @@ public class UserService {
 	private final ImageService imageService;
 	private final AdminPermissionService permissionService;
 	private final EmailSender emailSender;
+
+	@Value(value = "${api.images}")
+	private String imagesApiAddress;
 
 	@Transactional
 	public UserCreate.Response createUser(UserCreate.Request request) {
@@ -74,8 +78,8 @@ public class UserService {
 	@Transactional
 	public void setProfileImage(UUID userId, MultipartFile file) {
 		User user = getUserByUserId(userId);
-		MultipartFile image = imageService.saveImage(file);
-		imageService.deleteImage(user.getProfileImage());
+		String image = imageService.saveProfileImage(file);
+		imageService.removeImage(user.getProfileImage());
 		user.setProfileImage(image);
 	}
 
@@ -103,13 +107,12 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserPermissionRequestCreate.Response requestPermission(UUID userId, UserPermissionRequestCreate.Request request, List<MultipartFile> files) {
-		isValidFileSize(2, files);
+	public UserPermissionRequestCreate.Response requestPermission(UUID userId, UserPermissionRequestCreate.Request request) {
+		isValidFileSize(2, request.getPermissionImages());
 		User user = getUserByUserId(userId);
 		isAlreadySamePermission(request, user);
 
-		List<MultipartFile> images = imageService.saveImages(files);
-		permissionService.createPermissionRequest(user, request, images);
+		permissionService.createPermissionRequest(user, request);
 		return UserPermissionRequestCreate.Response.of(LocalDateTime.now());
 	}
 
@@ -120,8 +123,8 @@ public class UserService {
 		return true;
 	}
 
-	private void isValidFileSize(int size, List<MultipartFile> files) {
-		if (files.size() != size) {
+	private void isValidFileSize(int size, List<String> images) {
+		if (images.size() != size) {
 			throw new BusinessException(ErrorCode.NEED_AT_TWO_FILES);
 		}
 	}
@@ -154,4 +157,7 @@ public class UserService {
 		emailSender.sendPasswordInitEmail(request.getEmail(), newPassword);
 	}
 
+	public String setPermissionImage(MultipartFile file) {
+		return imagesApiAddress + imageService.savePermissionImage(file);
+	}
 }

@@ -36,7 +36,6 @@ public class ProductRead {
 		@Schema(description = "작품 설명", example = "어둑한 밤을 화폭에 옮겨 담았습니다.")
 		private String productDescription;
 
-
 		public static DetailResponse of(String imagesApiAddress, String productsApiAddress, Product product, User user) {
 			List<String> fileImageUrls = new ArrayList<>();
 
