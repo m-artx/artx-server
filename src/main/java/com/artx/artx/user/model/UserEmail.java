@@ -4,11 +4,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
-public class UserHandle {
+public class UserEmail {
 
 
 	@Getter
-	public static class Request {
+	public static class UsernameRequest {
+
+		@Schema(description = "이메일", example = "artx@gmail.com")
+		private String email;
+
+	}
+
+	@Getter
+	public static class PasswordRequest {
 		@Schema(description = "아이디", example = "artxlover")
 		private String username;
 

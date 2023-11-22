@@ -62,7 +62,7 @@ spec:
             - name: ARTX_ADDRESS
               value: "https://ka8d596e67406a.user-app.krampoline.com"
             - name: ARTX_EMAIL_SERVER_ADDRESS
-              value: "http://64.110.89.251:8000"
+              value: "https://api.stdout.site"
             - name: JWT_SECRET
               value: "6db7d12ce6b83355585381ecdd90f4b62e250db79fb0b4eb61d6c4c1ca5ff183e0d8a8f4701f71ebec37580b083a72cf2860a327c9345cf60f937aaba07ac041v"
             - name: GMAIL_USERNAME
