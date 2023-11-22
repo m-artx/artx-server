@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: artx
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_2359970a1149
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_8460ea799171
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -45,7 +45,7 @@ spec:
             - name: MYSQL_URL
               value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
-              value: "none"
+              value: "create-drop"
             - name: PRODUCT_IMAGES_DIRECTORY
               value: "/app/product-images"
             - name: TEMP_IMAGES_DIRECTORY
