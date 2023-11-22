@@ -1,11 +1,10 @@
 package com.artx.artx.user.service;
 
 import com.artx.artx.admin.service.AdminPermissionService;
-import com.artx.artx.email.EmailCreate;
-import com.artx.artx.email.EmailSender;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.image.service.ImageService;
+import com.artx.artx.email.EmailCreate;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.model.*;
 import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
@@ -39,7 +38,6 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final ImageService imageService;
 	private final AdminPermissionService permissionService;
-	private final EmailSender emailSender;
 
 	private final RestTemplate restTemplate;
 
@@ -59,10 +57,10 @@ public class UserService {
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
-			String body = objectMapper.writeValueAsString(EmailCreate.Request.builder().to(user.getEmail()).userId(user.getUserId()).build());
+			String body = objectMapper.writeValueAsString(EmailCreate.JoinRequest.builder().to(user.getEmail()).userId(user.getUserId()).build());
 
 			HttpEntity httpEntity = new HttpEntity(body, headers);
-			restTemplate.postForObject(emailApiAddress, httpEntity, EmailCreate.Response.class);
+			restTemplate.postForObject(emailApiAddress + "/join", httpEntity, EmailCreate.Response.class);
 
 		} catch (Exception e){
 			e.printStackTrace();
@@ -71,6 +69,29 @@ public class UserService {
 //		emailSender.sendAuthenticationEmail(user.getEmail(), user.getUserId());
 
 		return UserCreate.Response.of(user);
+	}
+
+	@Transactional
+	public void passwordInitByEmail(UserHandle.Request request) {
+		User user = userRepository.findByEmailAndUsername(request.getEmail(), request.getUsername()).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+		user.setPassword(passwordEncoder.encode(newPassword));
+
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String body = objectMapper.writeValueAsString(EmailCreate.PasswordRequest.builder().to(user.getEmail()).newPassword(newPassword).build());
+
+			HttpEntity httpEntity = new HttpEntity(body, headers);
+			restTemplate.postForObject(emailApiAddress + "/password", httpEntity, EmailCreate.Response.class);
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}
 
 	private boolean existUserByUsername(String username) {
@@ -174,14 +195,7 @@ public class UserService {
 		return UserHandle.UsernameResponse.builder().username(user.getUsername()).build();
 	}
 
-	@Transactional
-	public void passwordInitByEmail(UserHandle.Request request) {
-		User user = userRepository.findByEmailAndUsername(request.getEmail(), request.getUsername()).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-		String newPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
-		user.setPassword(passwordEncoder.encode(newPassword));
 
-		emailSender.sendPasswordInitEmail(request.getEmail(), newPassword);
-	}
 
 	public String setPermissionImage(MultipartFile file) {
 		return imagesApiAddress + imageService.savePermissionImage(file);

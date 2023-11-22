@@ -9,10 +9,19 @@ public class EmailCreate {
 
 	@Getter
 	@Builder
-	public static class Request {
+	public static class JoinRequest {
 		private String to;
 		private UUID userId;
 	}
+
+	@Getter
+	@Builder
+	public static class PasswordRequest {
+		private String to;
+		private String newPassword;
+	}
+
+
 
 	@Getter
 	public static class Response {
