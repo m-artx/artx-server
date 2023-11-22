@@ -51,8 +51,6 @@ directory:
   profile-images: ${PROFILE_IMAGES_DIRECTORY}
   permission-images: ${PERMISSION_IMAGES_DIRECTORY}
 
-
-
 artx:
   host: ${ARTX_HOST}
   port: ${ARTX_PORT}

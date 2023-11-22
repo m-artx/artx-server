@@ -42,13 +42,15 @@ spec:
             - name: DDL_AUTO
               value: "none"
             - name: PRODUCT_IMAGES_DIRECTORY
-              value: "/app/images/product-images"
+              value: "/app/product-images"
             - name: TEMP_IMAGES_DIRECTORY
-              value: "/app/images/temp-images"
+              value: "/app/temp-images"
             - name: THUMBNAIL_IMAGES_DIRECTORY
-              value: "/app/images/thumbnail-images"
+              value: "/app/thumbnail-images"
             - name: PROFILE_IMAGES_DIRECTORY
-              value: "/app/images/profile-images"
+              value: "/app/profile-images"
+            - name: PERMISSION_IMAGES_DIRECTORY
+              value: "/app/permission-images"
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
             - name: LOG_LEVEL
