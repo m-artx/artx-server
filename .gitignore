@@ -41,11 +41,11 @@ application.yml
 *.properties
 
 !gradle-wrapper.properties
-profile-images
-permission-images
-product-images
-temp-images
-thumbnail_images
+images/profile
+images/permission
+images/product
+images/temp
+images/thumbnail
 
 build
 
