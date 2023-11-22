@@ -51,6 +51,13 @@ directory:
   profile-images: ${PROFILE_IMAGES_DIRECTORY}
   permission-images: ${PERMISSION_IMAGES_DIRECTORY}
 
+prefix:
+  product-images: product_
+  temp-images: temp_
+  thumbnail-images: thumbnail_
+  profile-images: profile_
+  permission-images: permission_
+
 artx:
   host: ${ARTX_HOST}
   port: ${ARTX_PORT}
