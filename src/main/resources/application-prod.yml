@@ -64,13 +64,16 @@ artx:
   host: ${ARTX_HOST}
   port: ${ARTX_PORT}
   address: ${ARTX_ADDRESS}
+  email-server-address: ${ARTX_EMAIL_SERVER_ADDRESS}
 
 api:
   users: ${artx.address}/api/users/
   products: ${artx.address}/api/products/
   orders: ${artx.address}/api/orders/
   images: ${artx.address}/api/images/
+  email: ${artx.address}/api/email/
   permissions: ${artx.address}/api/admin/permission-requests/
+
 
 springdoc:
   swagger-ui:

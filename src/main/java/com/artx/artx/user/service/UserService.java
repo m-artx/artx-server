@@ -1,6 +1,7 @@
 package com.artx.artx.user.service;
 
 import com.artx.artx.admin.service.AdminPermissionService;
+import com.artx.artx.common.email.EmailCreate;
 import com.artx.artx.common.email.EmailSender;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -12,13 +13,18 @@ import com.artx.artx.user.model.permission.UserPermissionRequestRead;
 import com.artx.artx.user.repository.UserRepository;
 import com.artx.artx.user.type.UserRole;
 import com.artx.artx.user.type.UserStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -35,15 +41,35 @@ public class UserService {
 	private final AdminPermissionService permissionService;
 	private final EmailSender emailSender;
 
+	private final RestTemplate restTemplate;
+
 	@Value(value = "${api.images}")
 	private String imagesApiAddress;
+
+	@Value(value = "${api.email}")
+	private String emailApiAddress;
 
 	@Transactional
 	public UserCreate.Response createUser(UserCreate.Request request) {
 		existUserByUsername(request.getUsername());
 		User user = userRepository.save(User.from(request, passwordEncoder.encode(request.getPassword())));
 
-		emailSender.sendAuthenticationEmail(user.getEmail(), user.getUserId());
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String body = objectMapper.writeValueAsString(EmailCreate.Request.builder().to(user.getEmail()).userId(user.getUserId()).build());
+
+			HttpEntity httpEntity = new HttpEntity(body, headers);
+			restTemplate.postForObject(emailApiAddress, httpEntity, EmailCreate.Response.class);
+
+		} catch (Exception e){
+
+		}
+
+//		emailSender.sendAuthenticationEmail(user.getEmail(), user.getUserId());
+
 		return UserCreate.Response.of(user);
 	}
 

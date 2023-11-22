@@ -13,7 +13,7 @@ import java.util.UUID;
 @Tag(name = "유저")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/users/{userId}")
 public class UserEmailController {
 
 	private final UserService userService;
