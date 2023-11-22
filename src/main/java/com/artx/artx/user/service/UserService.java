@@ -1,8 +1,8 @@
 package com.artx.artx.user.service;
 
 import com.artx.artx.admin.service.AdminPermissionService;
-import com.artx.artx.common.email.EmailCreate;
-import com.artx.artx.common.email.EmailSender;
+import com.artx.artx.email.EmailCreate;
+import com.artx.artx.email.EmailSender;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.image.service.ImageService;
@@ -65,7 +65,7 @@ public class UserService {
 			restTemplate.postForObject(emailApiAddress, httpEntity, EmailCreate.Response.class);
 
 		} catch (Exception e){
-
+			e.printStackTrace();
 		}
 
 //		emailSender.sendAuthenticationEmail(user.getEmail(), user.getUserId());
@@ -83,7 +83,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public UserRead.Response readUser(UUID userId) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-		return UserRead.Response.of(user);
+		return UserRead.Response.of(user, imagesApiAddress);
 	}
 
 	@Transactional(readOnly = true)

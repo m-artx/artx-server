@@ -1,4 +1,4 @@
-package com.artx.artx.common.email;
+package com.artx.artx.email;
 
 import lombok.Builder;
 import lombok.Getter;

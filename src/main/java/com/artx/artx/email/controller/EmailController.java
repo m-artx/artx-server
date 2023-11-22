@@ -1,7 +1,7 @@
-package com.artx.artx.common.email.controller;
+package com.artx.artx.email.controller;
 
-import com.artx.artx.common.email.EmailCreate;
-import com.artx.artx.common.email.EmailSender;
+import com.artx.artx.email.EmailCreate;
+import com.artx.artx.email.EmailSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

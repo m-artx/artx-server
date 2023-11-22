@@ -1,4 +1,4 @@
-package com.artx.artx.common.email;
+package com.artx.artx.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

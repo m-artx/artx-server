@@ -1,4 +1,4 @@
-package com.artx.artx.common.email;
+package com.artx.artx.email;
 
 public enum Email {
 	CREATE_USER_SUBJECT("ARTX 회원가입 완료를 위해 인증이 필요합니다."),

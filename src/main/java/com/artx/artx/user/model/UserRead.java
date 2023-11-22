@@ -42,10 +42,10 @@ public class UserRead {
 		@Schema(description = "가입 날짜", example = "2023-12-01")
 		private LocalDate userCreatedAt;
 
-		public static Response of(User user) {
+		public static Response of(User user, String imagesApiAddress) {
 			return Response.builder()
 					.userId(user.getUserId())
-					.userProfileImage(user.getProfileImage())
+					.userProfileImage(imagesApiAddress + user.getProfileImage())
 					.userIntroduction(user.getIntroduction())
 					.username(user.getUsername())
 					.userEmail(user.getEmail())
