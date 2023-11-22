@@ -17,14 +17,19 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
+
             - name: artx-product-images
               mountPath: /app/product-images
+
             - name: artx-temp-images
               mountPath: /app/temp-images
+
             - name: artx-profile-images
               mountPath: /app/profile-images
+
             - name: artx-thumbnail-images
               mountPath: /app/thumbnail-images
+
             - name: artx-permission-images
               mountPath: /app/permission-images
 
@@ -83,15 +88,19 @@ spec:
         - name: artx-product-images
           persistentVolumeClaim:
             claimName: artx-product-images
+
         - name: artx-profile-images
           persistentVolumeClaim:
             claimName: artx-profile-images
+
         - name: artx-thumbnail-images
           persistentVolumeClaim:
             claimName: artx-thumbnail-images
+
         - name: artx-temp-images
           persistentVolumeClaim:
             claimName: artx-temp-images
+
         - name: artx-permission-images
           persistentVolumeClaim:
             claimName: artx-permission-images

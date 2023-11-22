@@ -1,9 +1,7 @@
 package com.artx.artx.cart.controller;
 
 import com.artx.artx.auth.model.UserDetails;
-import com.artx.artx.cart.model.CartProductCreate;
-import com.artx.artx.cart.model.CartProductDelete;
-import com.artx.artx.cart.model.CartProductRead;
+import com.artx.artx.cart.model.*;
 import com.artx.artx.cart.service.CartService;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -53,18 +51,18 @@ public class CartController {
 	@Operation(summary = "장바구니 상품 수량 증가", description = "상품의 수량을 증가시킬 수 있다.")
 	@PatchMapping("/increase")
 	public ResponseEntity<Void> increaseQuantity(
-			@RequestParam Long productId
+			@RequestBody CartProductDecrease.Request request
 	) {
-		cartService.increaseProductQuantity(getUserId(), productId);
+		cartService.increaseProductQuantity(getUserId(), request.getProductId());
 		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "장바구니 상품 수량 감소", description = "상품의 수량을 감소시킬 수 있다.")
 	@PatchMapping("/decrease")
 	public ResponseEntity<Void> decreaseQuantity(
-			@RequestParam Long productId
+			@RequestBody CartProductDecrease.Request request
 	) {
-		cartService.decreaseProductQuantity(getUserId(), productId);
+		cartService.decreaseProductQuantity(getUserId(), request.getProductId());
 		return ResponseEntity.ok().build();
 	}
 
