@@ -107,7 +107,6 @@ public class ArtistProductService {
 		user.isArtist();
 
 		Product product = productRepository.save(Product.from(request, user, productCategory, productStock));
-
 		product.setProductImages(saveProductImages);
 
 

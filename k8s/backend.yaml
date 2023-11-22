@@ -17,21 +17,8 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-
             - name: artx-product-images
-              mountPath: /app/product-images
-
-            - name: artx-temp-images
-              mountPath: /app/temp-images
-
-            - name: artx-profile-images
-              mountPath: /app/profile-images
-
-            - name: artx-thumbnail-images
-              mountPath: /app/thumbnail-images
-
-            - name: artx-permission-images
-              mountPath: /app/permission-images
+              mountPath: /app/images
 
           env:
             - name: REDIS_HOST
@@ -47,15 +34,15 @@ spec:
             - name: DDL_AUTO
               value: "update"
             - name: PRODUCT_IMAGES_DIRECTORY
-              value: "/app/product-images"
+              value: "/app/images/product"
             - name: TEMP_IMAGES_DIRECTORY
-              value: "/app/temp-images"
+              value: "/app/images/temp"
             - name: THUMBNAIL_IMAGES_DIRECTORY
-              value: "/app/thumbnail-images"
+              value: "/app/images/thumbnail"
             - name: PROFILE_IMAGES_DIRECTORY
-              value: "/app/profile-images"
+              value: "/app/images/profile"
             - name: PERMISSION_IMAGES_DIRECTORY
-              value: "/app/permission-images"
+              value: "/app/images/permission"
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
             - name: LOG_LEVEL
@@ -85,25 +72,9 @@ spec:
             - name: SQL_INIT_MODE
               value: "never"
       volumes:
-        - name: artx-product-images
+        - name: artx-images
           persistentVolumeClaim:
-            claimName: artx-product-images
-
-        - name: artx-profile-images
-          persistentVolumeClaim:
-            claimName: artx-profile-images
-
-        - name: artx-thumbnail-images
-          persistentVolumeClaim:
-            claimName: artx-thumbnail-images
-
-        - name: artx-temp-images
-          persistentVolumeClaim:
-            claimName: artx-temp-images
-
-        - name: artx-permission-images
-          persistentVolumeClaim:
-            claimName: artx-permission-images
+            claimName: artx-images
 ---
 
 apiVersion: v1
