@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -145,6 +147,9 @@ public class ArtistProductService {
 
 						File previousFile = previousPath.toFile();
 						File presentFile = presentPath.toFile();
+
+						Files.move(previousPath, presentPath, StandardCopyOption.REPLACE_EXISTING);
+
 
 						boolean isRenamed = previousFile.renameTo(presentFile);
 
