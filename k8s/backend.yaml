@@ -45,7 +45,7 @@ spec:
             - name: MYSQL_URL
               value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
-              value: "create"
+              value: "update"
             - name: PRODUCT_IMAGES_DIRECTORY
               value: "/app/product-images"
             - name: TEMP_IMAGES_DIRECTORY
@@ -81,9 +81,9 @@ spec:
             - name: GMAIL_PASSWORD
               value: "eutf hszs dvsa qylp"
             - name: DATASOURCE_INIT
-              value: "true"
+              value: "false"
             - name: SQL_INIT_MODE
-              value: "always"
+              value: "never"
       volumes:
         - name: artx-product-images
           persistentVolumeClaim:
