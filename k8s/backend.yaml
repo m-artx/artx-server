@@ -18,7 +18,7 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: artx-product-images
-              mountPath: /app/temp-images
+              mountPath: /app/product-images
             - name: artx-temp-images
               mountPath: /app/temp-images
             - name: artx-profile-images

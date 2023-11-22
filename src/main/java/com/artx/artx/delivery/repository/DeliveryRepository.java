@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DeliveryRepository extends JpaRepository<Delivery, String> {
 
@@ -12,6 +13,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, String> {
 	List<Object[]> getAllDeliveryStatusCounts();
 
 	@Query("SELECT d FROM Delivery d WHERE d.order.id = :orderId")
-	List<Delivery> findAllByOrderIdAndArtistId(String orderId);
+	Optional<Delivery> findByOrderIdAndArtistId(String orderId);
 
 }

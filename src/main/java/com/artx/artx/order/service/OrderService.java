@@ -2,6 +2,8 @@ package com.artx.artx.order.service;
 
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.delivery.entity.Delivery;
+import com.artx.artx.delivery.repository.DeliveryRepository;
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
 import com.artx.artx.order.entity.OrderProductId;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
 	private final OrderRepository orderRepository;
+	private final DeliveryRepository deliveryRepository;
 	private final KakaoPaymentRepository kakaoPaymentRepository;
 	private final UserService userService;
 	private final ProductService productService;
@@ -91,12 +94,12 @@ public class OrderService {
 	@Transactional
 	public PaymentCancel.Response cancelOrder(String orderId) {
 		KakaoPayment kakaoPayment = kakaoPaymentRepository.fetchKakaoPaymentByOrderId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
+		Delivery delivery = deliveryRepository.findByOrderIdAndArtistId(orderId).orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
 
 		Payment payment = kakaoPayment.getPayment();
 		Order order = payment.getOrder();
 
-
-//		delivery.isCacnelable();
+		delivery.isCacnelable();
 		order.isCancelable();
 		payment.isCancelable();
 

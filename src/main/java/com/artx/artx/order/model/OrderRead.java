@@ -2,6 +2,7 @@ package com.artx.artx.order.model;
 
 import com.artx.artx.order.entity.Order;
 import com.artx.artx.order.entity.OrderProduct;
+import com.artx.artx.order.model.detail.OrderDeliveryDetail;
 import com.artx.artx.order.model.detail.OrderProductDetail;
 import com.artx.artx.order.model.summary.OrderProductSummary;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -65,6 +66,8 @@ public class OrderRead {
 		@Schema(description = "주문 작품 정보", example = "")
 		private List<OrderProductDetail> orderProductDetails;
 
+		private OrderDeliveryDetail orderDeliveryDetail;
+
 		@Schema(description = "주문 등록 시간", example = "2023-01-01T10:00:30")
 		private LocalDateTime orderCreatedAt;
 
@@ -78,6 +81,13 @@ public class OrderRead {
 							orderProducts.stream()
 									.map(OrderProductDetail::of)
 									.collect(Collectors.toList())
+					)
+					.orderDeliveryDetail(OrderDeliveryDetail.builder()
+							.deliveryReceiver(order.getReceiver())
+							.deliveryReceiverPhoneNumber(order.getPhoneNumber())
+							.deliveryReceiverAddress(order.getAddress().getAddress())
+							.deliveryReceiverAddressDetail(order.getAddress().getAddressDetail())
+							.build()
 					)
 					.orderCreatedAt(order.getCreatedAt())
 					.build();

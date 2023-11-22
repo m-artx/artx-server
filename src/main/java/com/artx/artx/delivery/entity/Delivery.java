@@ -26,7 +26,7 @@ public class Delivery extends BaseEntity {
 	@GenericGenerator(name = "delivery-id-generator", strategy = "com.artx.artx.common.util.DeliveryGenerator")
 	private String id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "")
 	private Order order;
 
@@ -59,7 +59,7 @@ public class Delivery extends BaseEntity {
 	}
 
 	public boolean isCacnelable() {
-		if(this.status == DeliveryStatus.DELIVERY_READY){
+		if(this.status == null || this.status == DeliveryStatus.DELIVERY_READY){
 			return true;
 		}
 		throw new BusinessException(ErrorCode.CAN_NOT_PAYMENT_CANCEL);
