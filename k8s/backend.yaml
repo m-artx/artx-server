@@ -77,6 +77,22 @@ spec:
               value: "false"
             - name: SQL_INIT_MODE
               value: "never"
+      volumes:
+        - name: artx-product-images
+          persistentVolumeClaim:
+            claimName: artx-product-images
+        - name: artx-profile-images
+          persistentVolumeClaim:
+            claimName: artx-profile-images
+        - name: artx-thumbnail-images
+          persistentVolumeClaim:
+            claimName: artx-thumbnail-images
+        - name: artx-temp-images
+          persistentVolumeClaim:
+            claimName: artx-temp-images
+        - name: artx-permission-images
+          persistentVolumeClaim:
+            claimName: artx-permission-images
 ---
 
 apiVersion: v1
