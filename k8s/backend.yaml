@@ -17,7 +17,7 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: artx-product-images
+            - name: artx-images
               mountPath: /app/images
 
           env:
