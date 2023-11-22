@@ -4,6 +4,8 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "10g"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"  # 600초로 설정
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"  # 600초로 설정
   labels:
     app.kubernetes.io/managed-by: kargocd
   name: artx
