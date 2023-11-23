@@ -1,8 +1,8 @@
 package com.artx.artx.common.image.service;
 
-import com.artx.artx.common.error.ErrorCode;
-import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.common.image.model.CustomMultipartFile;
+import com.artx.artx.etc.error.ErrorCode;
+import com.artx.artx.etc.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
