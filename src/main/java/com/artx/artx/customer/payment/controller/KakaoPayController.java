@@ -1,0 +1,40 @@
+package com.artx.artx.customer.payment.controller;
+
+import com.artx.artx.customer.payment.service.KakaoPayService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+
+@Tag(name = "카카오페이 결제")
+@RestController
+@RequestMapping("/api/payments")
+@RequiredArgsConstructor
+public class KakaoPayController {
+
+	private final KakaoPayService kakaoPayService;
+
+	@GetMapping("/approval")
+	public void approval(
+			@RequestParam(name = "partner_order_id") String orderId,
+			@RequestParam String pg_token,
+			HttpServletResponse response
+	) throws IOException {
+		kakaoPayService.approvalPayment(orderId, pg_token);
+		response.sendRedirect("/success");
+	}
+
+	@PostMapping("/fail")
+	public void fail(HttpServletResponse response) throws IOException {
+		response.sendRedirect("/fail");
+	}
+
+	@PostMapping("/cancel")
+	public ResponseEntity<Void> cancel() {
+		return ResponseEntity.ok().build();
+	}
+
+}

@@ -73,6 +73,7 @@ api:
   images: ${artx.address}/api/images/
   email: ${artx.email-server-address}/api/email
   permissions: ${artx.address}/api/admin/permission-requests/
+  artist-orders: ${artx.email-server-address}/api/artist/orders/
 
 
 springdoc:
