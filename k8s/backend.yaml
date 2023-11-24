@@ -32,7 +32,7 @@ spec:
             - name: MYSQL_URL
               value: "jdbc:mysql://mysql:3306/artx"
             - name: DDL_AUTO
-              value: "update"
+              value: "create-drop"
             - name: PRODUCT_IMAGES_DIRECTORY
               value: "/app/images/product"
             - name: TEMP_IMAGES_DIRECTORY
