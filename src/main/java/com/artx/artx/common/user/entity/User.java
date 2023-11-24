@@ -62,7 +62,7 @@ public class User extends BaseEntity {
 	@JoinColumn(name = "cart_id", unique = true)
 	private Cart cart;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "address_id")
 	private UserAddress defaultAddress;
 

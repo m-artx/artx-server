@@ -33,7 +33,6 @@ public class UserService {
 	public UserCreate.Response createUser(UserCreate.Request request) {
 		existUserByUsername(request.getUsername());
 		User user = userRepository.save(User.from(request, passwordEncoder.encode(request.getPassword())));
-
 		user.addAddress(user.getDefaultAddress());
 		userEmailService.sendAuthenticationEmail(user);
 		return UserCreate.Response.of(user);
