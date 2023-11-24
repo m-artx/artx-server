@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsername(String username);
 
-	@Query("SELECT new com.artx.artx.common.user.model.UserReadDto(u.userId, u.nickname) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
+	@Query("SELECT new com.artx.artx.common.user.model.UserReadDto(u.userId, u.username) FROM User u WHERE u.userRole = :userRole ORDER BY u.createdAt DESC")
 	Page<UserReadDto> findUsersByUserRole(UserRole userRole, Pageable pageable);
 
 	@Query("SELECT u.userRole, count(u) FROM User u GROUP BY u.userRole")
