@@ -99,8 +99,8 @@ public class UserRead {
 					.userEmail(user.getEmail())
 					.userNickname(user.getNickname())
 					.userPhoneNumber(user.getPhoneNumber())
-					.userAddress(user.getAddress().getAddress())
-					.userAddressDetail(user.getAddress().getAddressDetail())
+					.userAddress(user.getDefaultAddress().getAddress().getAddress())
+					.userAddressDetail(user.getDefaultAddress().getAddress().getAddressDetail())
 					.userCreatedAt(user.getCreatedAt())
 					.build();
 		}

@@ -1,17 +1,18 @@
 package com.artx.artx.common.user.entity;
 
+import com.artx.artx.common.user.model.UserCreate;
 import com.artx.artx.common.user.type.UserRole;
+import com.artx.artx.common.user.type.UserStatus;
 import com.artx.artx.customer.cart.entity.Cart;
 import com.artx.artx.etc.error.ErrorCode;
 import com.artx.artx.etc.exception.BusinessException;
-import com.artx.artx.etc.model.Address;
 import com.artx.artx.etc.model.BaseEntity;
-import com.artx.artx.common.user.model.UserCreate;
-import com.artx.artx.common.user.type.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -61,19 +62,22 @@ public class User extends BaseEntity {
 	@JoinColumn(name = "cart_id", unique = true)
 	private Cart cart;
 
-	@Embedded
-	@Column(nullable = false)
-	private Address address;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "address_id")
+	private UserAddress defaultAddress;
 
-	public boolean isArtist(){
-		if(this.userRole != UserRole.ARTIST){
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<UserAddress> userAddresses;
+
+	public boolean isArtist() {
+		if (this.userRole != UserRole.ARTIST) {
 			throw new BusinessException(ErrorCode.CREATE_PRODUCT_ONLY_ARTIST);
 		}
 
 		return true;
 	}
 
-	public static User from(UserCreate.Request request, String password){
+	public static User from(UserCreate.Request request, String password) {
 		return User.builder()
 				.userStatus(UserStatus.INACTIVE)
 				.userRole(UserRole.USER)
@@ -82,13 +86,18 @@ public class User extends BaseEntity {
 				.email(request.getEmail())
 				.nickname(request.getNickname())
 				.phoneNumber(request.getPhoneNumber())
-				.address(Address.builder()
-						.address(request.getAddress())
-						.addressDetail(request.getAddressDetail())
-						.build())
 				.isEmailYn(request.getIsEmailYn())
 				.cart(Cart.builder().build())
+				.defaultAddress(UserAddress.from(request))
 				.build();
+	}
+
+	public void addAddress(UserAddress userAddress) {
+		if (this.userAddresses == null) {
+			this.userAddresses = new ArrayList<>();
+		}
+		userAddress.setUser(this);
+		this.userAddresses.add(userAddress);
 	}
 
 	public void setCart(Cart cart) {
@@ -99,7 +108,7 @@ public class User extends BaseEntity {
 		this.password = password;
 	}
 
-	public void setProfileImage(String image){
+	public void setProfileImage(String image) {
 		this.profileImage = image;
 	}
 
@@ -113,5 +122,9 @@ public class User extends BaseEntity {
 
 	public void setUserStatus(UserStatus userStatus) {
 		this.userStatus = userStatus;
+	}
+
+	public void setDefaultAddress(UserAddress userAddress) {
+		this.defaultAddress = userAddress;
 	}
 }

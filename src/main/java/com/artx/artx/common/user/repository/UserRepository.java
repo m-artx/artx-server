@@ -28,4 +28,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	List<Object[]> findAllDailyUserAndArtistCounts();
 
 
+	@Query("SELECT u FROM User u LEFT JOIN FETCH u.userAddresses ua WHERE u.userId = :userId")
+	Optional<User> findWithAddressById(UUID userId);
+
 }

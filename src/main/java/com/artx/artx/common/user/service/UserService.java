@@ -33,6 +33,8 @@ public class UserService {
 	public UserCreate.Response createUser(UserCreate.Request request) {
 		existUserByUsername(request.getUsername());
 		User user = userRepository.save(User.from(request, passwordEncoder.encode(request.getPassword())));
+
+		user.addAddress(user.getDefaultAddress());
 		userEmailService.sendAuthenticationEmail(user);
 		return UserCreate.Response.of(user);
 	}
@@ -98,6 +100,11 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public User getUserByUserId(UUID userId) {
 		return userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	@Transactional(readOnly = true)
+	public User getUserWithAddressByUserId(UUID userId) {
+		return userRepository.findWithAddressById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 	}
 
 	@Transactional(readOnly = true)

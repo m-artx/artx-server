@@ -1,13 +1,11 @@
 package com.artx.artx.common.user.controller;
 
 import com.artx.artx.common.auth.model.UserDetails;
-import com.artx.artx.common.user.model.UserCreate;
-import com.artx.artx.common.user.model.UserRead;
+import com.artx.artx.common.user.model.*;
 import com.artx.artx.common.user.service.UserMyPageService;
 import com.artx.artx.common.user.service.UserService;
 import com.artx.artx.etc.error.ErrorCode;
 import com.artx.artx.etc.exception.BusinessException;
-import com.artx.artx.common.user.model.UserUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +48,40 @@ public class UserMyPageContoller {
 	) {
 		UserUpdate.Response response = userMyPageService.updatePassword(getUserId(), request);
 		return ResponseEntity.ok(response);
+	}
+
+	@Operation(summary = "배송지 추가", description = "배송지를 추가할 수 있다.")
+	@PostMapping("/addresses")
+	public ResponseEntity<Void> addAddress(
+			@RequestBody UserAddressCreate.Request request
+	) {
+		userMyPageService.addAddress(getUserId(), request);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "배송지 조회", description = "배송지를 전체 조회할 수 있다.")
+	@GetMapping("/addresses")
+	public ResponseEntity<UserAddressRead.Response> readAddress(
+	) {
+		return ResponseEntity.ok(userMyPageService.getAllAddress(getUserId()));
+	}
+
+	@Operation(summary = "기본 배송지 변경", description = "기본 배송지를 변경할 수 있다.")
+	@PatchMapping("/addresses")
+	public ResponseEntity<Void> updateDefaultAddress(
+			@RequestBody UserAddressUpdate.Request request
+	) {
+		userMyPageService.updateDefaultAddress(getUserId(), request);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "배송지 삭제", description = "배송지를 삭제할 수 있다.")
+	@DeleteMapping("/addresses")
+	public ResponseEntity<Void> deleteAddress(
+			@RequestBody UserAddressDelete.Request request
+	) {
+		userMyPageService.deleteAddress(getUserId(), request);
+		return ResponseEntity.ok().build();
 	}
 
 	public UUID getUserId() {
