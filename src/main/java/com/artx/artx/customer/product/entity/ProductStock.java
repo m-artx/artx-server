@@ -54,4 +54,8 @@ public class ProductStock {
 	public void setQuantity(Long quantity) {
 		this.quantity = quantity;
 	}
+
+	public void updateQuantity(Long productQuantity) {
+		this.quantity = productQuantity;
+	}
 }

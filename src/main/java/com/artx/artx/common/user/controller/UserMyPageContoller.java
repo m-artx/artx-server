@@ -76,11 +76,11 @@ public class UserMyPageContoller {
 	}
 
 	@Operation(summary = "배송지 삭제", description = "배송지를 삭제할 수 있다.")
-	@DeleteMapping("/addresses")
+	@DeleteMapping("/addresses/{addressId}")
 	public ResponseEntity<Void> deleteAddress(
-			@RequestBody UserAddressDelete.Request request
+			@PathVariable Long addressId
 	) {
-		userMyPageService.deleteAddress(getUserId(), request);
+		userMyPageService.deleteAddress(getUserId(), addressId);
 		return ResponseEntity.ok().build();
 	}
 

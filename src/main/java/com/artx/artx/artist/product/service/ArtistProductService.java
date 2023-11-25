@@ -182,4 +182,5 @@ public class ArtistProductService {
 		return productCategoryRepository.findByType(category).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
 
+
 }

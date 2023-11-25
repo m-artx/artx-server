@@ -73,8 +73,8 @@ public class UserMyPageService {
 	}
 
 	@Transactional
-	public void deleteAddress(UUID userId, UserAddressDelete.Request request) {
-		UserAddress userAddress = userAddressRepository.findById(request.getAddressId()).orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND));
+	public void deleteAddress(UUID userId, Long addressId) {
+		UserAddress userAddress = userAddressRepository.findById(addressId).orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND));
 		User user = userService.getUserWithAddressByUserId(userId);
 
 		if(userAddress.getUser() != user){
@@ -86,7 +86,7 @@ public class UserMyPageService {
 		}
 
 		userAddress.setUser(null);
-		userAddressRepository.deleteById(request.getAddressId());
+		userAddressRepository.deleteById(addressId);
 	}
 
 //	public UserUpdate.Response addAddress(UUID userId, UserAddressCreate.Request request, Pageable pageable) {

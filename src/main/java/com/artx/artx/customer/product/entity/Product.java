@@ -94,4 +94,8 @@ public class Product extends BaseEntity {
 	public void setCategory(ProductCategory productCategory) {
 		this.productCategory = productCategory;
 	}
+
+	public void updatePrice(Long productPrice) {
+		this.price = productPrice;
+	}
 }
