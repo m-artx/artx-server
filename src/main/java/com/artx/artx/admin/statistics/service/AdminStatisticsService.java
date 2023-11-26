@@ -2,12 +2,12 @@ package com.artx.artx.admin.statistics.service;
 
 import com.artx.artx.admin.statistics.model.OrderStatisticsRead;
 import com.artx.artx.admin.statistics.model.UserStatisticsRead;
-import com.artx.artx.customer.delivery.repository.DeliveryRepository;
-import com.artx.artx.customer.delivery.type.DeliveryStatus;
-import com.artx.artx.customer.order.repository.OrderRepository;
-import com.artx.artx.customer.order.type.OrderStatus;
-import com.artx.artx.common.user.repository.UserRepository;
-import com.artx.artx.common.user.type.UserRole;
+import com.artx.artx.delivery.repository.DeliveryRepository;
+import com.artx.artx.delivery.type.DeliveryStatus;
+import com.artx.artx.order.repository.OrderRepository;
+import com.artx.artx.order.type.OrderStatus;
+import com.artx.artx.user.repository.UserRepository;
+import com.artx.artx.user.type.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

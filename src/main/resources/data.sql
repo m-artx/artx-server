@@ -26,9 +26,6 @@ VALUES (1, TIMESTAMP(NOW()),TIMESTAMP(NOW())),
        (20, TIMESTAMP(NOW()),TIMESTAMP(NOW())),
        (21, TIMESTAMP(NOW()),TIMESTAMP(NOW()));
 
-INSERT INTO address(id, address, address_detail, userId) VALUES
-
-
 INSERT INTO users(user_id, cart_id ,username,password,nickname,email,introduction,phone_number,address,address_detail,is_email_yn,is_deleted,user_role,user_status,created_at,modified_at)
 VALUES
     (UNHEX(REPLACE(UUID(), '-', '')), 1, 'user1', '$2a$10$vh4UtJw2UNaMSFyvCUSFRuIIb9uf1gPq0c2ATw1npdMao7bBs0hiu','nuser1','user1@gmail.com','유저 1호입니다.','010-1234-5678','서울특별시 광진구 가로 1길','101호',TRUE,FALSE,'USER','ACTIVE',TIMESTAMP(NOW()),TIMESTAMP(NOW())),

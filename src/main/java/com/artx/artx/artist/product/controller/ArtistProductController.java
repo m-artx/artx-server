@@ -2,12 +2,12 @@ package com.artx.artx.artist.product.controller;
 
 import com.artx.artx.artist.product.model.ArtistProductDelete;
 import com.artx.artx.artist.product.service.ArtistProductService;
-import com.artx.artx.common.auth.model.UserDetails;
-import com.artx.artx.etc.error.ErrorCode;
-import com.artx.artx.etc.exception.BusinessException;
-import com.artx.artx.customer.product.model.ProductCreate;
-import com.artx.artx.customer.product.model.ProductRead;
-import com.artx.artx.customer.product.model.ProductUpdate;
+import com.artx.artx.auth.model.UserDetails;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.product.model.ProductCreate;
+import com.artx.artx.product.model.ProductRead;
+import com.artx.artx.product.model.ProductUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

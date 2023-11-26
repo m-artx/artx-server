@@ -1,6 +1,6 @@
 package com.artx.artx.admin.category.model;
 
-import com.artx.artx.customer.product.type.Category;
+import com.artx.artx.product.type.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

@@ -15,8 +15,11 @@ public interface PermissionRequestRepository extends JpaRepository<PermissionReq
 	@Query("SELECT p FROM PermissionRequest p WHERE p.user.userId = :userId")
 	Page<PermissionRequest> findPermissionRequestByUser_UserId(UUID userId, Pageable pageable);
 
-	@Query("SELECT p FROM PermissionRequest p WHERE p.status = :permissionRequestStatus")
+	@Query("SELECT p FROM PermissionRequest p LEFT JOIN FETCH p.user WHERE p.status = :permissionRequestStatus")
 	Page<PermissionRequest> findAllPermissionRequestPageByStatus(PermissionRequestStatus permissionRequestStatus, Pageable pageable);
+
+	@Query("SELECT p FROM PermissionRequest p LEFT JOIN FETCH p.user WHERE p.id = :permissionRequestId")
+	Optional<PermissionRequest> findWithUserById(Long permissionRequestId);
 
 	Optional<PermissionRequest> findByUser_UserId(UUID userId);
 	boolean existsByUser_UserId(UUID userId);

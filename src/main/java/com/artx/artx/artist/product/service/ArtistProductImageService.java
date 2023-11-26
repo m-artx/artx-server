@@ -1,7 +1,7 @@
 package com.artx.artx.artist.product.service;
 
-import com.artx.artx.etc.error.ErrorCode;
-import com.artx.artx.etc.exception.BusinessException;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

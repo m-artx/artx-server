@@ -1,10 +1,10 @@
 package com.artx.artx.admin.permission.entity;
 
 import com.artx.artx.admin.permission.type.PermissionRequestStatus;
-import com.artx.artx.etc.model.BaseEntity;
-import com.artx.artx.common.user.entity.User;
-import com.artx.artx.common.user.model.permission.UserPermissionRequestCreate;
-import com.artx.artx.common.user.type.UserRole;
+import com.artx.artx.common.model.BaseEntity;
+import com.artx.artx.user.entity.User;
+import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
+import com.artx.artx.user.type.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

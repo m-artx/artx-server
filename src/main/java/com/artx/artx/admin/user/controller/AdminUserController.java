@@ -1,7 +1,7 @@
 package com.artx.artx.admin.user.controller;
 
 import com.artx.artx.admin.user.service.AdminUserService;
-import com.artx.artx.common.user.model.UserRead;
+import com.artx.artx.user.model.UserRead;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -5,11 +5,11 @@ import com.artx.artx.admin.permission.model.PermissionRequestRead;
 import com.artx.artx.admin.permission.model.PermissionRequestUpdate;
 import com.artx.artx.admin.permission.repository.PermissionRequestRepository;
 import com.artx.artx.admin.permission.type.PermissionRequestStatus;
-import com.artx.artx.etc.error.ErrorCode;
-import com.artx.artx.etc.exception.BusinessException;
-import com.artx.artx.common.image.service.ImageService;
-import com.artx.artx.common.user.entity.User;
-import com.artx.artx.common.user.model.permission.UserPermissionRequestCreate;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.image.service.ImageService;
+import com.artx.artx.user.entity.User;
+import com.artx.artx.user.model.permission.UserPermissionRequestCreate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -82,7 +82,7 @@ public class AdminPermissionService {
 	}
 
 	public PermissionRequestRead.Response readPermissionRequest(Long permissionRequestId) {
-		PermissionRequest permissionRequest = permissionRequestRepository.findById(permissionRequestId).orElseThrow(() -> new BusinessException(ErrorCode.PERMISSION_REQUEST_NOT_FOUND));
+		PermissionRequest permissionRequest = permissionRequestRepository.findWithUserById(permissionRequestId).orElseThrow(() -> new BusinessException(ErrorCode.PERMISSION_REQUEST_NOT_FOUND));
 		return PermissionRequestRead.Response.of(imagesApiAddress, permissionRequest);
 	}
 

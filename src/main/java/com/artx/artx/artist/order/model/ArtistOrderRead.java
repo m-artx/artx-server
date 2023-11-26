@@ -1,9 +1,9 @@
 package com.artx.artx.artist.order.model;
 
-import com.artx.artx.common.user.entity.User;
-import com.artx.artx.customer.delivery.entity.Delivery;
-import com.artx.artx.customer.order.entity.Order;
-import com.artx.artx.customer.order.model.detail.OrderDeliveryDetail;
+import com.artx.artx.user.entity.User;
+import com.artx.artx.delivery.entity.Delivery;
+import com.artx.artx.order.entity.Order;
+import com.artx.artx.order.model.detail.OrderDeliveryDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

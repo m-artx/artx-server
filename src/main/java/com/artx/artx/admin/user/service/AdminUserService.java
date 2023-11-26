@@ -1,8 +1,8 @@
 package com.artx.artx.admin.user.service;
 
-import com.artx.artx.common.user.entity.User;
-import com.artx.artx.common.user.model.UserRead;
-import com.artx.artx.common.user.repository.UserRepository;
+import com.artx.artx.user.entity.User;
+import com.artx.artx.user.model.UserRead;
+import com.artx.artx.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,7 @@
 package com.artx.artx.admin.banner.entity;
 
-import com.artx.artx.etc.model.BaseEntity;
-import com.artx.artx.customer.product.entity.Product;
+import com.artx.artx.common.model.BaseEntity;
+import com.artx.artx.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

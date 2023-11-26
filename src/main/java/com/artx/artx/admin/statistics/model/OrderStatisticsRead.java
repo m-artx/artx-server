@@ -1,7 +1,7 @@
 package com.artx.artx.admin.statistics.model;
 
-import com.artx.artx.customer.delivery.type.DeliveryStatus;
-import com.artx.artx.customer.order.type.OrderStatus;
+import com.artx.artx.delivery.type.DeliveryStatus;
+import com.artx.artx.order.type.OrderStatus;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package com.artx.artx.admin.notice.entity;
 
 import com.artx.artx.admin.notice.model.NoticeCreate;
-import com.artx.artx.etc.model.BaseEntity;
+import com.artx.artx.common.model.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

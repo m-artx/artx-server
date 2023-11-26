@@ -1,6 +1,6 @@
 package com.artx.artx.artist.delivery.model;
 
-import com.artx.artx.customer.delivery.type.DeliveryStatus;
+import com.artx.artx.delivery.type.DeliveryStatus;
 import lombok.Builder;
 import lombok.Getter;
 

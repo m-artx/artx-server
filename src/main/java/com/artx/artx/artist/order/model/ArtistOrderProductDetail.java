@@ -1,6 +1,6 @@
 package com.artx.artx.artist.order.model;
 
-import com.artx.artx.customer.order.entity.OrderProduct;
+import com.artx.artx.order.entity.OrderProduct;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,11 +1,11 @@
 package com.artx.artx.admin.category.service;
 
 import com.artx.artx.admin.category.model.ProductCategoryCreate;
-import com.artx.artx.etc.error.ErrorCode;
-import com.artx.artx.etc.exception.BusinessException;
-import com.artx.artx.customer.product.entity.ProductCategory;
-import com.artx.artx.customer.product.entity.ProductCategoryImage;
-import com.artx.artx.customer.product.repository.ProductCategoryRepository;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
+import com.artx.artx.product.entity.ProductCategory;
+import com.artx.artx.product.entity.ProductCategoryImage;
+import com.artx.artx.product.repository.ProductCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

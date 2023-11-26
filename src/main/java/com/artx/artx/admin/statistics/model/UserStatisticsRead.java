@@ -1,6 +1,6 @@
 package com.artx.artx.admin.statistics.model;
 
-import com.artx.artx.common.user.type.UserRole;
+import com.artx.artx.user.type.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 

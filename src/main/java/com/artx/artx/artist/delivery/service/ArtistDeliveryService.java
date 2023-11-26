@@ -1,10 +1,10 @@
 package com.artx.artx.artist.delivery.service;
 
 import com.artx.artx.artist.delivery.model.ArtistDeliveryCreate;
-import com.artx.artx.customer.delivery.entity.Delivery;
-import com.artx.artx.customer.delivery.repository.DeliveryRepository;
-import com.artx.artx.etc.error.ErrorCode;
-import com.artx.artx.etc.exception.BusinessException;
+import com.artx.artx.delivery.entity.Delivery;
+import com.artx.artx.delivery.repository.DeliveryRepository;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

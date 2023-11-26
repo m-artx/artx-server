@@ -2,9 +2,9 @@ package com.artx.artx.artist.order.controller;
 
 import com.artx.artx.artist.order.model.ArtistOrderRead;
 import com.artx.artx.artist.order.service.ArtistOrderService;
-import com.artx.artx.common.auth.model.UserDetails;
-import com.artx.artx.etc.error.ErrorCode;
-import com.artx.artx.etc.exception.BusinessException;
+import com.artx.artx.auth.model.UserDetails;
+import com.artx.artx.common.error.ErrorCode;
+import com.artx.artx.common.exception.BusinessException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

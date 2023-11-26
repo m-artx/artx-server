@@ -2,7 +2,7 @@ package com.artx.artx.admin.banner.repository;
 
 
 import com.artx.artx.admin.banner.entity.Banner;
-import com.artx.artx.customer.product.entity.Product;
+import com.artx.artx.product.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
