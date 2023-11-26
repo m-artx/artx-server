@@ -23,9 +23,9 @@ public interface CartProductRepository extends JpaRepository<CartProduct, CartPr
 	void deleteExpiredProducts(@Param("thirtyDaysAgo") LocalDateTime thirtyDaysAgo);
 
 	@Modifying
-	@Query("DELETE FROM CartProduct ci WHERE ci.cart.id = :cartId AND ci.product.id IN :productIds")
+	@Query("DELETE FROM CartProduct cp WHERE cp.product.isDeleted = false AND  cp.cart.id = :cartId AND cp.product.id IN :productIds")
 	void deleteSelectedCartProductsByCartIdAndProductIds(Long cartId, List<Long> productIds);
 
-	@Query("SELECT cp FROM CartProduct cp WHERE cp.cart.id = :cartId ORDER BY cp.createdAt DESC ")
+	@Query("SELECT cp FROM CartProduct cp WHERE cp.product.isDeleted = false AND cp.cart.id = :cartId ORDER BY cp.createdAt DESC ")
 	Page<CartProduct> findAllByCart_Id(Long cartId, Pageable pageable);
 }
