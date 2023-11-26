@@ -1,13 +1,12 @@
 package com.artx.artx.product.repository;
 
-import com.artx.artx.product.type.Category;
 import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.type.ProductCategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 					"LEFT JOIN FETCH p.user pu " +
 					"WHERE p.id = :productId AND p.isDeleted = false"
 	)
-	Optional<Product> findByIdWithProductImages(@Param("productId") Long productId);
+	Optional<Product> findByIdWithProductImages(Long productId);
 
 	/**
 	 * 카테고리(Nullable)와 작품명으로 조회
@@ -37,7 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 					"AND (:name IS NULL OR p.title = :name) " +
 					"AND p.isDeleted = false"
 	)
-	Page<Product> findAllByTitleWithProductImages(Category category, String name, Pageable pageable);
+	Page<Product> findAllByTitleWithProductImages(ProductCategoryType category, String name, Pageable pageable);
 
 	/**
 	 * 카테고리(Nullable)와 유저명으로 조회
@@ -50,7 +49,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 					"AND (:name IS NULL OR p.user.nickname = :name) " +
 					"AND p.isDeleted = false"
 	)
-	Page<Product> findAllByNicknameWithProductImages(Category category, String name, Pageable pageable);
+	Page<Product> findAllByNicknameWithProductImages(ProductCategoryType category, String name, Pageable pageable);
 
 	/**
 	 * 메인페이지 작품 최신순 10개 조회
@@ -60,7 +59,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			"SELECT p FROM Product p " +
 					"LEFT JOIN FETCH p.productImages img " +
 					"WHERE p.isDeleted = false " +
-					"ORDER BY p.createdAt ASC LIMIT 10"
+					"ORDER BY p.createdAt DESC LIMIT 10"
 
 	)
 	List<Product> findMainPageProductsByLatest();

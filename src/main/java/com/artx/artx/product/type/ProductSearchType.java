@@ -1,5 +1,5 @@
 package com.artx.artx.product.type;
 
-public enum Type {
+public enum ProductSearchType {
 	USER, TITLE
 }

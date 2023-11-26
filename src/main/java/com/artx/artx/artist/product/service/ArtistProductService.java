@@ -5,7 +5,6 @@ import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
-import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductImage;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.model.ProductCreate;
@@ -13,7 +12,7 @@ import com.artx.artx.product.model.ProductUpdate;
 import com.artx.artx.product.repository.ProductCategoryRepository;
 import com.artx.artx.product.repository.ProductImageRepository;
 import com.artx.artx.product.repository.ProductRepository;
-import com.artx.artx.product.type.Category;
+import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -105,7 +104,7 @@ public class ArtistProductService {
 		}
 
 		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-		ProductCategory productCategory = getProductCategoryByCategory(request.getProductCategory());
+		com.artx.artx.product.entity.ProductCategory productCategory = getProductCategoryByCategory(request.getProductCategory());
 		ProductStock productStock = ProductStock.from(request);
 
 		user.isArtist();
@@ -178,7 +177,7 @@ public class ArtistProductService {
 		return ProductUpdate.Response.of(product);
 	}
 
-	private ProductCategory getProductCategoryByCategory(Category category) {
+	private com.artx.artx.product.entity.ProductCategory getProductCategoryByCategory(ProductCategoryType category) {
 		return productCategoryRepository.findByType(category).orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
 

@@ -1,8 +1,8 @@
 package com.artx.artx.product.controller;
 
-import com.artx.artx.product.type.Category;
-import com.artx.artx.product.type.Filter;
-import com.artx.artx.product.type.Type;
+import com.artx.artx.product.type.ProductCategoryType;
+import com.artx.artx.product.type.ProductSearchFilter;
+import com.artx.artx.product.type.ProductSearchType;
 import com.artx.artx.product.model.ProductRead;
 import com.artx.artx.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,8 +27,8 @@ public class ProductController {
 	@Operation(summary = "작품 조회", description = "카테고리와 작가명 또는 제목으로 작품을 전체 조회할 수 있다.")
 	@GetMapping
 	public ResponseEntity<Page<ProductRead.SummaryResponse>> searchProducts(
-			@Nullable @RequestParam Category category,
-			@Nullable @RequestParam Type type,
+			@Nullable @RequestParam ProductCategoryType category,
+			@Nullable @RequestParam ProductSearchType type,
 			@Nullable @RequestParam String name,
 			Pageable pageable) {
 		return ResponseEntity.ok(productService.readAllProducts(category, type, name, pageable));
@@ -45,7 +45,7 @@ public class ProductController {
 	@Operation(summary = "메인 페이지 조회", description = "등록순 및 인기순으로 작품 10개를 조회할 수 있다.")
 	@GetMapping("/main")
 	public ResponseEntity<List<ProductRead.SummaryResponse>> mainPageProducts(
-			@RequestParam Filter type
+			@RequestParam ProductSearchFilter type
 	) {
 		return ResponseEntity.ok(productService.readMainPageProducts(type));
 	}

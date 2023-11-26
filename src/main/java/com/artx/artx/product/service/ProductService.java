@@ -1,11 +1,10 @@
 package com.artx.artx.product.service;
 
-import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.model.ProductCategoryRead;
 import com.artx.artx.product.repository.ProductCategoryRepository;
-import com.artx.artx.product.type.Category;
-import com.artx.artx.product.type.Filter;
-import com.artx.artx.product.type.Type;
+import com.artx.artx.product.type.ProductCategoryType;
+import com.artx.artx.product.type.ProductSearchFilter;
+import com.artx.artx.product.type.ProductSearchType;
 import com.artx.artx.user.entity.User;
 import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
@@ -38,19 +37,19 @@ public class ProductService {
 	private String productsApiAddress;
 
 	@Transactional(readOnly = true)
-	public Page<ProductRead.SummaryResponse> readAllProducts(Category category, Type type, String name, Pageable pageable) {
+	public Page<ProductRead.SummaryResponse> readAllProducts(ProductCategoryType category, ProductSearchType type, String name, Pageable pageable) {
 
 		if (type == null) {
 			return productRepository.findAllByTitleWithProductImages(category, name, pageable)
 					.map(product -> ProductRead.SummaryResponse.of(imagesApiAddress, productsApiAddress, product));
 		}
 
-		if (type == Type.USER) {
+		if (type == ProductSearchType.USER) {
 			return productRepository.findAllByNicknameWithProductImages(category, name, pageable)
 					.map(product -> ProductRead.SummaryResponse.of(imagesApiAddress, productsApiAddress, product));
 		}
 
-		if (type == Type.TITLE) {
+		if (type == ProductSearchType.TITLE) {
 			return productRepository.findAllByTitleWithProductImages(category, name, pageable)
 					.map(product -> ProductRead.SummaryResponse.of(imagesApiAddress, productsApiAddress, product));
 		}
@@ -67,13 +66,13 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ProductRead.SummaryResponse> readMainPageProducts(Filter type) {
+	public List<ProductRead.SummaryResponse> readMainPageProducts(ProductSearchFilter type) {
 
-		if (type == Filter.LATEST) {
+		if (type == ProductSearchFilter.LATEST) {
 			return productRepository.findMainPageProductsByLatest().stream().map(product -> ProductRead.SummaryResponse.of(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 
-		if (type == Filter.POPULARITY) {
+		if (type == ProductSearchFilter.POPULARITY) {
 			return productRepository.findMainPageProductsByPopularity().stream().map(product -> ProductRead.SummaryResponse.of(imagesApiAddress, productsApiAddress, product)).collect(Collectors.toList());
 		}
 
@@ -82,7 +81,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public List<ProductCategoryRead.SummaryResponse> readCategories() {
-		List<ProductCategory> categories = productCategoryRepository.findAllWithProductCategoryImage();
+		List<com.artx.artx.product.entity.ProductCategory> categories = productCategoryRepository.findAllWithProductCategoryImage();
 		return categories.stream().map(category -> ProductCategoryRead.SummaryResponse.of(imagesApiAddress, category)).collect(Collectors.toList());
 	}
 

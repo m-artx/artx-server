@@ -1,6 +1,6 @@
 package com.artx.artx.product.model;
 
-import com.artx.artx.product.type.Category;
+import com.artx.artx.product.type.ProductCategoryType;
 import com.artx.artx.product.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +18,7 @@ public class ProductCreate {
 
 		@Schema(description = "작품 카테고리 고유 식별 번호", example = "1")
 		@NotNull
-		private Category productCategory;
+		private ProductCategoryType productCategory;
 
 		@Schema(description = "작품 소개 제목", example = "목탄으로 표현한 어둠 속에 피어난 장미")
 		@NotBlank
