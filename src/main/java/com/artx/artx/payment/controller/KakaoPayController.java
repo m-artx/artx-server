@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,6 +23,9 @@ public class KakaoPayController {
 	@Value("${artx.payment-fail-redirect}")
 	private String failRedirectAddress;
 
+	@Value("${artx.payment-cancel-redirect}")
+	private String cancelRedirectAddress;
+
 
 	@GetMapping("/approval")
 	public void approval(
@@ -41,8 +43,8 @@ public class KakaoPayController {
 	}
 
 	@PostMapping("/cancel")
-	public ResponseEntity<Void> cancel() {
-		return ResponseEntity.ok().build();
+	public void cancel(HttpServletResponse response) throws IOException {
+		response.sendRedirect(failRedirectAddress);
 	}
 
 }
