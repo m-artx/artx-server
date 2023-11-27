@@ -77,7 +77,7 @@ spec:
               value: "https://artx-client-in-mogako.vercel.app/success"
             - name: PAYMENT_FAIL_REDIRECT
               value: "https://artx-client-in-mogako.vercel.app/fail"
-            - name: PAYMENT_FAIL_REDIRECT
+            - name: PAYMENT_CANCEL_REDIRECT
               value: "https://artx-client-in-mogako.vercel.app/cancel"
       volumes:
         - name: artx-images
