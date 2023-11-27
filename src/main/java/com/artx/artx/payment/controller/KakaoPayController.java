@@ -44,7 +44,7 @@ public class KakaoPayController {
 
 	@PostMapping("/cancel")
 	public void cancel(HttpServletResponse response) throws IOException {
-		response.sendRedirect(failRedirectAddress);
+		response.sendRedirect(cancelRedirectAddress);
 	}
 
 }
