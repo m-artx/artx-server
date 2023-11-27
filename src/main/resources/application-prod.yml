@@ -65,6 +65,8 @@ artx:
   port: ${ARTX_PORT}
   address: ${ARTX_ADDRESS}
   email-server-address: ${ARTX_EMAIL_SERVER_ADDRESS}
+  payment-success-redirect: ${PAYMENT_SUCCESS_REDIRECT}
+  payment-fail-redirect: ${PAYMENT_FAIL_REDIRECT}
 
 api:
   users: ${artx.address}/api/users/

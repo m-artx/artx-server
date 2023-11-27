@@ -73,6 +73,10 @@ spec:
               value: "false"
             - name: SQL_INIT_MODE
               value: "never"
+            - name: PAYMENT_SUCCESS_REDIRECT
+              value: "https://artx-client-in-mogako.vercel.app/success"
+            - name: PAYMENT_FAIL_REDIRECT
+              value: "https://artx-client-in-mogako.vercel.app/fail"
       volumes:
         - name: artx-images
           persistentVolumeClaim:

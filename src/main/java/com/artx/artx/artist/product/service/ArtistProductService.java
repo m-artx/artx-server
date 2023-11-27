@@ -5,6 +5,7 @@ import com.artx.artx.common.error.ErrorCode;
 import com.artx.artx.common.exception.BusinessException;
 import com.artx.artx.image.service.ImageService;
 import com.artx.artx.product.entity.Product;
+import com.artx.artx.product.entity.ProductCategory;
 import com.artx.artx.product.entity.ProductImage;
 import com.artx.artx.product.entity.ProductStock;
 import com.artx.artx.product.model.ProductCreate;
@@ -104,7 +105,7 @@ public class ArtistProductService {
 		}
 
 		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-		com.artx.artx.product.entity.ProductCategory productCategory = getProductCategoryByCategory(request.getProductCategory());
+		ProductCategory productCategory = getProductCategoryByCategory(request.getProductCategory());
 		ProductStock productStock = ProductStock.from(request);
 
 		user.isArtist();

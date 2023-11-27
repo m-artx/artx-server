@@ -4,6 +4,7 @@ import com.artx.artx.payment.service.KakaoPayService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,13 @@ public class KakaoPayController {
 
 	private final KakaoPayService kakaoPayService;
 
+	@Value("${artx.payment-success-redirect}")
+	private String successRedirectAddress;
+
+	@Value("${artx.payment-fail-redirect}")
+	private String failRedirectAddress;
+
+
 	@GetMapping("/approval")
 	public void approval(
 			@RequestParam(name = "partner_order_id") String orderId,
@@ -24,12 +32,12 @@ public class KakaoPayController {
 			HttpServletResponse response
 	) throws IOException {
 		kakaoPayService.approvalPayment(orderId, pg_token);
-		response.sendRedirect("/success");
+		response.sendRedirect(successRedirectAddress);
 	}
 
 	@PostMapping("/fail")
 	public void fail(HttpServletResponse response) throws IOException {
-		response.sendRedirect("/fail");
+		response.sendRedirect(failRedirectAddress);
 	}
 
 	@PostMapping("/cancel")
