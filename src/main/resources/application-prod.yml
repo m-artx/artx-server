@@ -63,7 +63,7 @@ prefix:
 artx:
   host: ${ARTX_HOST}
   port: ${ARTX_PORT}
-  address: ${ARTX_ADDRESS}
+  address: http://${artx.host}:${artx.port}
   email-server-address: ${ARTX_EMAIL_SERVER_ADDRESS}
   payment-success-redirect: ${PAYMENT_SUCCESS_REDIRECT}
   payment-fail-redirect: ${PAYMENT_FAIL_REDIRECT}
