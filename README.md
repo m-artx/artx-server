@@ -5,7 +5,7 @@
 ![Group 119](https://github.com/dlworhd/artx-server/assets/102597172/c0c13363-938e-465b-a016-e84d1c771f9b)
 
 ## ERD 설계
-![market](https://github.com/m-artx/artx-server/assets/102597172/8edabaa3-9afb-4d33-9ae0-adcb5f150eab)
+![market (1)](https://github.com/m-artx/artx-server/assets/102597172/3f4b0ea8-d229-4bce-844a-3cd9ae3a36a1)
 
 ## 요구사항 명세서
 
