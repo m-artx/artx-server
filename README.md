@@ -9,8 +9,6 @@
 
 ## 요구사항 명세서
 
-1. Spring WAS Server(Java/Spring, JPA Hibernetes, Redis DB)
-
 ### 회원 도메인
   
   1)   [x] 회원가입/회원탈퇴/로그인/로그아웃할 수 있습니다.
