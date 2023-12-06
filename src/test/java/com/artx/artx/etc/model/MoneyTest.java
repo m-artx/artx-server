@@ -1,8 +1,8 @@
 package com.artx.artx.etc.model;
 
-import com.artx.artx.common.exception.BusinessException;
-import com.artx.artx.common.model.Currency;
-import com.artx.artx.common.model.Money;
+import com.artx.artx.global.common.error.exception.BusinessException;
+import com.artx.artx.domain.model.Currency;
+import com.artx.artx.domain.model.Money;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
