@@ -1,7 +1,0 @@
-namespace: default
-resources:
-  - artx-pvc.yaml
-  - backend.yaml
-  - mysql.yaml
-  - redis.yaml
-  - ingress.yaml
