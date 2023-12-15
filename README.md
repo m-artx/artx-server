@@ -1,13 +1,26 @@
 ## 프로젝트
-누구나 쉽게 미술품을 사고 팔 수 있는 커머스 프로젝트입니다.
+누구나 쉽게 미술품을 사고 팔 수 있는 E-Commerce 프로젝트입니다.
+
+## 업데이트 내역
+- [2023-12-06] 이미지 저장 및 응답 속도를 고려하여 이미지 리사이징을 구현하였습니다.
+
 
 ## 프로젝트 구성
 ![Group 119](https://github.com/dlworhd/artx-server/assets/102597172/c0c13363-938e-465b-a016-e84d1c771f9b)
 
 ## ERD 설계
-![market (1)](https://github.com/m-artx/artx-server/assets/102597172/3f4b0ea8-d229-4bce-844a-3cd9ae3a36a1)
+![Group 2](https://github.com/m-artx/artx-server/assets/102597172/2631f8ec-7314-4c17-a54f-df989e696cae)
 
-## 요구사항 명세서
+## 빌드 및 배포
+
+### 1. Krampoline 빌드 및 배포(2023-11-28 이전)
+![image](https://github.com/m-artx/artx-server/assets/102597172/f1b1298e-979d-4897-92a8-f7887f22cf33)
+
+
+### 2. Github Actions CI/CD + 클라우드 인스턴스 환경 빌드 및 배포(2023-11-28 이후)
+![image](https://github.com/m-artx/artx-server/assets/102597172/308fe5aa-b113-4039-a470-524c7486ad41)
+
+## API 명세서
 
 ### 회원 도메인
   
@@ -72,3 +85,13 @@
   3) [x] 인증을 위한 이메일을 전송할 수 있습니다.
   4) [x] 패스워드 초기화 시 새로운 패스워드를 만들어 이메일을 전송할 수 있습니다.
 
+
+## 사용 예시
+사용 예시를 보여주는 것이기 때문에 누락된 페이지가 다수 존재할 수 있습니다.
+
+![image](https://github.com/m-artx/artx-server/assets/102597172/937596de-c95c-4c8b-ae86-188629c1a5ef)
+![image](https://github.com/m-artx/artx-server/assets/102597172/d2255958-2be8-4547-9c3c-1aba4479f28c)
+![image](https://github.com/m-artx/artx-server/assets/102597172/380055c0-c3a1-4faf-975f-70589c8a14ac)
+![image](https://github.com/m-artx/artx-server/assets/102597172/0ebce88a-12bc-4b82-8399-8f1294fa31bb)
+![image](https://github.com/m-artx/artx-server/assets/102597172/49aa3e21-c6f7-4beb-8ce5-d802f08aeed3)
+![image](https://github.com/m-artx/artx-server/assets/102597172/e5ccf204-0b8b-46d3-9900-c287c14f2c4d)
