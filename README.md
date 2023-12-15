@@ -20,6 +20,25 @@
 ### 2. Github Actions CI/CD + 클라우드 인스턴스 환경 빌드 및 배포(2023-11-28 이후)
 ![image](https://github.com/m-artx/artx-server/assets/102597172/308fe5aa-b113-4039-a470-524c7486ad41)
 
+## 사용 기술
+
+### Back-end
+- Go(Email Server)
+- Java 17
+- Spring Boot 3.1.5
+- JPA(Hibernate)
+- Spring Security
+- JWT Token
+
+### Infra
+- Docker
+- Oracle Cloud A1
+- Github Actions
+- Krampoline(Web IDE)
+- D2Hub
+- Kargo
+- MySQL
+
 ## API 명세서
 
 ### 회원 도메인
