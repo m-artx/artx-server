@@ -48,10 +48,6 @@ public class Order extends BaseEntity {
 	@Column(nullable = false)
 	List<OrderProduct> orderProducts = new ArrayList<>();
 
-//	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//	@JoinColumn(name = "delivery_id")
-//	private Delivery delivery;
-
 	public static Order from(User user, OrderCreate.Request request) {
 		return Order.builder()
 				.user(user)

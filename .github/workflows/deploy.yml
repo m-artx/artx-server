@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,8 +18,11 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew clean bootjar
 
       - name: Docker Hub
         run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -54,3 +56,19 @@ jobs:
             docker-compose down --rmi artx
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/artx:latest
             docker-compose up -d
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+
+    steps:
+      - name: Notify Failure to Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          author_name: www-be
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          if_mention: failure,cancelled
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
