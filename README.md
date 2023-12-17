@@ -1,4 +1,5 @@
 # ARTX
+![Group 1402](https://github.com/m-artx/artx-server/assets/102597172/2a9c1b41-c55c-4f95-ae19-c8de78d89888)
 
 ## 프로젝트 소개
 누구나 쉽게 작가가 되어 미술품을 판매할 수 있는 플랫폼입니다.
