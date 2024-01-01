@@ -61,7 +61,7 @@
 - MySQL
 
 ## 프로젝트 구성
-![Group 119](https://github.com/dlworhd/artx-server/assets/102597172/c0c13363-938e-465b-a016-e84d1c771f9b)
+![pj](https://github.com/m-artx/artx-server/assets/102597172/86b544ab-d275-4560-8e4f-6f3e42fd69af)
 
 ## 빌드 및 배포
 
